@@ -1,10 +1,11 @@
 {
   "name": "enerjix-az-kalkulyator-backend",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "EnergyX Az Açıq Enerji Kalkulyatoru — Gənclər Fondu qrantı çərçivəsində hazırlanmış açıq mənbə layihə",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "test": "node --test test/*.test.js"
   },
   "dependencies": {
     "cors": "^2.8.5",
@@ -12,5 +13,8 @@
     "express": "^4.19.2",
     "express-rate-limit": "^7.4.0"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "engines": {
+    "node": ">=18"
+  }
 }
