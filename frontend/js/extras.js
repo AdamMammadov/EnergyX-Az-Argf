@@ -467,7 +467,7 @@
       datasets: [
         { type: "bar", label: t.chart_gas_m3, data: all.map((m) => m.m3), backgroundColor: all.map((m) => col[m.tier] + (m.past ? "66" : "")),
           borderRadius: 4, yAxisID: "y", order: 2 },
-        { type: "line", label: t.chart_gas_cum, data: all.map((m) => m.cumulative), borderColor: "#9fb3c8", pointRadius: 2, borderWidth: 2, yAxisID: "y2", order: 1 },
+        { type: "line", label: t.chart_gas_cum, data: all.map((m) => m.cumulative), borderColor: P.cssVar("--line2"), pointRadius: 2, borderWidth: 2, yAxisID: "y2", order: 1 },
       ],
     };
     const opts = P.chartBase();

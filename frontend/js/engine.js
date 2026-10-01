@@ -638,7 +638,43 @@
       targetCost: calcTariff(target).cost, done: current ? current.kwh <= target : null };
   }
 
+  // =====================================================================
+  // v2.2 — Hesab yoxlayıcısı və cihaz müqayisəsi
+  // =====================================================================
+  // Azərişıq hesabındakı kVt·saat və məbləğ rəsmi tariflə uyğun gəlirmi?
+  function billCheck(kwh, amount) {
+    kwh = Number(kwh); amount = Number(amount);
+    if (!(kwh >= 0) || !(amount >= 0)) return null;
+    const expected = calcTariff(kwh);
+    const diff = round2(amount - expected.cost);
+    const tolerance = Math.max(0.05, expected.cost * 0.01); // yuvarlaqlaşdırma üçün 1% / 5 qəpik
+    const status = Math.abs(diff) <= tolerance ? "ok" : diff > 0 ? "over" : "under";
+    return { expected: expected.cost, tier: expected.tier, diff, diffPct: expected.cost ? round2((diff / expected.cost) * 100) : 0,
+      status, impliedKwh: Math.round(kwhForBudget(amount)) };
+  }
+
+  // Köhnə vs yeni cihaz: qənaət pilləli tarifə görə (cari istifadənin marjinal hissəsindən) hesablanır
+  function compareAppliances({ oldW, newW, hours, price, baseKwh }) {
+    oldW = Math.max(0, Number(oldW) || 0); newW = Math.max(0, Number(newW) || 0);
+    hours = Math.min(24, Math.max(0, Number(hours) || 0)); price = Math.max(0, Number(price) || 0);
+    baseKwh = Math.max(0, Number(baseKwh) || 0);
+    const savedKwh = ((oldW - newW) / 1000) * hours * 30;
+    let monthlyAzn;
+    if (savedKwh >= 0) {
+      const base = Math.max(baseKwh, savedKwh); // cari istifadə qənaətdən az ola bilməz
+      monthlyAzn = calcTariff(base).cost - calcTariff(base - savedKwh).cost;
+    } else {
+      monthlyAzn = -(calcTariff(baseKwh - savedKwh).cost - calcTariff(baseKwh).cost);
+    }
+    monthlyAzn = round2(monthlyAzn);
+    const payback = monthlyAzn > 0 ? price / monthlyAzn : null;
+    return { savedKwhMonth: round2(savedKwh), monthlyAzn, yearlyAzn: round2(monthlyAzn * 12),
+      paybackMonths: payback == null ? null : Math.round(payback * 10) / 10,
+      tenYearNet: round2(monthlyAzn * 120 - price), co2YearKg: Math.round(savedKwh * 12 * CO2_FACTOR) };
+  }
+
   return {
+    billCheck, compareAppliances,
     SENSITIVITY, diagnoseMeter, syntheticHouseholds, validateDetector,
     GAS_TIERS, GAS_SEASON, GAS_CO2_KG_PER_M3, gasCost, gasForecast, gasLeakTest,
     outagePlan, badges, monthlyChallenge,
