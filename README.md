@@ -45,13 +45,34 @@ Bu funksiyalar müəllifin əvvəlki iki layihəsindən (**GridPulse** — şəb
 | 15 | **PWA / oflayn iş** — telefona quraşdırıla bilir, internet olmadan da açılır | — | yeni |
 | 16 | **Aylıq sayğac qeydləri** — hər qeyd üçün ay seçilir, eyni ay təkrar yazılmır | Sayğaclarım | yeni |
 
+## 🔥 v2.1 — GridPulse və PanoPulse-dan əlavə ssenarilər
+
+| # | Funksiya | Harada | Mənbə |
+|---|----------|--------|-------|
+| 17 | **Təbii qaz kalkulyatoru** — İLLİK pilləli qaz tarifi (0–1200 m³: 12.5q, 1200–2500: 20q, 2500+: 25q), il üzrə yığılan həcm, pillə bölgüsü, CO₂ | Qaz | GridPulse gas module |
+| 18 | **Qaz proqnozu** — istilik mövsümü modeli (Bakı temperaturu), 1200/2500 m³ həddinin hansı ayda keçiləcəyi | Qaz | GridPulse gas forecast |
+| 19 | **Qaz sızma testi** — gecə/səhər 2 göstərici ilə | Qaz | GridPulse gas leak detection |
+| 20 | **Dəm qazı və qaz təhlükəsizliyi** yoxlama siyahısı | Qaz | yeni |
+| 21 | **Sayğac diaqnozu** — sıfır göstərici (nasazlıq), şübhəli davamlı azalma (icazəsiz müdaxilə/bypass), davamlı artım (cihaz nasazlığı), tək pik, tədrici trend; ciddilik dərəcəsi və "nə etməli" | Analitika | GridPulse diagnose_meters + SecurityAlerts |
+| 22 | **Həssaslıq tənzimləyicisi** (Ehtiyatlı / Balanslı / Həssas) — sınaq nəticələri ilə | Analitika | GridPulse ThresholdExplorer |
+| 23 | **Metodun doğrulanması** — 300 sintetik (Bakı iqliminə kalibrlənmiş) ev × 18 ay üzərində brauzerdə canlı sınaq: dəqiqlik, aşkarlama, yanlış həyəcan, növlər üzrə nəticə | Haqqında | GridPulse real_data_validation |
+| 24 | **İstifadə istilik xəritəsi** (ay × il, pillə rəngi, anomaliya işarəsi) | Analitika | PanoPulse RiskHeatmap |
+| 25 | **Evin enerji xəritəsi** — cihazlar ölçüsü istifadəyə, rəngi kateqoriyaya görə kafellər; effektivsizlər qırmızı çərçivəli | Cihazlar | PanoPulse Digital Twin |
+| 26 | **Nailiyyətlər (8 nişan) + aylıq çağırış** (keçən aydan 10% az hədəf) | Analitika | yeni |
+| 27 | **Kəsintiyə hazırlıq** — kritik cihazlar üçün Vt·saat, tövsiyə olunan ehtiyat tutumu, invertor gücü, powerbank sayı; qaz kombisi xəbərdarlığı | Hazırlıq | GridPulse critical infra / disaster scenario |
+| 28 | **Soyuducu qida təhlükəsizliyi** (USDA) + **təcili əlaqə** nömrələri (112, 101, 103, 104, 199) | Hazırlıq | GridPulse EmergencyTeamCard |
+| 29 | **Paylaşma** — nəticəni keçid ilə paylaşmaq (`?kwh=…&lang=…&tab=…` parametrləri) | Kalkulyator | yeni |
+| 30 | **Aylıq xatırlatma** — bu ayın sayğac qeydi yoxdursa banner | Kalkulyator | yeni |
+
+Düzəlişlər: GitHub keçidi düzgün repoya yönəldildi; mobil ekranda cihaz formasının üfüqi daşması aradan qaldırıldı; qısa ay adlarında İyun/İyul qarışıqlığı düzəldildi.
+
 ### 🛡️ Möhkəmlik və təhlükəsizlik
 - **XSS qoruması** — istifadəçinin yazdığı cihaz/sayğac adları HTML-ə təhlükəsiz yerləşdirilir
 - **Səhifə ~13 dəfə yüngülləşdi** (1.09 MB → ~85 KB): PDF şrifti ayrıca fayla çıxarıldı və yalnız PDF yaradılanda yüklənir
 - Backend: təhlükəsizlik başlıqları, `ALLOWED_ORIGINS` ilə CORS, 10 KB sorğu limiti, giriş doğrulaması, `/track` üçün rate-limit və hadisə növü siyahısı, statistikanın atomik yazılması, Gemini açarı URL-də yox başlıqda, 15 s timeout, `/health` endpoint, səliqəli 404/400 cavabları
 - AI-a göndərilən kontekst serverdə təmizlənir (prompt injection riskini azaltmaq üçün)
 - Tarif məntiqi vahid mənbədən gəlir və frontend ↔ backend uyğunluğu testlə yoxlanılır
-- **21 avtomatik test** (`cd backend && npm test`) + GitHub Actions CI
+- **32 avtomatik test** (`cd backend && npm test`) + GitHub Actions CI
 
 > Qeyd: "Nümunə məlumat" və təqdimat rejimindəki məlumat açıq şəkildə **nümunə** kimi etiketlənib — real istifadəçi məlumatı deyil.
 
@@ -68,6 +89,7 @@ energyx-az/
 │   ├── index.html
 │   ├── js/engine.js        Analitika mühərriki (təmiz funksiyalar, testlənir)
 │   ├── js/pro.js           Analitika / Planlaşdırma / Təqdimat / PDF / Yedək UI
+│   ├── js/extras.js        Qaz / Diaqnoz / Doğrulama / Hazırlıq / Nailiyyətlər UI
 │   ├── css/pro.css
 │   ├── fonts/DejaVuSans.ttf  PDF üçün Unicode şrift (lazım olanda yüklənir)
 │   ├── sw.js, manifest.webmanifest, icon.svg

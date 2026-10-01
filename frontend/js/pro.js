@@ -302,11 +302,13 @@
     en: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
     ru: ["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"],
   };
+  // "İyun"/"İyul" kimi qısa adlar tam saxlanılır, yoxsa ikisi də "İyu" olur
+  function shortMonth(name) { return name.length <= 4 ? name : name.slice(0, 3); }
   function monthLabel(key, long) {
     const p = E.parseMonth(key);
     if (!p) return key;
     const name = (MONTHS[currentLang] || MONTHS.az)[p.m];
-    return long ? `${name} ${p.y}` : `${name.slice(0, 3)} '${String(p.y).slice(2)}`;
+    return long ? `${name} ${p.y}` : `${shortMonth(name)} '${String(p.y).slice(2)}`;
   }
   function store(key, val) { try { localStorage.setItem(key, JSON.stringify(val)); } catch {} }
   function load(key, fallback) {
@@ -381,11 +383,13 @@
     const readings = readingsFor(source);
     const pace = load("energyx_pace", { month: "", readings: [], budget: 0 });
     const budget = Number(pace.budget) || 0;
-    const anomalies = E.detectAnomalies(readings);
-    const health = E.healthScore({ kwh, readings, appliances, budget });
+    const sensKey = load("energyx_sens", "balanced");
+    const sensitivity = E.SENSITIVITY[sensKey] || E.SENSITIVITY.balanced;
+    const anomalies = E.detectAnomalies(readings, sensitivity);
+    const health = E.healthScore({ kwh, readings, appliances, budget, sensitivity });
     const forecast = E.forecastYear(readings, kwh, new Date());
     const eco = E.ecoImpact(forecast.totalKwh);
-    state = { kwh, source, readings, anomalies, health, forecast, eco, budget };
+    state = { kwh, source, readings, anomalies, health, forecast, eco, budget, sensKey, sensitivity };
     return state;
   }
 
@@ -644,6 +648,7 @@
     const ins = activeTab === "insights"; // qrafiklər yalnız görünən paneldə çəkilir
     renderHealth(); renderAnomalies(ins); renderForecast(ins);
     renderPace(); renderWhatIf(); renderInvest();
+    if (window.EnergyExtras) EnergyExtras.refresh(state, activeTab);
   }
   function refreshSoon() { clearTimeout(timer); timer = setTimeout(refresh, 120); }
   function onTab(tab) { activeTab = tab; refresh(); }
@@ -855,7 +860,7 @@
 
   // ===== TƏQDİMAT REJİMİ (PanoPulse Presentation Mode) =====
   // İstifadəçinin məlumatı əvvəlcə yadda saxlanılır, demo bitəndə tam bərpa olunur.
-  const SNAP_KEYS = ["energyx_meters", "energyx_appliances", "energyx_pace", "energyx_ins_source", "energyx_invest"];
+  const SNAP_KEYS = ["energyx_meters", "energyx_appliances", "energyx_pace", "energyx_ins_source", "energyx_invest", "energyx_sens", "energyx_gas", "energyx_outage"];
   let pres = null;
   function startPresentation() {
     if (pres) return stopPresentation();
@@ -956,6 +961,7 @@
   window.EnergyPro = {
     refresh, refreshSoon, onTab, addPaceReading, removePaceReading, addPreset, loadSample, clearSample,
     exportBackup, importBackup, aiContext, localAnswer, exportPdf, startPresentation, stopPresentation, toast,
+    getState: () => state, monthLabel, shortMonth, fmt, load, store, cssVar, chartBase, compute,
   };
   applyTranslations(currentLang);
   refresh();
