@@ -66,13 +66,24 @@ Bu funksiyalar müəllifin əvvəlki iki layihəsindən (**GridPulse** — şəb
 
 Düzəlişlər: GitHub keçidi düzgün repoya yönəldildi; mobil ekranda cihaz formasının üfüqi daşması aradan qaldırıldı; qısa ay adlarında İyun/İyul qarışıqlığı düzəldildi.
 
+## 🎨 v2.2 — Yeni dizayn və responsiv tərtibat
+
+- **Masaüstü (≥1100px):** sol yan panel (ikonlu naviqasiya, təqdimat, tema, dil), geniş iş sahəsi (1280px-ə qədər), bütün bölmələrdə 2 sütunlu kart şəbəkəsi (≥1500px-də 3 sütun); kalkulyator iki sütunlu (sürüşdürücü + nəticələr)
+- **Planşet (720–1099px):** yuxarıda yapışqan, bulanıq fonlu başlıq + üfüqi naviqasiya (aktiv bölmə avtomatik görünür)
+- **Mobil (<720px):** yığcam başlıq + **aşağı naviqasiya paneli** (4 əsas bölmə + "Daha çox" pəncərəsi), toxunuşa uyğun düymələr, iOS-da avtomatik yaxınlaşmanın qarşısı (16px input), üfüqi daşma yoxdur
+- **Açıq / tünd tema** — sistem seçimini izləyir, əl ilə dəyişdirilə bilir, qrafiklər də uyğunlaşır
+- **Ümumi baxış zolağı** — sağlamlıq balı, 12 ay proqnozu, büdcə vəziyyəti, qaz xərci; klikləyəndə müvafiq bölməyə keçir
+- **Hesab yoxlayıcısı** — Azərişıq hesabındakı kVt·saat və məbləğ rəsmi tariflə uyğundurmu? Fərqi və məbləğin uyğun gəldiyi kVt-ı göstərir
+- **Köhnə vs yeni cihaz** — illik qənaət, geri ödəmə müddəti və 10 illik xalis nəticə (pilləli tarifə görə)
+- Klaviatura qısayolları (**Alt + 1…9**), URL-də bölmə (`#insights`), çap üçün təmiz görünüş
+
 ### 🛡️ Möhkəmlik və təhlükəsizlik
 - **XSS qoruması** — istifadəçinin yazdığı cihaz/sayğac adları HTML-ə təhlükəsiz yerləşdirilir
 - **Səhifə ~13 dəfə yüngülləşdi** (1.09 MB → ~85 KB): PDF şrifti ayrıca fayla çıxarıldı və yalnız PDF yaradılanda yüklənir
 - Backend: təhlükəsizlik başlıqları, `ALLOWED_ORIGINS` ilə CORS, 10 KB sorğu limiti, giriş doğrulaması, `/track` üçün rate-limit və hadisə növü siyahısı, statistikanın atomik yazılması, Gemini açarı URL-də yox başlıqda, 15 s timeout, `/health` endpoint, səliqəli 404/400 cavabları
 - AI-a göndərilən kontekst serverdə təmizlənir (prompt injection riskini azaltmaq üçün)
 - Tarif məntiqi vahid mənbədən gəlir və frontend ↔ backend uyğunluğu testlə yoxlanılır
-- **32 avtomatik test** (`cd backend && npm test`) + GitHub Actions CI
+- **36 avtomatik test** (`cd backend && npm test`) + GitHub Actions CI
 
 > Qeyd: "Nümunə məlumat" və təqdimat rejimindəki məlumat açıq şəkildə **nümunə** kimi etiketlənib — real istifadəçi məlumatı deyil.
 
@@ -90,7 +101,8 @@ energyx-az/
 │   ├── js/engine.js        Analitika mühərriki (təmiz funksiyalar, testlənir)
 │   ├── js/pro.js           Analitika / Planlaşdırma / Təqdimat / PDF / Yedək UI
 │   ├── js/extras.js        Qaz / Diaqnoz / Doğrulama / Hazırlıq / Nailiyyətlər UI
-│   ├── css/pro.css
+│   ├── js/ux.js            Tema, naviqasiya, ümumi baxış, hesab yoxlayıcısı, cihaz müqayisəsi
+│   ├── css/pro.css, css/layout.css   Komponent stilləri + responsiv tətbiq qabığı
 │   ├── fonts/DejaVuSans.ttf  PDF üçün Unicode şrift (lazım olanda yüklənir)
 │   ├── sw.js, manifest.webmanifest, icon.svg
 │   └── SpaceGrotesk-Bold.ttf

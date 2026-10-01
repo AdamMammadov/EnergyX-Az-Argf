@@ -1,0 +1,236 @@
+/* ==========================================================================
+   EnergyX Az — Tətbiq qabığı və responsiv tərtibat (v2.2)
+   ≥1100px  : sol yan panel (sidebar) + geniş iş sahəsi + kart şəbəkəsi
+   720–1099 : yuxarıda yapışqan başlıq + üfüqi naviqasiya
+   <720     : yığcam başlıq + aşağı naviqasiya paneli ("Daha çox" pəncərəsi ilə)
+   ========================================================================== */
+
+html { scroll-behavior:smooth; -webkit-text-size-adjust:100%; }
+body { background:var(--bg); color:var(--text-hi); transition:background .25s, color .25s; }
+main.wrap, footer.wrap { max-width:1280px; }
+main.wrap { padding-bottom:40px; }
+.pro-card, .result-card, .co2-card, .forecast-card, .countdown-bar, .kpi, .stat-card, .tip-card { box-shadow:var(--shadow-sm, none); }
+
+/* ---------- Yan panel / başlıq ---------- */
+.sidebar { background:var(--bg2); border-right:1px solid var(--border); z-index:50; }
+.sidebar .brand { display:grid; grid-template-columns:auto 1fr; align-items:center; column-gap:10px; font-weight:700; font-size:17px; line-height:1.2; white-space:nowrap; }
+.sidebar .brand svg { grid-row:span 2; }
+.sidebar .brand svg { width:28px; height:28px; flex-shrink:0; }
+.sidebar .brand .sub { display:block; font-weight:400; font-size:12px; color:var(--text-lo); border:none; margin:0; padding:0; }
+.side-foot { display:flex; flex-direction:column; gap:10px; }
+.side-controls { display:flex; align-items:center; gap:8px; }
+.theme-btn { width:36px; height:32px; border-radius:8px; border:1px solid var(--border); background:var(--surface); color:var(--text-hi);
+  cursor:pointer; font-size:15px; display:inline-flex; align-items:center; justify-content:center; flex-shrink:0; }
+.theme-btn:hover { border-color:var(--low); }
+.tab-btn::before { content:attr(data-icon); font-size:16px; width:22px; text-align:center; flex-shrink:0; }
+.tab-btn { display:inline-flex; align-items:center; gap:10px; transition:background .15s, color .15s; }
+.tab-btn:hover { color:var(--text-hi); background:var(--track); }
+.tab-btn.active { background:var(--surface); color:var(--text-hi); box-shadow:inset 3px 0 0 var(--low); }
+
+/* ---------- Ümumi baxış (dashboard zolağı) ---------- */
+.overview { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px; margin:0 0 24px; text-align:left; }
+.ov-tile { background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:14px 16px; cursor:pointer;
+  font-family:'SG'; color:var(--text-hi); text-align:left; display:flex; flex-direction:column; gap:2px; transition:border-color .15s, transform .15s; }
+.ov-tile:hover, .ov-tile:focus-visible { border-color:var(--low); transform:translateY(-1px); }
+.ov-top { display:flex; align-items:center; justify-content:space-between; font-size:12px; color:var(--text-lo); }
+.ov-val { font-size:22px; font-weight:700; font-variant-numeric:tabular-nums; line-height:1.2; }
+.ov-val.low { color:var(--low); } .ov-val.mid { color:var(--mid); } .ov-val.high { color:var(--high); }
+.ov-sub { font-size:11.5px; color:var(--text-lo); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+
+/* ---------- Kalkulyator ---------- */
+.dial { max-width:none; }
+.calc-hero { background:var(--surface); border:1px solid var(--border); border-radius:20px; padding:28px 28px 8px; }
+.calc-side { display:flex; flex-direction:column; }
+.calc-side > :first-child { margin-top:0; }
+.calc-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:20px; align-items:start; }
+.calc-grid > .pro-card { margin:0; }
+.calc-grid > *, .app-layout > *, .about-grid > *, .tips-grid > * { min-width:0; }
+.calc-grid .meters-section { margin-top:0; padding-top:22px; border-top:1px solid var(--border); }
+.calc-grid .tiers-explain, .calc-grid .simulate, .calc-grid .summary-section, .calc-grid .advisor { padding:22px; border-top:1px solid var(--border); }
+.calc-grid .tiers-explain h2, .calc-grid .simulate h2, .calc-grid .summary-section h2, .calc-grid .advisor h2 { font-size:18px; }
+.calc-grid .advisor, .calc-grid .summary-section { grid-column:1 / -1; }
+.bill-form { grid-template-columns:1fr 1fr; }
+.cmp-form { grid-template-columns:repeat(2,minmax(0,1fr)); }
+.pro-card[hidden] { display:none; }
+/* Sayğac formu dar kartda daşmasın: ad ayrıca sətirdə, ay + düymə altında */
+.meter-save-row { flex-wrap:wrap; }
+.meter-save-row #meterName { flex:1 1 100%; min-width:0; }
+.meter-save-row .meter-month { flex:1 1 140px !important; min-width:0; }
+.meter-save-row button { flex:1 1 160px; padding:11px 16px; }
+
+/* ---------- Kart şəbəkəsi olan bölmələr ---------- */
+.grid-panel.active { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:20px; align-items:start; }
+.grid-panel > .panel-title, .grid-panel > .panel-lead, .grid-panel > .source-row, .grid-panel > .hint-box, .grid-panel > .wide { grid-column:1 / -1; }
+.grid-panel > .panel-lead, .grid-panel > .source-row { margin-bottom:0; margin-top:-8px; }
+.grid-panel > .pro-card { margin:0; min-width:0; }
+.panel-title { font-size:clamp(22px,2.4vw,28px); margin-top:32px; }
+
+.app-layout { display:grid; grid-template-columns:minmax(0,1.15fr) minmax(0,0.85fr); gap:20px; align-items:start; margin-top:20px; }
+.app-main { margin:0; }
+.app-main .preset-row { margin-top:0; }
+.app-side { display:flex; flex-direction:column; gap:20px; min-width:0; }
+.app-side .pro-card { margin:0; }
+.app-chart-card .app-chart-wrap { margin:0 auto; max-width:300px; }
+.twin-card { margin-top:0; }
+
+.tips-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:14px; margin-top:24px; }
+.tips-grid .tip-card { margin:0; }
+.about-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px 28px; margin-top:24px; }
+.about-grid > .pro-card { grid-column:1 / -1; margin:0; }
+.stats-grid { max-width:900px; }
+
+/* ---------- Aşağı naviqasiya + "Daha çox" (yalnız mobil) ---------- */
+.bottom-nav, .more-sheet { display:none; }
+
+/* ======================================================================
+   MASAÜSTÜ ≥ 1100px
+   ====================================================================== */
+@media (min-width:1100px) {
+  .sidebar { position:fixed; inset:0 auto 0 0; width:248px; display:flex; flex-direction:column; gap:22px; padding:24px 16px; overflow-y:auto; }
+  .sidebar .brand { padding:0 8px; }
+  .tab-nav { flex-direction:column; gap:2px; padding:0; border:none; overflow:visible; flex:1; }
+  .tab-btn { width:100%; padding:10px 12px; font-size:14.5px; }
+  .side-foot { padding:0 4px; }
+  .side-foot .present-btn { width:100%; padding:9px 12px; font-size:13px; }
+  .side-controls .lang-toggle { flex:1; display:flex; }
+  .side-controls .lang-btn { flex:1; }
+  .side-foot .oss-badge { text-align:center; }
+  .shell { margin-left:248px; }
+  main.wrap, footer.wrap { padding-left:40px; padding-right:40px; }
+
+  .calc-zone { text-align:left; padding:36px 0 28px; }
+  .calc-zone .lead { margin:0 0 24px; max-width:640px; }
+  .calc-zone .reminder { margin:0 0 20px; }
+  .dial { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:20px; align-items:stretch; }
+  .calc-hero { text-align:center; display:flex; flex-direction:column; justify-content:center; }
+  .calc-side .result-card { margin-top:0; }
+}
+@media (min-width:1500px) {
+  .grid-panel.active { grid-template-columns:repeat(3,minmax(0,1fr)); }
+  .grid-panel > .wide { grid-column:span 2; }
+  #panel-insights > .wide { grid-column:1 / -1; }
+}
+
+/* ======================================================================
+   PLANŞET 720–1099px — yuxarıda yapışqan başlıq
+   ====================================================================== */
+@media (max-width:1099px) {
+  .sidebar { position:sticky; top:0; display:grid; grid-template-columns:auto 1fr; align-items:center; gap:10px 16px;
+    padding:12px max(16px, calc((100vw - 1280px) / 2)) 0; background:color-mix(in srgb, var(--bg) 88%, transparent);
+    backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); border-right:none; border-bottom:1px solid var(--border); }
+  .side-foot { grid-row:1; grid-column:2; flex-direction:row; align-items:center; justify-content:flex-end; gap:8px; }
+  .sidebar .brand { grid-row:1; grid-column:1; }
+  .tab-nav { grid-row:2; grid-column:1 / -1; padding:4px 0 10px; border:none; margin:0 -4px; }
+  .tab-btn { padding:8px 12px; font-size:13.5px; }
+  .tab-btn.active { box-shadow:inset 0 -2px 0 var(--low); }
+  main.wrap, footer.wrap { padding-left:24px; padding-right:24px; }
+  .overview { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .dial { max-width:560px; margin:0 auto; }
+  .calc-side { margin-top:16px; }
+  .tips-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+}
+@media (max-width:900px) {
+  .app-layout { grid-template-columns:minmax(0,1fr); }
+  .calc-grid { grid-template-columns:minmax(0,1fr); }
+}
+@media (max-width:860px) {
+  .grid-panel.active { grid-template-columns:minmax(0,1fr); }
+  .side-foot .oss-badge { display:none; }
+}
+
+/* ======================================================================
+   MOBİL < 720px — yığcam başlıq + aşağı naviqasiya
+   ====================================================================== */
+@media (max-width:719px) {
+  body { padding-bottom:calc(76px + env(safe-area-inset-bottom)); }
+  .sidebar { padding:10px 16px; grid-template-columns:1fr auto; }
+  .sidebar .brand { font-size:16px; }
+  .sidebar .brand .sub { display:none; }
+  .sidebar .brand svg { width:24px; height:24px; }
+  .tab-nav { display:none; }
+  .side-foot .present-btn { font-size:0; padding:0; width:34px; height:32px; border-radius:8px; }
+  .side-foot .present-btn::before { content:"▶"; font-size:13px; }
+  .lang-btn { padding:6px 8px; font-size:11.5px; }
+  main.wrap, footer.wrap { padding-left:16px; padding-right:16px; }
+
+  /* Aşağı naviqasiya */
+  .bottom-nav { display:grid; grid-template-columns:repeat(5,1fr); position:fixed; left:0; right:0; bottom:0; z-index:60;
+    background:color-mix(in srgb, var(--bg2) 94%, transparent); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
+    border-top:1px solid var(--border); padding:6px 4px calc(6px + env(safe-area-inset-bottom)); }
+  .bn-btn { display:flex; flex-direction:column; align-items:center; gap:2px; background:none; border:none; color:var(--text-lo);
+    font-family:'SG'; font-size:10.5px; font-weight:600; padding:6px 2px; border-radius:10px; cursor:pointer; min-width:0; }
+  .bn-btn .bn-ico { font-size:19px; line-height:1; }
+  .bn-btn span:last-child { max-width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .bn-btn.active { color:var(--low); background:var(--track); }
+  .more-sheet:not([hidden]) { display:block; position:fixed; inset:0; z-index:70; }
+  .more-backdrop { position:absolute; inset:0; background:rgba(0,0,0,0.45); animation:fadeIn .2s ease; }
+  .more-panel { position:absolute; left:0; right:0; bottom:0; background:var(--surface); border-radius:20px 20px 0 0;
+    padding:10px 16px calc(20px + env(safe-area-inset-bottom)); animation:sheetUp .25s ease; }
+  .more-grip { width:40px; height:4px; border-radius:4px; background:var(--border); margin:0 auto 14px; }
+  .more-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
+  .more-item { display:flex; flex-direction:column; align-items:center; gap:6px; background:var(--bg2); border:1px solid var(--border);
+    border-radius:14px; padding:14px 6px; color:var(--text-hi); font-family:'SG'; font-size:12.5px; font-weight:600; cursor:pointer; text-align:center; }
+  .more-item.active { border-color:var(--low); color:var(--low); }
+  .more-item .bn-ico { font-size:22px; }
+
+  /* Kalkulyator */
+  .calc-zone { padding:24px 0 20px; }
+  .calc-zone h1 { font-size:24px; }
+  .calc-zone .lead { font-size:14.5px; margin-bottom:20px; }
+  .calc-zone .reminder { margin:0 0 16px; }
+  .overview { grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; margin-bottom:18px; }
+  .ov-tile { padding:11px 12px; }
+  .ov-val { font-size:18px; }
+  .calc-hero { padding:20px 16px 4px; border-radius:16px; }
+  .dial-num { font-size:60px; }
+  .gauge-ring { width:112px; height:112px; }
+  .slider-track { margin:24px 0 8px; }
+  .scale-labels { margin-bottom:18px; }
+  .result-card { padding:18px; gap:12px; }
+  .result-cost { font-size:24px; }
+  .co2-card, .forecast-card { padding:16px 18px; }
+  .forecast-head { flex-wrap:wrap; gap:8px; }
+  .calc-grid { gap:14px; }
+  .calc-grid .tiers-explain, .calc-grid .simulate, .calc-grid .summary-section, .calc-grid .advisor { padding:18px 16px; }
+  .tier-row .range { width:110px; }
+  .sim-row { flex-wrap:wrap; gap:10px; }
+  .sim-row label { width:100%; }
+  .summary-grid { grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; }
+  .summary-item { padding:12px 6px; }
+  .summary-val { font-size:15px; }
+  .meter-save-row { flex-wrap:wrap; }
+  .meter-save-row input { flex:1 1 100%; }
+  .meter-save-row button { flex:1 1 100%; padding:12px; }
+  .chat-input-row input { min-width:0; }
+  .msg { max-width:92%; }
+  .bill-form { grid-template-columns:1fr 1fr; }
+
+  /* Ümumi */
+  .panel-title { margin-top:22px; font-size:22px; }
+  .grid-panel.active, .app-layout, .app-side { gap:14px; }
+  .tips-grid, .about-grid { grid-template-columns:minmax(0,1fr); }
+  .stats-grid { grid-template-columns:1fr; }
+  .app-form { grid-template-columns:1fr 1fr; }
+  .app-form input:first-child { grid-column:1 / -1; }
+  .app-form button { grid-column:1 / -1; padding:12px; }
+  .cmp-form { grid-template-columns:1fr 1fr; }
+  .pres-bar { bottom:calc(84px + env(safe-area-inset-bottom)); }
+  .toast-box { top:auto; bottom:calc(84px + env(safe-area-inset-bottom)); right:12px; left:12px; max-width:none; }
+
+  /* iOS fokusda yaxınlaşdırmasın deyə inputlar ≥ 16px */
+  input[type=text], input[type=number], input[type=month], select, .chat-input-row input { font-size:16px !important; }
+}
+@media (max-width:380px) {
+  .summary-grid { grid-template-columns:1fr; }
+  .overview { grid-template-columns:1fr 1fr; }
+  .ov-val { font-size:16px; }
+}
+@keyframes sheetUp { from { transform:translateY(100%); } to { transform:none; } }
+@keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+@media (prefers-reduced-motion: reduce) { .more-panel, .more-backdrop { animation:none; } html { scroll-behavior:auto; } }
+
+/* Çap: yalnız məzmun */
+@media print {
+  .sidebar, .bottom-nav, .more-sheet, .toast-box, .pres-bar, footer { display:none !important; }
+  .shell { margin:0 !important; }
+}

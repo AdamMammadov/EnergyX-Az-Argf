@@ -397,7 +397,7 @@
   function renderHealth() {
     const t = T(), h = state.health;
     const color = h.score >= 70 ? cssVar("--low") : h.score >= 45 ? cssVar("--mid") : cssVar("--high");
-    $("healthRing").style.background = `conic-gradient(${color} ${h.score}%, rgba(255,255,255,0.06) ${h.score}%)`;
+    $("healthRing").style.background = `conic-gradient(${color} ${h.score}%, var(--track) ${h.score}%)`;
     $("healthRing").setAttribute("aria-label", `${t.health_title}: ${h.score}/100`);
     $("healthScore").textContent = h.score;
     $("healthScore").style.color = color;
@@ -418,8 +418,8 @@
       responsive: true, maintainAspectRatio: false, animation: { duration: 400 },
       plugins: { legend: { labels: { color: cssVar("--text-hi"), font: { family: "SG" }, boxWidth: 12 } } },
       scales: {
-        x: { ticks: { color: cssVar("--text-lo") }, grid: { color: "rgba(255,255,255,0.04)" } },
-        y: { ticks: { color: cssVar("--text-lo") }, grid: { color: "rgba(255,255,255,0.06)" }, beginAtZero: true },
+        x: { ticks: { color: cssVar("--text-lo") }, grid: { color: cssVar("--track") } },
+        y: { ticks: { color: cssVar("--text-lo") }, grid: { color: cssVar("--track") }, beginAtZero: true },
       },
     };
   }
@@ -456,11 +456,11 @@
       labels: pts.map((p) => monthLabel(p.month)),
       datasets: [
         { type: "bar", label: t.chart_actual, data: pts.map((p) => p.kwh), backgroundColor: colors, borderRadius: 4, order: 2 },
-        { type: "line", label: t.chart_expected, data: pts.map((p) => p.expected), borderColor: "#9fb3c8", borderDash: [5, 4],
+        { type: "line", label: t.chart_expected, data: pts.map((p) => p.expected), borderColor: cssVar("--line2"), borderDash: [5, 4],
           pointRadius: 0, borderWidth: 2, spanGaps: true, order: 1 },
       ],
     };
-    if (anomChart) { anomChart.data = data; anomChart.update(); }
+    if (anomChart) { anomChart.data = data; anomChart.options = chartBase(); anomChart.update(); }
     else anomChart = new Chart($("anomChart"), { type: "bar", data, options: chartBase() });
   }
 
@@ -557,7 +557,7 @@
     const max = Math.max(res.projectedKwh, 330, limit) * 1.08;
     const pct = (v) => Math.min(100, (v / max) * 100).toFixed(1);
     const markers = [[200, cssVar("--mid"), "200", ""], [300, cssVar("--high"), "300", ""]];
-    if (limit) markers.push([limit, "#9fb3c8", res.budget.amount + "₼", " budget"]);
+    if (limit) markers.push([limit, cssVar("--line2"), res.budget.amount + "₼", " budget"]);
     $("paceBar").innerHTML = `<div class="pace-proj ${res.projected.tier}" style="width:${pct(res.projectedKwh)}%"></div>
       <div class="pace-fill" style="width:${pct(res.lastCum)}%"></div>` +
       markers.map(([v, c, l, cls]) => `<div class="pace-mark${cls}" style="left:${pct(v)}%; border-color:${c}"><span style="color:${c}">${esc(l)}</span></div>`).join("");

@@ -11,7 +11,16 @@
 <meta name="theme-color" content="#0A1420">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon.svg">
-<link rel="stylesheet" href="css/pro.css">
+<script>
+// Tema səhifə çəkilməmişdən əvvəl tətbiq olunur (ağ/qara yanıb-sönmə olmasın)
+(function () {
+  try {
+    var t = localStorage.getItem("energyx_theme");
+    if (t !== "light" && t !== "dark") t = window.matchMedia && matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+    document.documentElement.setAttribute("data-theme", t);
+  } catch (e) { document.documentElement.setAttribute("data-theme", "dark"); }
+})();
+</script>
 <style>
 @font-face {
   font-family: 'SG';
@@ -28,6 +37,23 @@
   --text-hi: #EDF2F0;
   --text-lo: #7C9088;
   --border: rgba(255,255,255,0.08);
+  --track: rgba(255,255,255,0.06);
+  --line2: #9fb3c8;
+  --info-text: #9cc7ff;
+  --bad-text: #ffb3ae;
+  --overlay: rgba(13,26,40,0.96);
+  --shadow: 0 10px 30px rgba(0,0,0,0.35);
+  color-scheme: dark;
+}
+/* ===== AÇIQ TEMA (sistem seçiminə görə və ya əl ilə) ===== */
+:root[data-theme="light"] {
+  --bg: #F3F6F5; --bg2: #E9EFED; --surface: #FFFFFF;
+  --low: #00936F; --mid: #B86E0B; --high: #CC3A33;
+  --text-hi: #0E1A24; --text-lo: #56675F;
+  --border: rgba(10,20,32,0.11); --track: rgba(10,20,32,0.07);
+  --line2: #6b7f92; --info-text: #1f5fae; --bad-text: #a52a24;
+  --overlay: rgba(255,255,255,0.97); --shadow: 0 10px 30px rgba(10,20,32,0.12);
+  color-scheme: light;
 }
 * { margin:0; padding:0; box-sizing:border-box; }
 body {
@@ -257,7 +283,7 @@ input[type=range]::-moz-range-thumb {
 .chat-log { min-height:60px; max-height:280px; overflow-y:auto; margin-bottom:14px; display:flex; flex-direction:column; gap:12px; }
 .msg { font-size:14.5px; padding:10px 14px; border-radius:10px; max-width:85%; line-height:1.5; }
 .msg.user { background:rgba(0,217,163,0.12); align-self:flex-end; }
-.msg.bot { background:rgba(255,255,255,0.05); align-self:flex-start; }
+.msg.bot { background:var(--track); align-self:flex-start; }
 .msg-feedback { display:flex; gap:8px; align-self:flex-start; margin-top:-6px; }
 .msg-feedback button { background:none; border:1px solid var(--border); border-radius:8px; padding:3px 9px;
   font-size:12px; cursor:pointer; color:var(--text-lo); }
@@ -277,45 +303,54 @@ footer { padding:36px 0 48px; border-top:1px solid var(--border); text-align:cen
 footer a { color:var(--text-lo); text-decoration:underline; }
 footer .credit { margin-top:8px; font-size:12px; }
 </style>
+<link rel="stylesheet" href="css/pro.css">
+<link rel="stylesheet" href="css/layout.css">
 </head>
 <body>
 
-<header class="wrap">
+<aside class="sidebar" id="sidebar">
   <div class="brand">
     <svg viewBox="0 0 420 420"><defs><linearGradient id="mg" x1="0%" y1="100%" x2="100%" y2="0%"><stop offset="0%" stop-color="#00E6B8"/><stop offset="100%" stop-color="#00A98A"/></linearGradient><linearGradient id="bg2g" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#5CB0FF"/><stop offset="100%" stop-color="#2F8FFF"/></linearGradient></defs><path d="M 78 78 C 130 130, 150 150, 175 178 M 245 242 C 270 268, 292 292, 342 342" stroke="url(#bg2g)" stroke-width="26" stroke-linecap="round" fill="none"/><path d="M 78 342 L 148 342 L 148 272 L 218 272 L 218 202 L 242 202" stroke="url(#mg)" stroke-width="26" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M 178 178 L 200 156 L 268 156 L 342 82" stroke="url(#mg)" stroke-width="26" stroke-linecap="round" stroke-linejoin="round" fill="none"/><circle cx="210" cy="210" r="22" fill="#EAFFFA"/></svg>
     EnergyX Az <span class="sub" data-i18n="brand_sub">Enerji Kalkulyatoru</span>
   </div>
-  <div class="header-right">
+  <nav class="tab-nav" id="tabNav" aria-label="Bölmələr">
+  <button class="tab-btn active" data-tab="calc" data-icon="🧮" onclick="switchTab('calc')" data-i18n="tab_calc">Kalkulyator</button>
+  <button class="tab-btn" data-tab="app" data-icon="🔌" onclick="switchTab('app')" data-i18n="tab_app">Cihazlar</button>
+  <button class="tab-btn" data-tab="gas" data-icon="🔥" onclick="switchTab('gas')" data-i18n="tab_gas">Qaz</button>
+  <button class="tab-btn" data-tab="insights" data-icon="📊" onclick="switchTab('insights')" data-i18n="tab_insights">Analitika</button>
+  <button class="tab-btn" data-tab="plan" data-icon="🎯" onclick="switchTab('plan')" data-i18n="tab_plan">Planlaşdır</button>
+  <button class="tab-btn" data-tab="ready" data-icon="🛟" onclick="switchTab('ready')" data-i18n="tab_ready">Hazırlıq</button>
+  <button class="tab-btn" data-tab="stats" data-icon="📈" onclick="switchTab('stats')" data-i18n="tab_stats">Statistika</button>
+  <button class="tab-btn" data-tab="learn" data-icon="💡" onclick="switchTab('learn')" data-i18n="tab_learn">Öyrən</button>
+  <button class="tab-btn" data-tab="about" data-icon="ℹ️" onclick="switchTab('about')" data-i18n="tab_about">Haqqında</button>
+</nav>
+  <div class="side-foot">
     <button class="present-btn" id="presentBtn" onclick="EnergyPro.startPresentation()" data-i18n="present_btn" title="Avtomatik demo">▶ Təqdimat</button>
-    <div class="oss-badge" data-i18n="oss_badge">🔓 Açıq mənbə, pulsuz</div>
-    <div class="lang-toggle">
-      <button class="lang-btn active" id="btnAz" onclick="setLang('az')">AZ</button>
-      <button class="lang-btn" id="btnEn" onclick="setLang('en')">EN</button>
-      <button class="lang-btn" id="btnRu" onclick="setLang('ru')">RU</button>
+    <div class="side-controls">
+      <button class="theme-btn" id="themeBtn" type="button" aria-label="Tema">🌙</button>
+      <div class="lang-toggle">
+        <button class="lang-btn active" id="btnAz" onclick="setLang('az')">AZ</button>
+        <button class="lang-btn" id="btnEn" onclick="setLang('en')">EN</button>
+        <button class="lang-btn" id="btnRu" onclick="setLang('ru')">RU</button>
+      </div>
     </div>
+    <div class="oss-badge" data-i18n="oss_badge">🔓 Açıq mənbə, pulsuz</div>
   </div>
-</header>
+</aside>
 
-<div class="tab-nav wrap">
-  <button class="tab-btn active" data-tab="calc" onclick="switchTab('calc')" data-i18n="tab_calc">Kalkulyator</button>
-  <button class="tab-btn" data-tab="app" onclick="switchTab('app')" data-i18n="tab_app">Cihazlar</button>
-  <button class="tab-btn" data-tab="gas" onclick="switchTab('gas')" data-i18n="tab_gas">Qaz</button>
-  <button class="tab-btn" data-tab="insights" onclick="switchTab('insights')" data-i18n="tab_insights">Analitika</button>
-  <button class="tab-btn" data-tab="plan" onclick="switchTab('plan')" data-i18n="tab_plan">Planlaşdır</button>
-  <button class="tab-btn" data-tab="ready" onclick="switchTab('ready')" data-i18n="tab_ready">Hazırlıq</button>
-  <button class="tab-btn" data-tab="stats" onclick="switchTab('stats')" data-i18n="tab_stats">Statistika</button>
-  <button class="tab-btn" data-tab="learn" onclick="switchTab('learn')" data-i18n="tab_learn">Öyrən</button>
-  <button class="tab-btn" data-tab="about" onclick="switchTab('about')" data-i18n="tab_about">Haqqında</button>
-</div>
+<div class="shell">
 
-<main class="wrap">
+<main class="wrap" id="main">
 <div class="tab-panel active" id="panel-calc">
   <section class="calc-zone">
     <div class="reminder" id="reminderBanner" hidden></div>
     <h1 data-i18n="calc_title">Bu ay nə qədər ödəyəcəksiniz?</h1>
     <p class="lead" data-i18n="calc_lead">Sürüşdürücünü hərəkət etdirin, aylıq elektrik istifadənizə uyğun tarif pilləsini və xərcinizi anında görün.</p>
 
+    <div class="overview" id="overview" aria-label="Ümumi baxış"></div>
+
     <div class="dial">
+     <div class="calc-hero">
       <div class="dial-num low" id="kwhDisplay">180</div>
       <div class="dial-unit" data-i18n="dial_unit">kVt/saat, bu ay</div>
 
@@ -332,6 +367,8 @@ footer .credit { margin-top:8px; font-size:12px; }
         <input type="range" min="0" max="600" value="180" id="kwhSlider" aria-label="Aylıq kVt/saat istifadəsi">
       </div>
       <div class="scale-labels"><span>0</span><span>200</span><span>300</span><span>600</span></div>
+     </div>
+     <div class="calc-side">
 
       <div class="result-card" aria-live="polite">
         <div>
@@ -371,8 +408,12 @@ footer .credit { margin-top:8px; font-size:12px; }
         <button class="pdf-btn" onclick="exportPdf()" data-i18n="pdf_btn">📄 PDF hesabat kimi yüklə</button>
         <button class="pdf-btn share-btn" onclick="EnergyExtras.share()" data-i18n="share_btn">🔗 Paylaş</button>
       </div>
+     </div>
+    </div>
+  </section>
 
-      <div class="meters-section">
+  <div class="calc-grid">
+      <div class="meters-section pro-card">
         <h3 data-i18n="meters_title">Sayğaclarım</h3>
         <p class="lead" data-i18n="meters_lead">Bir neçə evi/obyekti (məs. ev, yaylaq) saxlayıb müqayisə edin.</p>
         <div class="meter-save-row">
@@ -387,10 +428,18 @@ footer .credit { margin-top:8px; font-size:12px; }
             <input type="file" accept="application/json,.json" onchange="EnergyPro.importBackup(this)" hidden></label>
         </div>
       </div>
+
+  <section class="pro-card" id="billCard">
+    <div class="pro-card-head"><h2 data-i18n="bill_title">Hesab Yoxlayıcısı</h2><span class="pro-tag" data-i18n="bill_tag">faktura</span></div>
+    <p class="pro-lead" data-i18n="bill_lead">Azərişıq hesabındakı kVt·saatı və məbləği yazın — rəsmi tariflə uyğun gəlib-gəlmədiyini yoxlayaq.</p>
+    <div class="pace-form bill-form">
+      <label><span data-i18n="bill_kwh">Hesabdakı kVt·saat</span><input type="number" id="billKwh" min="0" step="1" inputmode="decimal"></label>
+      <label><span data-i18n="bill_amount">Hesabdakı məbləğ (₼)</span><input type="number" id="billAmount" min="0" step="0.01" inputmode="decimal"></label>
     </div>
+    <div id="billResult" aria-live="polite"></div>
   </section>
 
-  <section class="tiers-explain">
+  <section class="tiers-explain pro-card">
     <h2 data-i18n="tiers_title">Tarif necə işləyir</h2>
     <div class="tier-row">
       <span class="tier-dot low"></span>
@@ -409,7 +458,7 @@ footer .credit { margin-top:8px; font-size:12px; }
     </div>
   </section>
 
-  <section class="simulate">
+  <section class="simulate pro-card">
     <h2 data-i18n="sim_title">İstifadəni azaltsam, nə qədər qənaət edərəm?</h2>
     <p class="lead" data-i18n="sim_lead">Yuxarıdakı istifadənizi əsas götürərək, azaltma faizini seçin.</p>
     <div class="sim-row">
@@ -423,7 +472,7 @@ footer .credit { margin-top:8px; font-size:12px; }
     </div>
   </section>
 
-  <section class="summary-section">
+  <section class="summary-section pro-card">
     <h2 data-i18n="summary_title">Ümumi Qənaət Xülasəsi</h2>
     <p class="lead" data-i18n="summary_lead">Yuxarıdakı azaltma faizinə və cihaz siyahınıza əsaslanan tam mənzərə.</p>
     <div class="summary-grid">
@@ -446,7 +495,7 @@ footer .credit { margin-top:8px; font-size:12px; }
     <div class="summary-total" id="summaryTotal"></div>
   </section>
 
-  <section class="advisor">
+  <section class="advisor pro-card">
     <h2 data-i18n="advisor_title">AI Enerji Məsləhətçisi</h2>
     <p class="lead" data-i18n="advisor_lead">Sualınızı yazın, real vəziyyətinizə uyğun cavab alın.</p>
     <div class="chat-box">
@@ -461,12 +510,15 @@ footer .credit { margin-top:8px; font-size:12px; }
       </div>
     </div>
   </section>
+  </div>
 </div>
 
 <div class="tab-panel" id="panel-app">
-  <h1 data-i18n="app_title" style="font-size:24px; margin-top:32px;">Ev Cihazlarınızı Analiz Edin</h1>
-  <p class="lead" data-i18n="app_lead" style="color:var(--text-lo); font-size:15px; margin:10px 0 8px;">Cihazlarınızı əlavə edin, hansının ən çox enerji yediyini görün.</p>
+  <h1 class="panel-title" data-i18n="app_title">Ev Cihazlarınızı Analiz Edin</h1>
+  <p class="panel-lead" data-i18n="app_lead">Cihazlarınızı əlavə edin, hansının ən çox enerji yediyini görün.</p>
 
+  <div class="app-layout">
+  <div class="app-main pro-card">
   <div class="preset-row" id="presetRow" aria-label="Hazır cihazlar"></div>
   <div class="app-form">
     <input type="text" id="appName" data-i18n-ph="app_name_ph" placeholder="Cihazın adı (məs. Soyuducu)">
@@ -474,8 +526,6 @@ footer .credit { margin-top:8px; font-size:12px; }
     <input type="number" id="appHours" placeholder="Saat/gün" step="0.5">
     <button onclick="addAppliance()" data-i18n="app_add_btn">Əlavə et</button>
   </div>
-
-  <div class="app-chart-wrap"><canvas id="appChart"></canvas></div>
 
   <div class="app-list" id="appList">
     <div class="app-empty" data-i18n="app_empty">Hələ cihaz əlavə etməmisiniz.</div>
@@ -486,15 +536,30 @@ footer .credit { margin-top:8px; font-size:12px; }
     <span id="appTotalKwh" style="font-weight:700; font-size:20px;">0 kVt/saat</span>
   </div>
   <div class="mismatch-warning" id="mismatchWarning"></div>
-
+  </div>
+  <div class="app-side">
+  <section class="pro-card app-chart-card"><div class="app-chart-wrap"><canvas id="appChart"></canvas></div></section>
   <section class="pro-card twin-card">
     <div class="pro-card-head"><h2 data-i18n="twin_title">Evin Enerji Xəritəsi</h2><span class="pro-tag" data-i18n="twin_tag">rəqəmsal əkiz</span></div>
     <p class="pro-lead" data-i18n="twin_lead">Hər kafel bir cihazdır: ölçüsü aylıq istifadəyə, rəngi effektivliyə görədir. Qırmızı çərçivə — tipik effektiv modeldən çox işlədir.</p>
     <div class="twin" id="twinMap"></div>
   </section>
+  <section class="pro-card" id="cmpCard">
+    <div class="pro-card-head"><h2 data-i18n="cmp_title">Köhnə vs Yeni Cihaz</h2><span class="pro-tag" data-i18n="cmp_tag">alışdan əvvəl</span></div>
+    <p class="pro-lead" data-i18n="cmp_lead">Yeni cihaz almağa dəyərmi? Hər ikisinin gücünü yazın — illik fərqi və geri ödəmə müddətini pilləli tarifə görə hesablayaq.</p>
+    <div class="inv-inputs cmp-form">
+      <label><span data-i18n="cmp_old">Köhnə cihaz (W)</span><input type="number" id="cmpOld" min="0" value="200" inputmode="decimal"></label>
+      <label><span data-i18n="cmp_new">Yeni cihaz (W)</span><input type="number" id="cmpNew" min="0" value="90" inputmode="decimal"></label>
+      <label><span data-i18n="cmp_hours">Saat/gün</span><input type="number" id="cmpHours" min="0" max="24" step="0.5" value="10" inputmode="decimal"></label>
+      <label><span data-i18n="cmp_price">Yeni cihazın qiyməti (₼)</span><input type="number" id="cmpPrice" min="0" value="700" inputmode="decimal"></label>
+    </div>
+    <div id="cmpResult" aria-live="polite"></div>
+  </section>
+  </div>
+  </div>
 </div>
 
-<div class="tab-panel" id="panel-insights">
+<div class="tab-panel grid-panel" id="panel-insights">
   <h1 class="panel-title" data-i18n="ins_title">Enerji Analitikası</h1>
   <p class="panel-lead" data-i18n="ins_lead">Sayğac tarixçənizə əsaslanan sağlamlıq balı, anomaliya aşkarlanması, 12 aylıq proqnoz və ekoloji təsir. Hesablamalar yalnız sizin cihazınızda aparılır.</p>
 
@@ -520,6 +585,12 @@ footer .credit { margin-top:8px; font-size:12px; }
   </section>
 
   <section class="pro-card">
+    <div class="pro-card-head"><h2 data-i18n="diag_title">Sayğac Diaqnozu</h2><span class="pro-tag" data-i18n="diag_tag">nasazlıq · müdaxilə · trend</span></div>
+    <p class="pro-lead" data-i18n="diag_lead">Anomaliyaların formasına görə ehtimal olunan səbəb: sayğac nasazlığı, icazəsiz müdaxilə, cihaz problemi və ya tədrici dəyişiklik. Bu, ehtimaldır — təsdiq üçün mütəxəssis yoxlaması lazımdır.</p>
+    <div id="diagList"></div>
+  </section>
+
+  <section class="pro-card wide">
     <div class="pro-card-head"><h2 data-i18n="anom_title">Anomaliya Aşkarlayıcısı</h2><span class="pro-tag">robust z-score · Bakı iqlimi</span></div>
     <p class="pro-lead" data-i18n="anom_lead">Hər ayın istifadəsi mövsümə görə düzəldilir və əvvəlki aylarla müqayisə olunur. Qırmızı — anomaliya, sarı — müşahidə.</p>
     <div class="sens-row">
@@ -536,10 +607,16 @@ footer .credit { margin-top:8px; font-size:12px; }
     <div id="anomTimeline"></div>
   </section>
 
+
   <section class="pro-card">
-    <div class="pro-card-head"><h2 data-i18n="diag_title">Sayğac Diaqnozu</h2><span class="pro-tag" data-i18n="diag_tag">nasazlıq · müdaxilə · trend</span></div>
-    <p class="pro-lead" data-i18n="diag_lead">Anomaliyaların formasına görə ehtimal olunan səbəb: sayğac nasazlığı, icazəsiz müdaxilə, cihaz problemi və ya tədrici dəyişiklik. Bu, ehtimaldır — təsdiq üçün mütəxəssis yoxlaması lazımdır.</p>
-    <div id="diagList"></div>
+    <div class="pro-card-head"><h2 data-i18n="fc_title">12 Aylıq Proqnoz</h2><span class="pro-tag">95% interval</span></div>
+    <p class="pro-lead" id="fcBasis"></p>
+    <div class="chart-box"><canvas id="fcChart" aria-label="12 aylıq proqnoz"></canvas></div>
+    <div class="kpi-grid">
+      <div class="kpi"><div class="kpi-val" id="fcYear">—</div><div class="kpi-label" data-i18n="fc_year">Növbəti 12 ay, ₼</div></div>
+      <div class="kpi"><div class="kpi-val" id="fcRange">—</div><div class="kpi-label" data-i18n="fc_range">95% aralıq, ₼</div></div>
+      <div class="kpi"><div class="kpi-val" id="fcPeak">—</div><div class="kpi-label" data-i18n="fc_peak">Ən baha ay</div></div>
+    </div>
   </section>
 
   <section class="pro-card">
@@ -554,16 +631,6 @@ footer .credit { margin-top:8px; font-size:12px; }
     <div class="badges" id="badgeGrid"></div>
   </section>
 
-  <section class="pro-card">
-    <div class="pro-card-head"><h2 data-i18n="fc_title">12 Aylıq Proqnoz</h2><span class="pro-tag">95% interval</span></div>
-    <p class="pro-lead" id="fcBasis"></p>
-    <div class="chart-box"><canvas id="fcChart" aria-label="12 aylıq proqnoz"></canvas></div>
-    <div class="kpi-grid">
-      <div class="kpi"><div class="kpi-val" id="fcYear">—</div><div class="kpi-label" data-i18n="fc_year">Növbəti 12 ay, ₼</div></div>
-      <div class="kpi"><div class="kpi-val" id="fcRange">—</div><div class="kpi-label" data-i18n="fc_range">95% aralıq, ₼</div></div>
-      <div class="kpi"><div class="kpi-val" id="fcPeak">—</div><div class="kpi-label" data-i18n="fc_peak">Ən baha ay</div></div>
-    </div>
-  </section>
 
   <section class="pro-card">
     <div class="pro-card-head"><h2 data-i18n="eco_title">İllik Ekoloji İz</h2><span class="pro-tag">ESG</span></div>
@@ -577,7 +644,7 @@ footer .credit { margin-top:8px; font-size:12px; }
   </section>
 </div>
 
-<div class="tab-panel" id="panel-plan">
+<div class="tab-panel grid-panel" id="panel-plan">
   <h1 class="panel-title" data-i18n="plan_title">Planlaşdırma Mərkəzi</h1>
   <p class="panel-lead" data-i18n="plan_lead">Ay ərzində büdcənizi qoruyun, "əgər...?" ssenarilərini sınayın və hansı sərmayənin özünü ən tez ödədiyini görün.</p>
 
@@ -610,7 +677,7 @@ footer .credit { margin-top:8px; font-size:12px; }
     <div class="hint-box" id="wiHint" hidden></div>
   </section>
 
-  <section class="pro-card">
+  <section class="pro-card wide">
     <div class="pro-card-head"><h2 data-i18n="inv_title">Sərmayə Geri Ödəmə Planı</h2><span class="pro-tag" data-i18n="inv_tag">prioritet sıralaması</span></div>
     <p class="pro-lead" data-i18n="inv_lead">Qənaət pilləli tarifə görə real hesablanır (marjinal tarif). Qiymətlər fərziyyədir — öz bazar qiymətlərinizi yazın.</p>
     <div class="inv-inputs">
@@ -625,7 +692,7 @@ footer .credit { margin-top:8px; font-size:12px; }
   </section>
 </div>
 
-<div class="tab-panel" id="panel-gas">
+<div class="tab-panel grid-panel" id="panel-gas">
   <h1 class="panel-title" data-i18n="gas_title">Təbii Qaz Kalkulyatoru</h1>
   <p class="panel-lead" data-i18n="gas_lead">Qaz tarifi İLLİK həcmə görə pillələnir: ilin əvvəlindən yığılan istifadə 1200 m³-i keçdikdən sonra hər kubmetr bahalaşır. Qışda istilik səbəbindən istifadə kəskin artır.</p>
 
@@ -673,11 +740,11 @@ footer .credit { margin-top:8px; font-size:12px; }
   </section>
 </div>
 
-<div class="tab-panel" id="panel-ready">
+<div class="tab-panel grid-panel" id="panel-ready">
   <h1 class="panel-title" data-i18n="ready_title">Kəsintiyə Hazırlıq</h1>
   <p class="panel-lead" data-i18n="ready_lead">Elektrik kəsiləndə hansı cihazlar işləməlidir? Siyahını seçin — neçə Vt·saat ehtiyat enerji, hansı tutumda powerbank və ya ehtiyat qida mənbəyi lazım olduğunu hesablayaq.</p>
 
-  <section class="pro-card">
+  <section class="pro-card wide">
     <div class="pro-card-head"><h2 data-i18n="out_title">Ehtiyat Enerji Planlayıcısı</h2><span class="pro-tag" data-i18n="out_tag">kritik cihazlar</span></div>
     <div class="out-devices" id="outDevices"></div>
     <div class="wi-row" style="margin-top:14px;"><label for="outHours" data-i18n="out_hours">Kəsinti müddəti</label><input type="range" id="outHours" min="1" max="24" value="6"><span class="wi-val" id="outHoursVal">6 saat</span></div>
@@ -697,8 +764,8 @@ footer .credit { margin-top:8px; font-size:12px; }
 </div>
 
 <div class="tab-panel" id="panel-stats">
-  <h1 data-i18n="stats_title" style="font-size:24px; margin-top:32px;">İctimai Statistika</h1>
-  <p class="lead" data-i18n="stats_lead" style="color:var(--text-lo); font-size:15px; margin:10px 0 8px;">Bu alətin real, canlı istifadə göstəriciləri — şəffaflıq üçün açıqdır.</p>
+  <h1 class="panel-title" data-i18n="stats_title">İctimai Statistika</h1>
+  <p class="panel-lead" data-i18n="stats_lead">Bu alətin real, canlı istifadə göstəriciləri — şəffaflıq üçün açıqdır.</p>
   <div class="stats-grid">
     <div class="stat-card">
       <div class="stat-num" id="statCalc">—</div>
@@ -716,8 +783,8 @@ footer .credit { margin-top:8px; font-size:12px; }
 </div>
 
 <div class="tab-panel" id="panel-learn">
-  <h1 data-i18n="learn_title" style="font-size:24px; margin-top:32px;">Enerji Qənaəti Məsləhətləri</h1>
-  <div style="margin-top:24px;">
+  <h1 class="panel-title" data-i18n="learn_title">Enerji Qənaəti Məsləhətləri</h1>
+  <div class="tips-grid">
     <div class="tip-card"><h3>❄️ <span data-i18n="tip1_t">Soyuducu və dondurucu</span></h3><p data-i18n="tip1_p">Soyuducunu divardan 10 sm aralı qoyun ki, arxa hissə rahat soyusun. Temperaturu 3-5°C arası saxlamaq kifayətdir — daha soyuq elektrik sərfini artırır.</p></div>
     <div class="tip-card"><h3>💡 <span data-i18n="tip2_t">İşıqlandırma</span></h3><p data-i18n="tip2_p">Adi lampaları LED ilə əvəz edin — LED lampalar 80%-ə qədər az enerji sərf edir və 10 dəfə uzun ömürlüdür.</p></div>
     <div class="tip-card"><h3>❄️ <span data-i18n="tip3_t">Kondisioner</span></h3><p data-i18n="tip3_p">Yayda 24-25°C arası temperatur seçin — hər 1°C aşağı salmaq enerji sərfini təxminən 6-8% artırır.</p></div>
@@ -754,8 +821,8 @@ footer .credit { margin-top:8px; font-size:12px; }
 </div>
 
 <div class="tab-panel" id="panel-about">
-  <h1 data-i18n="about_title" style="font-size:24px; margin-top:32px;">Bu Layihə Haqqında</h1>
-  <div style="margin-top:24px;">
+  <h1 class="panel-title" data-i18n="about_title">Bu Layihə Haqqında</h1>
+  <div class="about-grid">
     <div class="about-block">
       <h3 data-i18n="about_h1">Niyə yaradıldı</h3>
       <p data-i18n="about_p1">Azərbaycanda pillə-əsaslı elektrik tarifini izah edən, sərbəst istifadə oluna bilən heç bir ixtisaslaşmış alət yox idi. Bu alət həmin boşluğu doldurmaq üçün yaradılıb — tam pulsuz, hər kəsə açıq.</p>
@@ -787,6 +854,10 @@ footer .credit { margin-top:8px; font-size:12px; }
   <p><a href="https://github.com/AdamMammadov/EnergyX-Az-Argf" target="_blank" rel="noopener" data-i18n="footer_github">GitHub-da baxın →</a></p>
   <p class="credit">EnergyX Az · 2026</p>
 </footer>
+</div>
+
+<nav class="bottom-nav" id="bottomNav" aria-label="Əsas bölmələr"></nav>
+<div class="more-sheet" id="moreSheet" hidden><div class="more-backdrop" data-close></div><div class="more-panel" role="dialog" aria-modal="true"><div class="more-grip"></div><div class="more-grid" id="moreGrid"></div></div></div>
 
 <script src="js/engine.js"></script>
 <script>
@@ -1031,14 +1102,14 @@ function updateCalc() {
   costDisplay.innerHTML = cost.toFixed(2) + " <span>₼</span>";
 
   // Dairəvi gauge — cari pillə daxilində irəliləmə
-  const tierColor = { low: "#00D9A3", mid: "#E8A33D", high: "#E8544D" }[tier];
+  const tierColor = getComputedStyle(document.documentElement).getPropertyValue("--" + tier).trim();
   let tierStart, tierEnd;
   if (tier === "low") { tierStart = 0; tierEnd = 200; }
   else if (tier === "mid") { tierStart = 200; tierEnd = 300; }
   else { tierStart = 300; tierEnd = 600; }
   const gaugePctVal = Math.min(100, Math.round(((kwh - tierStart) / (tierEnd - tierStart)) * 100));
   document.getElementById("gaugeRing").style.background =
-    `conic-gradient(${tierColor} ${gaugePctVal}%, #1a2530 ${gaugePctVal}%)`;
+    `conic-gradient(${tierColor} ${gaugePctVal}%, var(--track) ${gaugePctVal}%)`;
   document.getElementById("gaugePct").textContent = gaugePctVal + "%";
   document.getElementById("gaugePct").style.color = tierColor;
 
@@ -1354,7 +1425,7 @@ function renderChart() {
       datasets: [{ data: appliances.map(a => a.monthlyKwh), backgroundColor: CHART_COLORS, borderWidth:0 }],
     },
     options: {
-      plugins: { legend: { position:"bottom", labels:{ color:"#EDF2F0", font:{family:"SG"}, padding:14 } } },
+      plugins: { legend: { position:"bottom", labels:{ color:getComputedStyle(document.documentElement).getPropertyValue("--text-hi").trim(), font:{family:"SG"}, padding:14 } } },
     },
   });
 }
@@ -1463,6 +1534,7 @@ updateSim();
 </script>
 <script src="js/pro.js"></script>
 <script src="js/extras.js"></script>
+<script src="js/ux.js"></script>
 
 </body>
 </html>
