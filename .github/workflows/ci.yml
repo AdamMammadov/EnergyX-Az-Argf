@@ -19,6 +19,6 @@ jobs:
           cache-dependency-path: backend/package-lock.json
       - run: npm ci
       - name: Sintaksis yoxlaması (frontend)
-        run: node --check ../frontend/js/engine.js && node --check ../frontend/js/pro.js && node --check ../frontend/sw.js
+        run: node --check ../frontend/js/engine.js && node --check ../frontend/js/pro.js && node --check ../frontend/js/extras.js && node --check ../frontend/sw.js
       - name: Testlər (mühərrik + API)
         run: npm test

@@ -109,8 +109,16 @@
   // 2) Əvvəlki ≤6 ay üzrə median/MAD ilə robust z-score
   // 3) Davamlılıq filtri: eyni istiqamətdə ardıcıl 2+ bayraq → "davamlı"
   const Z_WATCH = 2.5, Z_ANOMALY = 3.5, MIN_HISTORY = 3;
+  // Həssaslıq səviyyələri (GridPulse ThresholdExplorer): yanlış həyəcan ↔ aşkarlama tarazlığı
+  const SENSITIVITY = {
+    careful:   { anomaly: 4.5, watch: 3.0 },
+    balanced:  { anomaly: Z_ANOMALY, watch: Z_WATCH },
+    sensitive: { anomaly: 2.5, watch: 2.0 },
+  };
 
-  function detectAnomalies(readings) {
+  function detectAnomalies(readings, opts) {
+    const zA = (opts && opts.anomaly) || Z_ANOMALY;
+    const zW = (opts && opts.watch) || Z_WATCH;
     const series = normalizeSeries(readings);
     const out = series.map((p) => {
       const pm = parseMonth(p.month);
@@ -128,7 +136,7 @@
       p.expected = Math.round(med * p.factor);
       p.direction = p.z > 0 ? 1 : -1;
       const az = Math.abs(p.z);
-      p.level = az >= Z_ANOMALY ? "anomaly" : az >= Z_WATCH ? "watch" : "none";
+      p.level = az >= zA ? "anomaly" : az >= zW ? "watch" : "none";
     });
     // Davamlılıq: iki ardıcıl bayraqlı ay eyni istiqamətdə
     out.forEach((p, i) => {
@@ -270,7 +278,7 @@
   // ===== ENERJİ SAĞLAMLIQ BALI (PanoPulse Health Score) =====
   // Ani xərcdən fərqli, uzunmüddətli göstərici: təkrarlanan anomaliyalar,
   // artan trend və effektivsiz cihazlar balı aşağı salır.
-  function healthScore({ kwh, readings, appliances, budget }) {
+  function healthScore({ kwh, readings, appliances, budget, sensitivity }) {
     const factors = [];
     const add = (key, penalty) => { if (penalty > 0) factors.push({ key, penalty: Math.round(penalty) }); };
     const { tier } = calcTariff(kwh);
@@ -279,7 +287,7 @@
     const trend = trendPctPerMonth(readings);
     add("trend", trend > 3 ? Math.min(15, trend * 1.5) : 0);
 
-    const recent = detectAnomalies(readings).slice(-6);
+    const recent = detectAnomalies(readings, sensitivity).slice(-6);
     let anomPen = 0;
     recent.forEach((p) => {
       if (p.level === "anomaly") anomPen += 8;
@@ -393,7 +401,7 @@
     const appliances = [
       { name: "Soyuducu", watts: 190, hours: 10 },
       { name: "Kondisioner", watts: 1200, hours: 5 },
-      { name: "Lampalar (közərmə, 5 əd.)", watts: 300, hours: 5 },
+      { name: "Lampa (közərmə)", watts: 60, hours: 5 },
       { name: "Su qızdırıcı", watts: 1500, hours: 2 },
       { name: "Televizor", watts: 120, hours: 5 },
       { name: "Paltaryuyan", watts: 500, hours: 1 },
@@ -402,7 +410,238 @@
     return { meterName: "Nümunə ev", readings, appliances };
   }
 
+
+  // =====================================================================
+  // v2.1 — GridPulse/PanoPulse-dan əlavə ssenarilər
+  // =====================================================================
+
+  // ===== SAYĞAC DİAQNOZU (GridPulse diagnose_meters + SecurityAlertsPanel) =====
+  // Nasazlığı icazəsiz müdaxilədən və real istifadə dəyişikliyindən ayırmağa çalışır.
+  // Nəticələr ehtimaldır, fakt deyil — UI-da belə təqdim olunur.
+  const DIAG_SEVERITY = { meter_zero: "high", suspicious_drop: "critical", sustained_rise: "high",
+    spike: "medium", gradual_rise: "medium", gradual_decline: "low" };
+  function diagnoseMeter(readings, opts) {
+    const pts = detectAnomalies(readings, opts);
+    const findings = [];
+    if (pts.length < 2) return findings;
+    // 1) Sıfır göstərici: əvvəl normal idi, sonra tam sıfır — sayğac/rabitə nasazlığı
+    const zeros = pts.filter((p, i) => i > 0 && p.kwh === 0 && pts.slice(0, i).some((q) => q.kwh > 20));
+    if (zeros.length) findings.push({ type: "meter_zero", months: zeros.map((p) => p.month) });
+    // 2) Davamlı kəskin azalma (sıfır deyil): bypass / icazəsiz müdaxilə əlaməti ola bilər
+    const drops = pts.filter((p) => p.sustained && p.direction < 0 && p.kwh > 0 && p.expected && p.kwh < p.expected * 0.65);
+    if (drops.length >= 2) findings.push({ type: "suspicious_drop", months: drops.map((p) => p.month) });
+    // 3) Davamlı artım: cihaz nasazlığı
+    const rises = pts.filter((p) => p.sustained && p.direction > 0 && p.level !== "none");
+    if (rises.length >= 2) findings.push({ type: "sustained_rise", months: rises.map((p) => p.month) });
+    // 4) Tək pik
+    const spikes = pts.filter((p) => !p.sustained && p.direction > 0 && p.level === "anomaly");
+    if (spikes.length) findings.push({ type: "spike", months: spikes.map((p) => p.month) });
+    // 5) Tədrici trend (anomaliya həddinə çatmayan, aylarla davam edən dəyişiklik)
+    const trend = trendPctPerMonth(readings);
+    const recent = pts.slice(-6).map((p) => p.month);
+    if (pts.length >= 5 && trend <= -5) findings.push({ type: "gradual_decline", months: recent, trend });
+    if (pts.length >= 5 && trend >= 5 && !rises.length) findings.push({ type: "gradual_rise", months: recent, trend });
+    const order = { critical: 0, high: 1, medium: 2, low: 3 };
+    findings.forEach((f) => { f.severity = DIAG_SEVERITY[f.type]; });
+    return findings.sort((a, b) => order[a.severity] - order[b.severity]);
+  }
+
+  // ===== METODUN DOĞRULANMASI (GridPulse real_data_validation + threshold sweep) =====
+  // Real, açıq, sayğac-səviyyəli Azərbaycan datası mövcud olmadığı üçün (GridPulse-da
+  // araşdırılıb), Bakı iqliminə kalibrlənmiş SİNTETİK ev təsərrüfatları yaradılır,
+  // bilinən anomaliyalar "inject" edilir və detektorun dəqiqliyi ölçülür.
+  function mulberry32(seed) {
+    let a = seed >>> 0;
+    return function () {
+      a = (a + 0x6D2B79F5) >>> 0;
+      let t = a;
+      t = Math.imul(t ^ (t >>> 15), t | 1);
+      t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+  function gauss(rnd) {
+    const u = Math.max(1e-9, rnd()), v = rnd();
+    return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+  }
+  function syntheticHouseholds({ n = 300, months = 18, seed = 2026, anomalyShare = 0.3, noise = 0.06 } = {}) {
+    const rnd = mulberry32(seed);
+    const homes = [];
+    for (let h = 0; h < n; h++) {
+      const base = 120 + rnd() * 260;
+      const readings = [], labels = [];
+      for (let i = 0; i < months; i++) {
+        const mi = i % 12;
+        readings.push({ month: monthKey(2025, i), kwh: Math.max(0, Math.round(base * seasonalFactor(mi) * (1 + noise * gauss(rnd)))) });
+        labels.push(false);
+      }
+      let type = "none";
+      if (rnd() < anomalyShare) {
+        const types = ["spike", "sustained_rise", "drop", "zero"];
+        type = types[Math.floor(rnd() * types.length)];
+        const at = 8 + Math.floor(rnd() * (months - 10)); // ən azı 8 ay normal tarixçə
+        const span = type === "spike" ? 1 : 2 + Math.floor(rnd() * 2);
+        const mult = type === "spike" ? 1.6 + rnd() * 0.6 : type === "sustained_rise" ? 1.35 + rnd() * 0.25
+          : type === "drop" ? 0.4 + rnd() * 0.2 : 0;
+        for (let k = at; k < Math.min(months, at + span); k++) {
+          readings[k].kwh = Math.round(readings[k].kwh * mult);
+          labels[k] = true;
+        }
+      }
+      homes.push({ readings, labels, type });
+    }
+    return homes;
+  }
+  function validateDetector(opts) {
+    opts = opts || {};
+    const homes = syntheticHouseholds(opts);
+    const thresholds = opts.thresholds || [2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0];
+    // z-score həddən asılı deyil — bir dəfə hesablanır
+    const scored = homes.map((h) => ({ ...h, z: detectAnomalies(h.readings).map((p, i) => (i < MIN_HISTORY ? 0 : Math.abs(p.z))) }));
+    const sweep = thresholds.map((th) => {
+      let tp = 0, fp = 0, fn = 0, normalMonths = 0;
+      const byType = {};
+      scored.forEach((h) => {
+        let hit = false;
+        h.z.forEach((z, i) => {
+          if (i < MIN_HISTORY) return;
+          const flagged = z >= th;
+          if (h.labels[i] && flagged) { tp++; hit = true; }
+          else if (!h.labels[i] && flagged) fp++;
+          else if (h.labels[i] && !flagged) fn++;
+          if (!h.labels[i]) normalMonths++;
+        });
+        if (h.type !== "none") {
+          byType[h.type] = byType[h.type] || { homes: 0, caught: 0 };
+          byType[h.type].homes++;
+          if (hit) byType[h.type].caught++;
+        }
+      });
+      return {
+        z: th,
+        precision: tp + fp ? round2(tp / (tp + fp)) : 1,
+        recall: tp + fn ? round2(tp / (tp + fn)) : 0,
+        falseAlarmRatePct: normalMonths ? round2((fp / normalMonths) * 100) : 0,
+        byType: Object.fromEntries(Object.entries(byType).map(([k, v]) => [k, round2(v.caught / v.homes)])),
+      };
+    });
+    return { homes: homes.length, anomalous: homes.filter((h) => h.type !== "none").length,
+      months: homes[0] ? homes[0].readings.length : 0, sweep };
+  }
+
+  // ===== TƏBİİ QAZ (GridPulse gas module) =====
+  // Əhali üçün İLLİK həcmə görə pilləli tarif (Tarif Şurası).
+  const GAS_TIERS = [
+    { max: 1200, rate: 0.125 },
+    { max: 2500, rate: 0.20 },
+    { max: Infinity, rate: 0.25 },
+  ];
+  const GAS_CO2_KG_PER_M3 = 1.9; // təbii qazın yanmasından, təxmini (IPCC əmsalı əsasında)
+  // Qaz istehlakının mövsümi profili: bişirmə + isti su (sabit) + istilik (Bakı temperaturuna görə)
+  const _gasRaw = BAKU_TEMP_C.map((t) => 1 + 0.25 * Math.max(0, 18 - t));
+  const _gasMean = _gasRaw.reduce((s, v) => s + v, 0) / 12;
+  const GAS_SEASON = _gasRaw.map((v) => v / _gasMean);
+
+  function gasCost(m3, priorThisYear) {
+    m3 = Math.max(0, Number(m3) || 0);
+    let from = Math.max(0, Number(priorThisYear) || 0);
+    const to = from + m3;
+    let cost = 0, prev = 0;
+    const parts = [];
+    GAS_TIERS.forEach((t, i) => {
+      const lo = Math.max(from, prev), hi = Math.min(to, t.max);
+      if (hi > lo) { cost += (hi - lo) * t.rate; parts.push({ tier: i, m3: round2(hi - lo), rate: t.rate }); }
+      prev = t.max;
+    });
+    const tierIdx = to <= GAS_TIERS[0].max ? 0 : to <= GAS_TIERS[1].max ? 1 : 2;
+    return { cost: round2(cost), tier: ["low", "mid", "high"][tierIdx], parts, cumulative: round2(to) };
+  }
+
+  // İl sonuna qədər proqnoz: hazırkı ay → dekabr, pillə keçid ayları ilə
+  function gasForecast(m3ThisMonth, monthIdx, priorThisYear) {
+    const level = (Number(m3ThisMonth) || 0) / GAS_SEASON[monthIdx];
+    let cum = Math.max(0, Number(priorThisYear) || 0);
+    const months = [];
+    let cross1200 = null, cross2500 = null, total = 0;
+    for (let m = monthIdx; m < 12; m++) {
+      const use = m === monthIdx ? Number(m3ThisMonth) || 0 : level * GAS_SEASON[m];
+      const c = gasCost(use, cum);
+      if (cross1200 === null && cum <= 1200 && cum + use > 1200) cross1200 = m;
+      if (cross2500 === null && cum <= 2500 && cum + use > 2500) cross2500 = m;
+      cum += use; total += c.cost;
+      months.push({ monthIdx: m, m3: Math.round(use), cost: c.cost, cumulative: Math.round(cum), tier: c.tier });
+    }
+    const yearEstimate = Math.round(level * GAS_SEASON.reduce((s, v) => s + v, 0));
+    return { months, yearEndCumulative: Math.round(cum), restOfYearCost: round2(total), cross1200, cross2500,
+      typicalYearM3: yearEstimate, typicalYearCost: gasCost(yearEstimate, 0).cost, co2Kg: Math.round(yearEstimate * GAS_CO2_KG_PER_M3) };
+  }
+
+  // Sızma testi: heç bir qaz cihazı işləmirkən sayğacın iki göstəricisi
+  function gasLeakTest(start, end, hours) {
+    const d = (Number(end) || 0) - (Number(start) || 0);
+    const h = Math.max(0.1, Number(hours) || 0);
+    if (d < 0) return { status: "invalid" };
+    const perHour = d / h;
+    // 0.001 m³ — mexaniki sayğacın ən kiçik bölgüsü
+    return { status: d >= 0.001 ? "leak" : "ok", deltaM3: round2(d * 1000) / 1000, perHour: Math.round(perHour * 10000) / 10000,
+      perMonthM3: round2(perHour * 24 * 30) };
+  }
+
+  // ===== KƏSİNTİ HAZIRLIĞI (GridPulse critical infra + disaster scenario, ev miqyasında) =====
+  // devices: [{watts, duty (0..1), count}] → lazım olan enerji və tövsiyə olunan ehtiyat tutumu
+  const INVERTER_EFF = 0.85, USABLE_DOD = 0.8, POWERBANK_WH = 37; // 10 000 mAh × 3.7 V
+  function outagePlan(devices, hours) {
+    hours = Math.max(0, Number(hours) || 0);
+    const loadW = (devices || []).reduce((s, d) => s + (d.watts || 0) * (d.duty == null ? 1 : d.duty) * (d.count || 1), 0);
+    const peakW = (devices || []).reduce((s, d) => s + (d.watts || 0) * (d.count || 1), 0);
+    const wh = loadW * hours;
+    const capacityWh = Math.ceil(wh / INVERTER_EFF / USABLE_DOD);
+    return { loadW: Math.round(loadW), peakW: Math.round(peakW), wh: Math.round(wh), capacityWh,
+      inverterW: Math.ceil((peakW * 1.25) / 100) * 100, powerbanks: Math.ceil(wh / (POWERBANK_WH * 0.85)) };
+  }
+
+  // ===== NAİLİYYƏTLƏR + AYLIQ ÇAĞIRIŞ (öyrənmə motivasiyası) =====
+  function badges({ readings, budget, appliances, health }) {
+    const series = normalizeSeries(readings);
+    const last = series[series.length - 1];
+    const prev = series[series.length - 2];
+    let streak = 0;
+    for (let i = series.length - 1; i >= 0; i--) {
+      if (i === series.length - 1) { streak = 1; continue; }
+      const a = parseMonth(series[i].month), b = parseMonth(series[i + 1].month);
+      if ((b.y * 12 + b.m) - (a.y * 12 + a.m) === 1) streak++; else break;
+    }
+    const adj = (p) => p.kwh / seasonalFactor(parseMonth(p.month).m);
+    return [
+      { key: "first", earned: series.length >= 1, progress: Math.min(1, series.length) },
+      { key: "streak3", earned: streak >= 3, progress: Math.min(1, streak / 3) },
+      { key: "streak12", earned: streak >= 12, progress: Math.min(1, streak / 12) },
+      { key: "low_tier", earned: !!last && last.kwh <= 200, progress: last ? Math.min(1, 200 / Math.max(1, last.kwh)) : 0 },
+      { key: "saver", earned: !!(last && prev && adj(last) <= adj(prev) * 0.9), progress: last && prev ? Math.min(1, Math.max(0, (adj(prev) - adj(last)) / (adj(prev) * 0.1))) : 0 },
+      { key: "planner", earned: budget > 0, progress: budget > 0 ? 1 : 0 },
+      { key: "auditor", earned: (appliances || []).length >= 5, progress: Math.min(1, (appliances || []).length / 5) },
+      { key: "healthy", earned: !!health && health.score >= 85, progress: health ? Math.min(1, health.score / 85) : 0 },
+    ];
+  }
+  // Bu ay üçün hədəf: keçən ayın mövsümə görə düzəldilmiş səviyyəsindən 10% az
+  function monthlyChallenge(readings, now) {
+    now = now || new Date();
+    const series = normalizeSeries(readings);
+    const key = monthKey(now.getFullYear(), now.getMonth());
+    const past = series.filter((p) => p.month < key);
+    if (!past.length) return null;
+    const ref = past[past.length - 1];
+    const level = ref.kwh / seasonalFactor(parseMonth(ref.month).m);
+    const target = Math.round(level * seasonalFactor(now.getMonth()) * 0.9);
+    const current = series.find((p) => p.month === key);
+    return { month: key, target, reference: ref, current: current ? current.kwh : null,
+      targetCost: calcTariff(target).cost, done: current ? current.kwh <= target : null };
+  }
+
   return {
+    SENSITIVITY, diagnoseMeter, syntheticHouseholds, validateDetector,
+    GAS_TIERS, GAS_SEASON, GAS_CO2_KG_PER_M3, gasCost, gasForecast, gasLeakTest,
+    outagePlan, badges, monthlyChallenge,
     TIERS, CO2_FACTOR, TREE_ABSORPTION_KG_YEAR, AZ_TD_LOSS_PCT, BAKU_TEMP_C, SEASON_FACTORS,
     calcTariff, marginalRate, kwhForBudget, seasonalFactor, parseMonth, monthKey, median,
     normalizeSeries, detectAnomalies, trendPctPerMonth, forecastYear, monthPace,

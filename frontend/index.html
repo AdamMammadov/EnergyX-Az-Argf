@@ -299,8 +299,10 @@ footer .credit { margin-top:8px; font-size:12px; }
 <div class="tab-nav wrap">
   <button class="tab-btn active" data-tab="calc" onclick="switchTab('calc')" data-i18n="tab_calc">Kalkulyator</button>
   <button class="tab-btn" data-tab="app" onclick="switchTab('app')" data-i18n="tab_app">Cihazlar</button>
+  <button class="tab-btn" data-tab="gas" onclick="switchTab('gas')" data-i18n="tab_gas">Qaz</button>
   <button class="tab-btn" data-tab="insights" onclick="switchTab('insights')" data-i18n="tab_insights">Analitika</button>
   <button class="tab-btn" data-tab="plan" onclick="switchTab('plan')" data-i18n="tab_plan">Planlaşdır</button>
+  <button class="tab-btn" data-tab="ready" onclick="switchTab('ready')" data-i18n="tab_ready">Hazırlıq</button>
   <button class="tab-btn" data-tab="stats" onclick="switchTab('stats')" data-i18n="tab_stats">Statistika</button>
   <button class="tab-btn" data-tab="learn" onclick="switchTab('learn')" data-i18n="tab_learn">Öyrən</button>
   <button class="tab-btn" data-tab="about" onclick="switchTab('about')" data-i18n="tab_about">Haqqında</button>
@@ -309,6 +311,7 @@ footer .credit { margin-top:8px; font-size:12px; }
 <main class="wrap">
 <div class="tab-panel active" id="panel-calc">
   <section class="calc-zone">
+    <div class="reminder" id="reminderBanner" hidden></div>
     <h1 data-i18n="calc_title">Bu ay nə qədər ödəyəcəksiniz?</h1>
     <p class="lead" data-i18n="calc_lead">Sürüşdürücünü hərəkət etdirin, aylıq elektrik istifadənizə uyğun tarif pilləsini və xərcinizi anında görün.</p>
 
@@ -364,7 +367,10 @@ footer .credit { margin-top:8px; font-size:12px; }
         <div class="forecast-note" data-i18n="forecast_note">Hazırkı tempə əsasən, ±15% aralıqla təxmini.</div>
       </div>
 
-      <button class="pdf-btn" onclick="exportPdf()" data-i18n="pdf_btn">📄 PDF hesabat kimi yüklə</button>
+      <div class="action-row">
+        <button class="pdf-btn" onclick="exportPdf()" data-i18n="pdf_btn">📄 PDF hesabat kimi yüklə</button>
+        <button class="pdf-btn share-btn" onclick="EnergyExtras.share()" data-i18n="share_btn">🔗 Paylaş</button>
+      </div>
 
       <div class="meters-section">
         <h3 data-i18n="meters_title">Sayğaclarım</h3>
@@ -480,6 +486,12 @@ footer .credit { margin-top:8px; font-size:12px; }
     <span id="appTotalKwh" style="font-weight:700; font-size:20px;">0 kVt/saat</span>
   </div>
   <div class="mismatch-warning" id="mismatchWarning"></div>
+
+  <section class="pro-card twin-card">
+    <div class="pro-card-head"><h2 data-i18n="twin_title">Evin Enerji Xəritəsi</h2><span class="pro-tag" data-i18n="twin_tag">rəqəmsal əkiz</span></div>
+    <p class="pro-lead" data-i18n="twin_lead">Hər kafel bir cihazdır: ölçüsü aylıq istifadəyə, rəngi effektivliyə görədir. Qırmızı çərçivə — tipik effektiv modeldən çox işlədir.</p>
+    <div class="twin" id="twinMap"></div>
+  </section>
 </div>
 
 <div class="tab-panel" id="panel-insights">
@@ -510,9 +522,36 @@ footer .credit { margin-top:8px; font-size:12px; }
   <section class="pro-card">
     <div class="pro-card-head"><h2 data-i18n="anom_title">Anomaliya Aşkarlayıcısı</h2><span class="pro-tag">robust z-score · Bakı iqlimi</span></div>
     <p class="pro-lead" data-i18n="anom_lead">Hər ayın istifadəsi mövsümə görə düzəldilir və əvvəlki aylarla müqayisə olunur. Qırmızı — anomaliya, sarı — müşahidə.</p>
+    <div class="sens-row">
+      <label for="sensSelect" data-i18n="sens_label">Həssaslıq:</label>
+      <select id="sensSelect">
+        <option value="careful" data-i18n="sens_careful">Ehtiyatlı — az yanlış həyəcan</option>
+        <option value="balanced" data-i18n="sens_balanced">Balanslı (tövsiyə)</option>
+        <option value="sensitive" data-i18n="sens_sensitive">Həssas — heç nəyi qaçırma</option>
+      </select>
+      <span class="sens-stat" id="sensStat"></span>
+    </div>
     <div class="chart-box"><canvas id="anomChart" aria-label="Aylıq istifadə və gözlənilən dəyər"></canvas></div>
     <h3 class="pro-sub" data-i18n="timeline_title">Hadisə xronologiyası</h3>
     <div id="anomTimeline"></div>
+  </section>
+
+  <section class="pro-card">
+    <div class="pro-card-head"><h2 data-i18n="diag_title">Sayğac Diaqnozu</h2><span class="pro-tag" data-i18n="diag_tag">nasazlıq · müdaxilə · trend</span></div>
+    <p class="pro-lead" data-i18n="diag_lead">Anomaliyaların formasına görə ehtimal olunan səbəb: sayğac nasazlığı, icazəsiz müdaxilə, cihaz problemi və ya tədrici dəyişiklik. Bu, ehtimaldır — təsdiq üçün mütəxəssis yoxlaması lazımdır.</p>
+    <div id="diagList"></div>
+  </section>
+
+  <section class="pro-card">
+    <div class="pro-card-head"><h2 data-i18n="heat_title">İstifadə İstilik Xəritəsi</h2><span class="pro-tag" data-i18n="heat_tag">ay × il</span></div>
+    <div class="heatmap-scroll"><div class="heatmap" id="heatmap"></div></div>
+    <div class="heat-legend"><span class="hl low"></span>≤200 <span class="hl mid"></span>200–300 <span class="hl high"></span>300+ <span class="hl none"></span><span data-i18n="heat_none">məlumat yoxdur</span></div>
+  </section>
+
+  <section class="pro-card">
+    <div class="pro-card-head"><h2 data-i18n="ach_title">Nailiyyətlər və Aylıq Çağırış</h2><span class="pro-tag" id="achCount"></span></div>
+    <div class="challenge" id="challengeBox"></div>
+    <div class="badges" id="badgeGrid"></div>
   </section>
 
   <section class="pro-card">
@@ -583,6 +622,77 @@ footer .credit { margin-top:8px; font-size:12px; }
       <label><span data-i18n="inv_p_plug">Ağıllı rozetka, ₼</span><input type="number" id="invPPlug" min="0" value="25"></label>
     </div>
     <div id="invTable"></div>
+  </section>
+</div>
+
+<div class="tab-panel" id="panel-gas">
+  <h1 class="panel-title" data-i18n="gas_title">Təbii Qaz Kalkulyatoru</h1>
+  <p class="panel-lead" data-i18n="gas_lead">Qaz tarifi İLLİK həcmə görə pillələnir: ilin əvvəlindən yığılan istifadə 1200 m³-i keçdikdən sonra hər kubmetr bahalaşır. Qışda istilik səbəbindən istifadə kəskin artır.</p>
+
+  <section class="pro-card">
+    <div class="gas-inputs">
+      <label><span data-i18n="gas_month_label">Bu ayın istifadəsi (m³)</span>
+        <input type="range" id="gasSlider" min="0" max="600" value="120" aria-label="m³"><b id="gasVal">120 m³</b></label>
+      <label><span data-i18n="gas_prior_label">Bu il əvvəlki aylarda (m³)</span><input type="number" id="gasPrior" min="0" max="20000" value="0"></label>
+      <label><span data-i18n="gas_month_sel">Ay</span><select id="gasMonth"></select></label>
+    </div>
+    <div class="kpi-grid">
+      <div class="kpi"><div class="kpi-val" id="gasCost">—</div><div class="kpi-label" data-i18n="gas_cost">Bu ayın xərci</div></div>
+      <div class="kpi"><div class="kpi-val" id="gasCum">—</div><div class="kpi-label" data-i18n="gas_cum">İl üzrə yığılan</div></div>
+      <div class="kpi"><div class="kpi-val" id="gasCo2">—</div><div class="kpi-label" data-i18n="gas_co2">kq CO₂ (bu ay)</div></div>
+    </div>
+    <div id="gasParts" class="chip-list"></div>
+    <div class="gas-tiers">
+      <div><span class="tier-dot low"></span> 0 – 1200 m³/il · <span data-i18n="gas_t1">12.5 qəpik/m³</span></div>
+      <div><span class="tier-dot mid"></span> 1200 – 2500 m³/il · <span data-i18n="gas_t2">20 qəpik/m³</span></div>
+      <div><span class="tier-dot high"></span> 2500+ m³/il · <span data-i18n="gas_t3">25 qəpik/m³</span></div>
+    </div>
+  </section>
+
+  <section class="pro-card">
+    <div class="pro-card-head"><h2 data-i18n="gasfc_title">İl Sonuna Qədər Proqnoz</h2><span class="pro-tag" data-i18n="gasfc_tag">istilik mövsümü modeli</span></div>
+    <div class="chart-box"><canvas id="gasChart" aria-label="Qaz proqnozu"></canvas></div>
+    <div id="gasFcText" class="pro-lead" style="margin-top:12px;"></div>
+  </section>
+
+  <section class="pro-card">
+    <div class="pro-card-head"><h2 data-i18n="leak_title">Sızma Testi</h2><span class="pro-tag" data-i18n="leak_tag">2 göstərici ilə</span></div>
+    <p class="pro-lead" data-i18n="leak_lead">Axşam bütün qaz cihazlarını (soba, kombi, plita, su qızdırıcı) söndürün və sayğac göstəricisini yazın. Səhər heç nəyi yandırmadan yenidən yazın. Sayğac hərəkət edibsə — sızma ola bilər.</p>
+    <div class="pace-form">
+      <label><span data-i18n="leak_start">Axşam göstəricisi (m³)</span><input type="number" id="leakStart" step="0.001" min="0"></label>
+      <label><span data-i18n="leak_end">Səhər göstəricisi (m³)</span><input type="number" id="leakEnd" step="0.001" min="0"></label>
+      <label><span data-i18n="leak_hours">Neçə saat keçib</span><input type="number" id="leakHours" min="1" max="48" value="8"></label>
+      <button onclick="EnergyExtras.runLeakTest()" data-i18n="leak_btn">Yoxla</button>
+    </div>
+    <div id="leakResult" aria-live="polite"></div>
+  </section>
+
+  <section class="pro-card safety-card">
+    <div class="pro-card-head"><h2 data-i18n="gsafe_title">Dəm Qazı və Qaz Təhlükəsizliyi</h2><span class="pro-tag">⚠️</span></div>
+    <ul class="checklist" id="gasSafety"></ul>
+  </section>
+</div>
+
+<div class="tab-panel" id="panel-ready">
+  <h1 class="panel-title" data-i18n="ready_title">Kəsintiyə Hazırlıq</h1>
+  <p class="panel-lead" data-i18n="ready_lead">Elektrik kəsiləndə hansı cihazlar işləməlidir? Siyahını seçin — neçə Vt·saat ehtiyat enerji, hansı tutumda powerbank və ya ehtiyat qida mənbəyi lazım olduğunu hesablayaq.</p>
+
+  <section class="pro-card">
+    <div class="pro-card-head"><h2 data-i18n="out_title">Ehtiyat Enerji Planlayıcısı</h2><span class="pro-tag" data-i18n="out_tag">kritik cihazlar</span></div>
+    <div class="out-devices" id="outDevices"></div>
+    <div class="wi-row" style="margin-top:14px;"><label for="outHours" data-i18n="out_hours">Kəsinti müddəti</label><input type="range" id="outHours" min="1" max="24" value="6"><span class="wi-val" id="outHoursVal">6 saat</span></div>
+    <div id="outResult" aria-live="polite"></div>
+  </section>
+
+  <section class="pro-card">
+    <div class="pro-card-head"><h2 data-i18n="food_title">Soyuducu Qida Təhlükəsizliyi</h2></div>
+    <div id="foodBox"></div>
+  </section>
+
+  <section class="pro-card">
+    <div class="pro-card-head"><h2 data-i18n="sos_title">Təcili Əlaqə</h2></div>
+    <div class="sos-grid" id="sosGrid"></div>
+    <p class="pro-note" data-i18n="sos_note">Nömrələr ümumi məlumat üçündür — rəsmi saytlardan yoxlayın.</p>
   </section>
 </div>
 
@@ -658,9 +768,15 @@ footer .credit { margin-top:8px; font-size:12px; }
       <h3 data-i18n="about_h3">Metodologiya</h3>
       <p data-i18n="about_p3">Tarif rəqəmləri Azərbaycan Respublikası Energetika Nazirliyinin rəsmi elanlarına əsaslanır (0-200 kVt: 8.4 qəpik, 200-300 kVt: 10 qəpik, 300+ kVt: 15 qəpik).</p>
     </div>
+    <section class="pro-card" id="validationCard">
+      <div class="pro-card-head"><h2 data-i18n="val_title">Metodun Doğrulanması</h2><span class="pro-tag" data-i18n="val_tag">şəffaflıq</span></div>
+      <p class="pro-lead" id="valLead"></p>
+      <div class="table-scroll"><table class="inv-table" id="valTable"></table></div>
+      <p class="pro-note" data-i18n="val_note">Açıq, sayğac-səviyyəli real Azərbaycan istehlak datası mövcud deyil, ona görə bu sınaq REAL data deyil — Bakının iqlim ritmi ilə kalibrlənmiş sintetik ssenaridir. Testi brauzeriniz indi, canlı olaraq aparır.</p>
+    </section>
     <div class="about-block">
       <h3 data-i18n="about_h4">Açıq mənbə</h3>
-      <p data-i18n="about_p4">Kodun tamamı ictimaiyyətə açıqdır. <a href="https://github.com/energyxaz/kalkulyator" target="_blank" data-i18n="about_github">GitHub-da baxın</a> — istənilən töhfə (bug report, təkmilləşdirmə təklifi) xoş qarşılanır.</p>
+      <p data-i18n="about_p4">Kodun tamamı ictimaiyyətə açıqdır. <a href="https://github.com/AdamMammadov/EnergyX-Az-Argf" target="_blank" rel="noopener" data-i18n="about_github">GitHub-da baxın</a> — istənilən töhfə (bug report, təkmilləşdirmə təklifi) xoş qarşılanır.</p>
     </div>
   </div>
 </div>
@@ -668,7 +784,7 @@ footer .credit { margin-top:8px; font-size:12px; }
 
 <footer class="wrap">
   <p data-i18n="footer_p1">Bu alət Azərbaycan Respublikasının Gənclər Fondu qrant dəstəyi ilə hazırlanıb. Kodun tamamı açıq mənbədir.</p>
-  <p><a href="https://github.com/energyxaz/kalkulyator" target="_blank" data-i18n="footer_github">GitHub-da baxın →</a></p>
+  <p><a href="https://github.com/AdamMammadov/EnergyX-Az-Argf" target="_blank" rel="noopener" data-i18n="footer_github">GitHub-da baxın →</a></p>
   <p class="credit">EnergyX Az · 2026</p>
 </footer>
 
@@ -1346,6 +1462,7 @@ updateSim();
 
 </script>
 <script src="js/pro.js"></script>
+<script src="js/extras.js"></script>
 
 </body>
 </html>
