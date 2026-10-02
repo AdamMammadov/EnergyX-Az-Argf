@@ -9,6 +9,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <meta name="theme-color" content="#0A1420">
+<!-- Tətbiq versiyası: dəyişəndə həm buradakı ?v=, həm də sw.js-dəki VERSION artırılmalıdır -->
+<meta name="app-version" content="2.3.0">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon.svg">
 <script>
@@ -303,8 +305,8 @@ footer { padding:36px 0 48px; border-top:1px solid var(--border); text-align:cen
 footer a { color:var(--text-lo); text-decoration:underline; }
 footer .credit { margin-top:8px; font-size:12px; }
 </style>
-<link rel="stylesheet" href="css/pro.css">
-<link rel="stylesheet" href="css/layout.css">
+<link rel="stylesheet" href="css/pro.css?v=2.3.0">
+<link rel="stylesheet" href="css/layout.css?v=2.3.0">
 </head>
 <body>
 
@@ -868,7 +870,7 @@ footer .credit { margin-top:8px; font-size:12px; }
   <button class="bn-btn" type="button" id="bnMore" onclick="toggleNav(true)"><span class="bn-ico">☰</span><span data-i18n="nav_more">Daha çox</span></button>
 </nav>
 
-<script src="js/engine.js"></script>
+<script src="js/engine.js?v=2.3.0"></script>
 <script>
 const API_BASE = "https://energyx-az-kalkulyator.onrender.com";
 
@@ -1558,9 +1560,9 @@ updateCalc();
 updateSim();
 
 </script>
-<script src="js/pro.js"></script>
-<script src="js/extras.js"></script>
-<script src="js/ux.js"></script>
+<script src="js/pro.js?v=2.3.0"></script>
+<script src="js/extras.js?v=2.3.0"></script>
+<script src="js/ux.js?v=2.3.0"></script>
 
 </body>
 </html>
