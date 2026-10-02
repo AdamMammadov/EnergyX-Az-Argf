@@ -309,6 +309,8 @@ footer .credit { margin-top:8px; font-size:12px; }
 <body>
 
 <aside class="sidebar" id="sidebar">
+  <button class="menu-btn" id="menuBtn" type="button" aria-label="Menyu" aria-controls="tabNav" aria-expanded="false"
+    onclick="toggleNav()">☰</button>
   <div class="brand">
     <svg viewBox="0 0 420 420"><defs><linearGradient id="mg" x1="0%" y1="100%" x2="100%" y2="0%"><stop offset="0%" stop-color="#00E6B8"/><stop offset="100%" stop-color="#00A98A"/></linearGradient><linearGradient id="bg2g" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#5CB0FF"/><stop offset="100%" stop-color="#2F8FFF"/></linearGradient></defs><path d="M 78 78 C 130 130, 150 150, 175 178 M 245 242 C 270 268, 292 292, 342 342" stroke="url(#bg2g)" stroke-width="26" stroke-linecap="round" fill="none"/><path d="M 78 342 L 148 342 L 148 272 L 218 272 L 218 202 L 242 202" stroke="url(#mg)" stroke-width="26" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M 178 178 L 200 156 L 268 156 L 342 82" stroke="url(#mg)" stroke-width="26" stroke-linecap="round" stroke-linejoin="round" fill="none"/><circle cx="210" cy="210" r="22" fill="#EAFFFA"/></svg>
     EnergyX Az <span class="sub" data-i18n="brand_sub">Enerji Kalkulyatoru</span>
@@ -337,6 +339,8 @@ footer .credit { margin-top:8px; font-size:12px; }
     <div class="oss-badge" data-i18n="oss_badge">🔓 Açıq mənbə, pulsuz</div>
   </div>
 </aside>
+
+<div class="nav-backdrop" onclick="toggleNav(false)"></div>
 
 <div class="shell">
 
@@ -856,8 +860,13 @@ footer .credit { margin-top:8px; font-size:12px; }
 </footer>
 </div>
 
-<nav class="bottom-nav" id="bottomNav" aria-label="Əsas bölmələr"></nav>
-<div class="more-sheet" id="moreSheet" hidden><div class="more-backdrop" data-close></div><div class="more-panel" role="dialog" aria-modal="true"><div class="more-grip"></div><div class="more-grid" id="moreGrid"></div></div></div>
+<nav class="bottom-nav" id="bottomNav" aria-label="Əsas bölmələr">
+  <button class="bn-btn active" type="button" data-tab-target="calc" onclick="switchTab('calc')"><span class="bn-ico">🧮</span><span data-i18n="tab_calc">Kalkulyator</span></button>
+  <button class="bn-btn" type="button" data-tab-target="app" onclick="switchTab('app')"><span class="bn-ico">🔌</span><span data-i18n="tab_app">Cihazlar</span></button>
+  <button class="bn-btn" type="button" data-tab-target="insights" onclick="switchTab('insights')"><span class="bn-ico">📊</span><span data-i18n="tab_insights">Analitika</span></button>
+  <button class="bn-btn" type="button" data-tab-target="plan" onclick="switchTab('plan')"><span class="bn-ico">🎯</span><span data-i18n="tab_plan">Planlaşdır</span></button>
+  <button class="bn-btn" type="button" id="bnMore" onclick="toggleNav(true)"><span class="bn-ico">☰</span><span data-i18n="nav_more">Daha çox</span></button>
+</nav>
 
 <script src="js/engine.js"></script>
 <script>
@@ -1269,8 +1278,25 @@ function askSuggested(text) {
 chatInput.addEventListener("keypress", (e) => { if (e.key === "Enter") sendMessage(); });
 
 // ===== TAB SWITCHING =====
+// Mobil menyu (soldan açılan panel). Əsas skriptdədir ki, digər fayllar yüklənməsə belə işləsin.
+function toggleNav(open) {
+  const root = document.documentElement;
+  const next = typeof open === "boolean" ? open : !root.classList.contains("nav-open");
+  root.classList.toggle("nav-open", next);
+  const btn = document.getElementById("menuBtn");
+  if (btn) btn.setAttribute("aria-expanded", String(next));
+  if (next) { const a = document.querySelector(".tab-btn.active") || document.querySelector(".tab-btn"); if (a) a.focus({ preventScroll: true }); }
+}
+document.addEventListener("keydown", (e) => { if (e.key === "Escape") toggleNav(false); });
+
+const PRIMARY_TABS = ["calc", "app", "insights", "plan"];
 function switchTab(tab) {
+  if (!document.getElementById("panel-" + tab)) return;
   document.querySelectorAll(".tab-btn").forEach(b => b.classList.toggle("active", b.dataset.tab === tab));
+  document.querySelectorAll("#bottomNav [data-tab-target]").forEach(b => b.classList.toggle("active", b.dataset.tabTarget === tab));
+  const more = document.getElementById("bnMore");
+  if (more) more.classList.toggle("active", !PRIMARY_TABS.includes(tab));
+  toggleNav(false);
   document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
   document.getElementById("panel-" + tab).classList.add("active");
   if (tab === "stats") loadStats();

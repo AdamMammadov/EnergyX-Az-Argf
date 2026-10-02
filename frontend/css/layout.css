@@ -80,7 +80,9 @@ main.wrap { padding-bottom:40px; }
 .stats-grid { max-width:900px; }
 
 /* ---------- Aşağı naviqasiya + "Daha çox" (yalnız mobil) ---------- */
-.bottom-nav, .more-sheet { display:none; }
+.bottom-nav, .menu-btn, .nav-backdrop { display:none; }
+.menu-btn { width:38px; height:36px; border-radius:10px; border:1px solid var(--border); background:var(--surface);
+  color:var(--text-hi); font-size:18px; line-height:1; cursor:pointer; align-items:center; justify-content:center; }
 
 /* ======================================================================
    MASAÜSTÜ ≥ 1100px
@@ -116,7 +118,7 @@ main.wrap { padding-bottom:40px; }
    ====================================================================== */
 @media (max-width:1099px) {
   .sidebar { position:sticky; top:0; display:grid; grid-template-columns:auto 1fr; align-items:center; gap:10px 16px;
-    padding:12px max(16px, calc((100vw - 1280px) / 2)) 0; background:color-mix(in srgb, var(--bg) 88%, transparent);
+    padding:12px max(16px, calc((100vw - 1280px) / 2)) 0; background:var(--bg); background:color-mix(in srgb, var(--bg) 88%, transparent);
     backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); border-right:none; border-bottom:1px solid var(--border); }
   .side-foot { grid-row:1; grid-column:2; flex-direction:row; align-items:center; justify-content:flex-end; gap:8px; }
   .sidebar .brand { grid-row:1; grid-column:1; }
@@ -143,11 +145,32 @@ main.wrap { padding-bottom:40px; }
    ====================================================================== */
 @media (max-width:719px) {
   body { padding-bottom:calc(76px + env(safe-area-inset-bottom)); }
-  .sidebar { padding:10px 16px; grid-template-columns:1fr auto; }
+  /* Başlıq: ☰ | brend | idarəetmə. backdrop-filter söndürülür, yoxsa içindəki
+     position:fixed menyu ekrana yox, başlığa görə yerləşir */
+  .sidebar { padding:10px 12px; grid-template-columns:auto minmax(0,1fr) auto; column-gap:8px; background:var(--bg); backdrop-filter:none; -webkit-backdrop-filter:none; }
+  .menu-btn { display:inline-flex; grid-row:1; grid-column:1; }
+  /* Brend dar ekranda kiçilir (başlıq heç vaxt ekrandan genişlənmir) */
+  .sidebar .brand { grid-column:2; display:flex; align-items:center; gap:8px; min-width:0; overflow:hidden; white-space:nowrap; }
+  .side-foot { grid-column:3; gap:6px; min-width:0; }
+  /* Təhlükəsizlik toru: səhifə heç vaxt üfüqi genişlənməsin — yoxsa mobil brauzer
+     səhifəni kiçildir və aşağı naviqasiya görünən sahədən kənara düşür */
+  html, body { overflow-x:clip; max-width:100%; }
   .sidebar .brand { font-size:16px; }
   .sidebar .brand .sub { display:none; }
   .sidebar .brand svg { width:24px; height:24px; }
-  .tab-nav { display:none; }
+  /* Soldan açılan menyu (masaüstündəki yan panelin mobil forması) */
+  .tab-nav { position:fixed; top:0; left:0; bottom:0; width:min(82vw, 300px); z-index:90; display:flex; flex-direction:column;
+    gap:2px; margin:0; padding:calc(18px + env(safe-area-inset-top)) 12px calc(18px + env(safe-area-inset-bottom));
+    background:var(--bg2); border-right:1px solid var(--border); box-shadow:var(--shadow); overflow-y:auto;
+    transform:translateX(-105%); visibility:hidden; transition:transform .25s ease, visibility .25s; }
+  .tab-nav .tab-btn { width:100%; padding:12px 14px; font-size:15px; }
+  .tab-nav .tab-btn.active { box-shadow:inset 3px 0 0 var(--low); }
+  .nav-open .tab-nav { transform:none; visibility:visible; }
+  .nav-backdrop { display:block; position:fixed; inset:0; z-index:85; background:rgba(0,0,0,0.45); opacity:0; pointer-events:none; transition:opacity .25s; }
+  .nav-open .nav-backdrop { opacity:1; pointer-events:auto; }
+  /* Başlıq öz stacking context-idir (z-index:50) — menyu fondan yuxarıda olsun deyə açıq ikən qaldırılır */
+  .nav-open .sidebar { z-index:95; }
+  .nav-open body { overflow:hidden; }
   .side-foot .present-btn { font-size:0; padding:0; width:34px; height:32px; border-radius:8px; }
   .side-foot .present-btn::before { content:"▶"; font-size:13px; }
   .lang-btn { padding:6px 8px; font-size:11.5px; }
@@ -155,23 +178,13 @@ main.wrap { padding-bottom:40px; }
 
   /* Aşağı naviqasiya */
   .bottom-nav { display:grid; grid-template-columns:repeat(5,1fr); position:fixed; left:0; right:0; bottom:0; z-index:60;
-    background:color-mix(in srgb, var(--bg2) 94%, transparent); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
+    background:var(--bg2); background:color-mix(in srgb, var(--bg2) 94%, transparent); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
     border-top:1px solid var(--border); padding:6px 4px calc(6px + env(safe-area-inset-bottom)); }
   .bn-btn { display:flex; flex-direction:column; align-items:center; gap:2px; background:none; border:none; color:var(--text-lo);
     font-family:'SG'; font-size:10.5px; font-weight:600; padding:6px 2px; border-radius:10px; cursor:pointer; min-width:0; }
   .bn-btn .bn-ico { font-size:19px; line-height:1; }
   .bn-btn span:last-child { max-width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
   .bn-btn.active { color:var(--low); background:var(--track); }
-  .more-sheet:not([hidden]) { display:block; position:fixed; inset:0; z-index:70; }
-  .more-backdrop { position:absolute; inset:0; background:rgba(0,0,0,0.45); animation:fadeIn .2s ease; }
-  .more-panel { position:absolute; left:0; right:0; bottom:0; background:var(--surface); border-radius:20px 20px 0 0;
-    padding:10px 16px calc(20px + env(safe-area-inset-bottom)); animation:sheetUp .25s ease; }
-  .more-grip { width:40px; height:4px; border-radius:4px; background:var(--border); margin:0 auto 14px; }
-  .more-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
-  .more-item { display:flex; flex-direction:column; align-items:center; gap:6px; background:var(--bg2); border:1px solid var(--border);
-    border-radius:14px; padding:14px 6px; color:var(--text-hi); font-family:'SG'; font-size:12.5px; font-weight:600; cursor:pointer; text-align:center; }
-  .more-item.active { border-color:var(--low); color:var(--low); }
-  .more-item .bn-ico { font-size:22px; }
 
   /* Kalkulyator */
   .calc-zone { padding:24px 0 20px; }
@@ -220,6 +233,12 @@ main.wrap { padding-bottom:40px; }
   /* iOS fokusda yaxınlaşdırmasın deyə inputlar ≥ 16px */
   input[type=text], input[type=number], input[type=month], select, .chat-input-row input { font-size:16px !important; }
 }
+@media (max-width:400px) {
+  .side-foot .present-btn { display:none; }
+  .theme-btn { width:32px; }
+  .lang-btn { padding:6px 6px; font-size:11px; }
+  .sidebar .brand { font-size:15px; }
+}
 @media (max-width:380px) {
   .summary-grid { grid-template-columns:1fr; }
   .overview { grid-template-columns:1fr 1fr; }
@@ -227,10 +246,10 @@ main.wrap { padding-bottom:40px; }
 }
 @keyframes sheetUp { from { transform:translateY(100%); } to { transform:none; } }
 @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
-@media (prefers-reduced-motion: reduce) { .more-panel, .more-backdrop { animation:none; } html { scroll-behavior:auto; } }
+@media (prefers-reduced-motion: reduce) { .tab-nav, .nav-backdrop { transition:none !important; } html { scroll-behavior:auto; } }
 
 /* Çap: yalnız məzmun */
 @media print {
-  .sidebar, .bottom-nav, .more-sheet, .toast-box, .pres-bar, footer { display:none !important; }
+  .sidebar, .bottom-nav, .nav-backdrop, .toast-box, .pres-bar, footer { display:none !important; }
   .shell { margin:0 !important; }
 }

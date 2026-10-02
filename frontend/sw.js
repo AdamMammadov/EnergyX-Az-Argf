@@ -1,7 +1,7 @@
 // EnergyX Az — Service Worker (oflayn dəstək)
 // Statik fayllar keşlənir; səhifə üçün "əvvəlcə şəbəkə", qalanı üçün stale-while-revalidate.
 // API sorğuları (backend) keşlənmir.
-const CACHE = "energyx-v4";
+const CACHE = "energyx-v5";
 const CORE = ["./", "index.html", "css/pro.css", "css/layout.css", "js/engine.js", "js/pro.js", "js/extras.js", "js/ux.js", "SpaceGrotesk-Bold.ttf", "icon.svg", "manifest.webmanifest"];
 const CDN = "https://cdnjs.cloudflare.com/";
 
