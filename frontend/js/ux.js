@@ -81,9 +81,7 @@
   Object.keys(UT).forEach((l) => Object.assign(translations[l], UT[l]));
 
   const TABS = ["calc", "app", "gas", "insights", "plan", "ready", "stats", "learn", "about"];
-  const PRIMARY = ["calc", "app", "insights", "plan"];
-  const tabIcon = (k) => (document.querySelector(`.tab-btn[data-tab="${k}"]`) || {}).dataset?.icon || "•";
-  let currentTab = (document.querySelector(".tab-btn.active") || {}).dataset?.tab || "calc";
+  let currentTab = (document.querySelector(".tab-btn.active") || { dataset: {} }).dataset.tab || "calc";
 
   // ===== TEMA =====
   function theme() { return document.documentElement.getAttribute("data-theme") === "light" ? "light" : "dark"; }
@@ -105,25 +103,13 @@
   }
 
   // ===== NAVİQASİYA =====
-  function buildBottomNav() {
-    const t = T();
-    const item = (k, cls) => `<button class="${cls}${k === currentTab ? " active" : ""}" data-go="${k}" type="button">
-      <span class="bn-ico">${tabIcon(k)}</span><span>${esc(t["tab_" + k])}</span></button>`;
-    const moreActive = !PRIMARY.includes(currentTab);
-    $("bottomNav").innerHTML = PRIMARY.map((k) => item(k, "bn-btn")).join("") +
-      `<button class="bn-btn${moreActive ? " active" : ""}" data-more type="button"><span class="bn-ico">${moreActive ? tabIcon(currentTab) : "☰"}</span><span>${esc(moreActive ? t["tab_" + currentTab] : t.nav_more)}</span></button>`;
-    $("moreGrid").innerHTML = TABS.map((k) => item(k, "more-item")).join("");
-  }
-  function openMore() { $("moreSheet").hidden = false; const f = $("moreGrid").querySelector("button"); if (f) f.focus(); }
-  function closeMore() { $("moreSheet").hidden = true; }
-
+  // Aşağı panel və mobil menyu index.html-də statikdir (JS olmasa da işləyir);
+  // burada yalnız əlavə davranış var: aktiv düyməni görünən etmək, URL-də bölmə.
   const origSwitch = window.switchTab;
   window.switchTab = function (tab) {
     if (!document.getElementById("panel-" + tab)) return;
     origSwitch(tab);
     currentTab = tab;
-    buildBottomNav();
-    closeMore();
     const btn = document.querySelector(`.tab-btn[data-tab="${tab}"]`);
     if (btn && window.innerWidth < 1100) btn.scrollIntoView({ inline: "center", block: "nearest", behavior: "smooth" });
     if (!document.getElementById("presBar")) window.scrollTo({ top: 0, behavior: "auto" });
@@ -133,11 +119,8 @@
   document.addEventListener("click", (e) => {
     const go = e.target.closest("[data-go]");
     if (go) { switchTab(go.dataset.go); return; }
-    if (e.target.closest("[data-more]")) { openMore(); return; }
-    if (e.target.closest("[data-close]")) closeMore();
   });
   document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape") closeMore();
     // Alt + 1..9 — bölmələr arasında sürətli keçid
     if (e.altKey && !e.ctrlKey && !e.metaKey && /^[1-9]$/.test(e.key)) {
       e.preventDefault();
@@ -213,7 +196,6 @@
     renderOverview(state);
     renderBill();
     renderCompare();
-    buildBottomNav();
     renderThemeBtn();
   }
   const origExtras = window.EnergyExtras.refresh;
@@ -239,7 +221,7 @@
     });
   } catch {}
 
-  window.EnergyUx = { toggleTheme, openMore, closeMore };
+  window.EnergyUx = { toggleTheme };
   applyTranslations(currentLang);
   // URL-dəki #bölmə ilə birbaşa açılış
   const hashTab = location.hash.replace("#", "");

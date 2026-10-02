@@ -842,7 +842,7 @@
     if (state.invest && state.invest.length) {
       head(t.pdf_invest);
       const r = state.invest[0];
-      para(`${t["inv_key_" + r.key].replace(/^\S+\s/, "")}: ${r.cost.toFixed(0)} AZN → ${r.monthlyAzn.toFixed(2)} AZN/${t.inv_months}, ${t.inv_col_payback}: ${r.paybackMonths ?? "—"} ${t.inv_months}`);
+      para(`${t["inv_key_" + r.key].replace(/^\S+\s/, "")}: ${r.cost.toFixed(0)} AZN → ${r.monthlyAzn.toFixed(2)} AZN/${t.inv_months}, ${t.inv_col_payback}: ${r.paybackMonths == null ? "—" : r.paybackMonths} ${t.inv_months}`);
     }
     head(t.pdf_eco);
     const e = state.eco;
