@@ -2,6 +2,8 @@
 import json, sys, re, difflib
 import numpy as np
 import scipy.io.wavfile as wav
+from math import gcd
+from scipy.signal import resample_poly
 from transformers import pipeline
 
 clips = json.load(open(sys.argv[1], encoding="utf-8"))
@@ -12,6 +14,8 @@ scores = []
 for c in clips:
     sr, a = wav.read(c["file"])
     a = a.astype(np.float32) / 32768
+    if sr != 16000:  # Whisper 16 kHz gözləyir (Gemini 24 kHz verir)
+        g = gcd(sr, 16000); a = resample_poly(a, 16000 // g, sr // g).astype(np.float32); sr = 16000
     hyp = asr({"raw": a, "sampling_rate": sr}, generate_kwargs={"language": "azerbaijani", "task": "transcribe"})["text"]
     ref = " ".join(script[c["id"]]["tts"])
     r = difflib.SequenceMatcher(None, norm(ref), norm(hyp)).ratio()
