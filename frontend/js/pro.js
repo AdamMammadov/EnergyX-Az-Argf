@@ -621,7 +621,7 @@
     state.invest = rows;
     store("energyx_invest", ["invLed", "invPlug", "invPLed", "invPInv", "invPFridge", "invPPlug"].map((id) => $(id).value));
     if (!rows.length) { $("invTable").innerHTML = `<div class="pace-empty">${esc(t.inv_empty)}</div>`; return; }
-    $("invTable").innerHTML = `<div class="table-scroll"><table class="inv-table">
+    $("invTable").innerHTML = `<div class="table-scroll" tabindex="0" role="region" aria-label="${esc(t.inv_title)}"><table class="inv-table">
       <thead><tr><th>${esc(t.inv_col_measure)}</th><th>${esc(t.inv_col_cost)}</th><th>${esc(t.inv_col_save)}</th><th>${esc(t.inv_col_payback)}</th><th>${esc(t.inv_col_net)}</th></tr></thead>
       <tbody>${rows.map((r, i) => `<tr class="${i === 0 ? "top" : ""}">
         <td>${esc(t["inv_key_" + r.key])}${i === 0 ? ` <span class="tl-badge ok">${esc(t.inv_top)}</span>` : ""}<div class="inv-sub">${r.kwh} kVt/ay · ${r.co2Year} kq CO₂/il</div></td>
@@ -688,8 +688,10 @@
 
   // ===== YEDƏKLƏMƏ (GridPulse backup ideyası — burada istifadəçi tərəfində) =====
   function exportBackup() {
-    const payload = { app: "energyx-az", version: 1, exportedAt: new Date().toISOString(),
-      data: { meters: getMeters(), appliances, pace: load("energyx_pace", null), lang: currentLang } };
+    const settings = {};
+    SETTING_KEYS.forEach((k) => { const v = load(k, null); if (v != null) settings[k] = v; });
+    const payload = { app: "energyx-az", version: 2, exportedAt: new Date().toISOString(),
+      data: { meters: getMeters(), appliances, pace: load("energyx_pace", null), lang: currentLang, settings } };
     const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
     const a = document.createElement("a");
     a.href = URL.createObjectURL(blob);
@@ -698,6 +700,47 @@
     setTimeout(() => URL.revokeObjectURL(a.href), 1000);
     toast(T().backup_done, "info");
   }
+  // v2 yedək: qaz, kəsinti planı, ağıllı sayğac (CSV), cihaz müqayisəsi, sərmayə, həssaslıq.
+  // Hər açar idxalda ayrıca yoxlanılır — gözlənilməz forma atılır.
+  const SETTING_KEYS = ["energyx_gas", "energyx_outage", "energyx_lab", "energyx_cmp", "energyx_invest", "energyx_sens"];
+  const clampNum = (v, lo, hi) => Math.min(hi, Math.max(lo, Number(v) || 0));
+  const numStrList = (a, n) => (Array.isArray(a) && a.length === n && a.every((x) => x === "" || isFinite(Number(x))) ? a.map((x) => String(x).slice(0, 12)) : null);
+  const SETTING_CLEAN = {
+    energyx_gas: (g) => (g && typeof g === "object" ? { m3: clampNum(g.m3, 0, 5000), prior: clampNum(g.prior, 0, 20000), month: Math.round(clampNum(g.month, 0, 11)) } : null),
+    energyx_outage: (o) => {
+      if (!o || typeof o !== "object" || !o.devices || typeof o.devices !== "object") return null;
+      const devices = {};
+      ["router", "phone", "led", "laptop", "fridge", "kombi", "cpap", "tv"].forEach((k) => {
+        const d = o.devices[k];
+        if (d && typeof d === "object") devices[k] = { on: !!d.on, count: Math.round(clampNum(d.count, 1, 20)) };
+      });
+      return { devices, hours: Math.round(clampNum(o.hours, 1, 24)) };
+    },
+    energyx_lab: (l) => {
+      if (!l || typeof l !== "object" || !["sim", "sample", "csv"].includes(l.src)) return null;
+      const csv = Array.isArray(l.csv) ? l.csv.filter((r) => Array.isArray(r) && isFinite(r[0]) && r[1] >= 0 && r[1] < 100).slice(-17520).map((r) => [Number(r[0]), Number(r[1])]) : null;
+      const enough = !!csv && csv.length >= 48;
+      return { src: l.src === "csv" && !enough ? "sample" : l.src, csv: enough ? csv : null, unit: l.unit === "Wh" ? "Wh" : "kWh" };
+    },
+    energyx_cmp: (a) => numStrList(a, 4),
+    energyx_invest: (a) => numStrList(a, 6),
+    energyx_sens: (v) => (["careful", "balanced", "sensitive"].includes(v) ? v : null),
+  };
+
+  // İdxaldan sonra formlar yaddaşdan yenidən doldurulur — yoxsa növbəti render köhnə input dəyərlərini
+  // yaddaşa geri yazar (müqayisə/sərmayə), kəsinti siyahısı və sayğac analizi köhnə qalardı.
+  function syncSettingInputs() {
+    const fill = (key, ids) => {
+      const v = load(key, null);
+      if (Array.isArray(v)) ids.forEach((id, i) => { if (v[i] !== undefined && v[i] !== "" && $(id)) $(id).value = v[i]; });
+    };
+    fill("energyx_cmp", ["cmpOld", "cmpNew", "cmpHours", "cmpPrice"]);
+    fill("energyx_invest", ["invLed", "invPlug", "invPLed", "invPInv", "invPFridge", "invPPlug"]);
+    const out = $("outDevices");
+    if (out) delete out.dataset.built;
+    if (window.EnergyLab) window.EnergyLab.compute();
+  }
+
   function cleanMeter(m) {
     if (!m || typeof m.name !== "string" || !(Number(m.kwh) >= 0)) return null;
     const kwh = Math.min(100000, Number(m.kwh));
@@ -717,7 +760,7 @@
   function importBackup(input) {
     const file = input.files && input.files[0];
     input.value = "";
-    if (!file || file.size > 2 * 1024 * 1024) { toast(T().backup_invalid, "bad"); return; }
+    if (!file || file.size > 4 * 1024 * 1024) { toast(T().backup_invalid, "bad"); return; }
     const reader = new FileReader();
     reader.onload = () => {
       try {
@@ -733,6 +776,9 @@
           store("energyx_pace", { month: String(obj.data.pace.month || ""), budget: Math.max(0, Number(obj.data.pace.budget) || 0),
             readings: obj.data.pace.readings.filter((r) => r && r.day >= 1 && r.day <= 31 && r.cum >= 0).map((r) => ({ day: +r.day, cum: +r.cum })) });
         }
+        const settings = obj.data.settings && typeof obj.data.settings === "object" ? obj.data.settings : {};
+        SETTING_KEYS.forEach((k) => { if (k in settings) { const v = SETTING_CLEAN[k](settings[k]); if (v != null) store(k, v); } });
+        syncSettingInputs();
         renderMeters(); renderAppliances(); refresh();
         toast(T().backup_imported, "info");
       } catch { toast(T().backup_invalid, "bad"); }

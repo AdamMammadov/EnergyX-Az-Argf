@@ -117,8 +117,93 @@ function historyToContents(history) {
   return merged.map((m) => ({ role: m.role, parts: [{ text: m.text }] }));
 }
 
-const GEMINI_MODEL = process.env.GEMINI_MODEL || "gemini-2.5-flash";
-const AI_TIMEOUT_MS = 15000;
+// Default: Google-un "həmişə ən son Flash" ləqəbi. Konkret versiyalar (2.0-flash, 2.5-flash …)
+// vaxtaşırı bağlanır — 2.0-flash 1 iyun 2026-da bağlandı və köhnə backend-də AI məhz buna görə dayandı.
+const GEMINI_MODEL = String(process.env.GEMINI_MODEL || "gemini-flash-latest").trim();
+// Model bağlanıbsa (404 NOT_FOUND) bu ləqəblərə avtomatik keçilir
+const FALLBACK_MODELS = ["gemini-flash-latest", "gemini-flash-lite-latest"];
+let activeModel = GEMINI_MODEL; // son işləyən model yadda saxlanılır
+const AI_TIMEOUT_MS = 20000;    // frontend 25 s gözləyir — backend ondan əvvəl cavab verməlidir
+
+// Generasiya parametrləri modelə görə:
+// - 2.5 Flash: "düşünmə" tokenləri maxOutputTokens-dan xərclənir → düşünmə söndürülür (thinkingBudget: 0)
+// - 1.x / 2.0: köhnə modellər, düşünmə yoxdur
+// - 3.x və "*-latest" ləqəbləri: düşünmə həmişə aktivdir → limit genişləndirilir; Google bu modellərdə
+//   temperaturu default saxlamağı tövsiyə edir, ona görə göndərilmir
+function generationConfig(model, maxOutputTokens) {
+  if (/2\.5-flash/i.test(model)) return { maxOutputTokens, temperature: 0.6, thinkingConfig: { thinkingBudget: 0 } };
+  if (/^gemini-(1\.|2\.0)/i.test(model)) return { maxOutputTokens, temperature: 0.6 };
+  return { maxOutputTokens: Math.max(maxOutputTokens, 4096) };
+}
+
+// Gemini cavabından mətni çıxarır: bütün mətn hissələri birləşdirilir, "thought" hissələri atılır
+function extractAnswer(data) {
+  const cand = data && Array.isArray(data.candidates) ? data.candidates[0] : null;
+  const parts = cand && cand.content && Array.isArray(cand.content.parts) ? cand.content.parts : [];
+  const text = parts.filter((p) => p && typeof p.text === "string" && !p.thought).map((p) => p.text).join("").trim();
+  const reason = text ? null
+    : (data && data.promptFeedback && data.promptFeedback.blockReason) || (cand && cand.finishReason) || "EMPTY_RESPONSE";
+  return { text, reason };
+}
+
+// Vahid Gemini çağırışı: { ok, text, model } və ya { ok:false, status, reason } qaytarır (açar heç vaxt qaytarılmır).
+// Model bağlanıbsa (404) növbəti ehtiyat modelə keçir və işləyəni yadda saxlayır.
+async function callGemini(opts) {
+  const order = [...new Set([activeModel, GEMINI_MODEL, ...FALLBACK_MODELS])];
+  let result;
+  for (const model of order) {
+    result = await callGeminiModel(model, opts);
+    if (result.ok && model !== activeModel) {
+      console.warn(`Gemini modeli dəyişdi: ${activeModel} → ${model} (GEMINI_MODEL-i yeniləyin)`);
+      activeModel = model;
+    }
+    if (result.status !== 404) return result;
+  }
+  return result;
+}
+
+async function callGeminiModel(model, { system, contents, maxOutputTokens = 1024, timeoutMs = AI_TIMEOUT_MS }) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    const response = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`,
+      {
+        method: "POST",
+        // Açar URL-də yox, başlıqda göndərilir — loglara düşmür
+        headers: { "Content-Type": "application/json", "x-goog-api-key": process.env.GEMINI_API_KEY },
+        body: JSON.stringify({
+          ...(system ? { systemInstruction: { parts: [{ text: system }] } } : {}),
+          contents,
+          generationConfig: generationConfig(model, maxOutputTokens),
+        }),
+        signal: controller.signal,
+      }
+    );
+    let data = null;
+    try { data = await response.json(); } catch { data = null; }
+    if (!response.ok) {
+      const err = (data && data.error) || {};
+      const reason = String(err.status || `HTTP_${response.status}`).slice(0, 40);
+      // Açar və layihə nömrəsi kimi uzun rəqəmlər gizlədilir (mesaj /ai-check-də görünür)
+      const message = String(err.message || "").replace(/key=[^&\s]+/gi, "key=***").replace(/\d{6,}/g, "***").slice(0, 200);
+      console.error("Gemini xətası:", model, response.status, reason, message);
+      return { ok: false, status: response.status, reason, message };
+    }
+    const { text, reason } = extractAnswer(data);
+    if (!text) {
+      console.error("Gemini boş cavab:", reason);
+      return { ok: false, status: 200, reason };
+    }
+    return { ok: true, text, model };
+  } catch (err) {
+    const timedOut = err && err.name === "AbortError";
+    console.error("AI xətası:", timedOut ? "timeout" : err && err.message);
+    return { ok: false, status: timedOut ? 504 : 500, reason: timedOut ? "TIMEOUT" : "NETWORK_ERROR" };
+  } finally {
+    clearTimeout(timer);
+  }
+}
 
 app.post("/advise", aiLimiter, async (req, res) => {
   const body = req.body || {};
@@ -144,38 +229,31 @@ ${ctxText ? `İstifadəçinin analitika məlumatı (onun öz cihazında hesablan
 Qısa (3-5 cümlə), praktik, konkret enerji qənaəti məsləhətləri ver. Uydurma rəqəm vermə. Yalnız enerji mövzusunda cavab ver.
 Cavabı ${LANG_NAMES[lang]} dilində yaz.`;
 
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), AI_TIMEOUT_MS);
-  try {
-    const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(GEMINI_MODEL)}:generateContent`,
-      {
-        method: "POST",
-        // Açar URL-də yox, başlıqda göndərilir — loglara düşmür
-        headers: { "Content-Type": "application/json", "x-goog-api-key": process.env.GEMINI_API_KEY },
-        body: JSON.stringify({
-          systemInstruction: { parts: [{ text: systemContext }] },
-          contents: [...historyToContents(body.history), { role: "user", parts: [{ text: question }] }],
-          generationConfig: { maxOutputTokens: 600, temperature: 0.6 },
-        }),
-        signal: controller.signal,
-      }
-    );
-    if (!response.ok) {
-      console.error("Gemini HTTP xətası:", response.status);
-      return res.status(502).json({ error: "AI xidmətində xəta baş verdi." });
-    }
-    const data = await response.json();
-    const answer = data?.candidates?.[0]?.content?.parts?.[0]?.text || "Üzr istəyirəm, cavab hazırlaya bilmədim, bir daha cəhd edin.";
-    bumpStats((s) => { s.totalAiQuestions += 1; });
-    res.json({ answer });
-  } catch (err) {
-    const timedOut = err && err.name === "AbortError";
-    console.error("AI xətası:", timedOut ? "timeout" : err && err.message);
-    res.status(timedOut ? 504 : 500).json({ error: "AI xidmətində xəta baş verdi." });
-  } finally {
-    clearTimeout(timeout);
+  const result = await callGemini({
+    system: systemContext,
+    contents: [...historyToContents(body.history), { role: "user", parts: [{ text: question }] }],
+  });
+  if (!result.ok) {
+    // Boş/bloklanmış cavab da xəta sayılır — frontend bu halda oflayn köməkçiyə keçir
+    const status = result.status === 504 ? 504 : 502;
+    return res.status(status).json({ error: "AI xidmətində xəta baş verdi.", reason: result.reason });
   }
+  bumpStats((s) => { s.totalAiQuestions += 1; });
+  res.json({ answer: result.text });
+});
+
+// ==========================================
+// 🩺 GET /ai-check — AI-ın real vəziyyətini yoxlayır (deploy-dan sonra diaqnostika üçün)
+// Kiçik test sorğusu göndərir; açar və ya istifadəçi məlumatı qaytarılmır.
+// ==========================================
+const aiCheckLimiter = rateLimit({ windowMs: 60 * 1000, max: 3, standardHeaders: true, legacyHeaders: false,
+  message: { error: "Çox tez-tez yoxlama." } });
+app.get("/ai-check", aiCheckLimiter, async (req, res) => {
+  if (!process.env.GEMINI_API_KEY) return res.status(503).json({ ok: false, model: activeModel, reason: "GEMINI_API_KEY_MISSING" });
+  const t0 = Date.now();
+  const r = await callGemini({ contents: [{ role: "user", parts: [{ text: "Reply with the single word: OK" }] }], maxOutputTokens: 16, timeoutMs: 15000 });
+  res.status(r.ok ? 200 : 502).json({ ok: r.ok, model: activeModel, latencyMs: Date.now() - t0,
+    ...(r.ok ? {} : { reason: r.reason, message: r.message || undefined }) });
 });
 
 // ==========================================
@@ -245,7 +323,8 @@ app.get("/stats", (req, res) => {
 });
 
 app.get("/health", (req, res) => {
-  res.json({ status: "ok", ai: Boolean(process.env.GEMINI_API_KEY), uptimeSec: Math.round(process.uptime()) });
+  res.json({ status: "ok", version: require("./package.json").version, ai: Boolean(process.env.GEMINI_API_KEY), model: activeModel,
+    uptimeSec: Math.round(process.uptime()) });
 });
 
 app.get("/", (req, res) => {
@@ -266,4 +345,4 @@ if (require.main === module) {
   app.listen(PORT, () => console.log(`🚀 Server işə düşdü → port ${PORT}`));
 }
 
-module.exports = { app, contextToText, historyToContents };
+module.exports = { app, contextToText, historyToContents, extractAnswer, generationConfig };

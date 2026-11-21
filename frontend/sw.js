@@ -7,7 +7,7 @@
 //  - Fayl URL-ləri versiyalıdır (?v=...), yeni HTML həmişə yeni faylları istəyir.
 //  - CDN kitabxanaları (Chart.js, jsPDF) versiyalı URL-lərdir və dəyişmir: əvvəlcə keş.
 //  - API sorğuları (backend) keşlənmir.
-const VERSION = "2.4.0";
+const VERSION = "2.4.1";
 const CACHE = "energyx-" + VERSION;
 const CORE = ["./", "index.html", "SpaceGrotesk-Bold.ttf", "icon.svg", "manifest.webmanifest",
   "img/azgf-h-color.webp", "img/azgf-h-white.webp", "img/azgf-v-color.webp", "img/azgf-v-white.webp",

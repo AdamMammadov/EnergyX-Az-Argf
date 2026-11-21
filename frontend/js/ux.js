@@ -12,7 +12,7 @@
 
   const UT = {
     az: {
-      nav_more: "Daha çox", theme_light: "Açıq tema", theme_dark: "Tünd tema",
+      nav_more: "Daha çox", to_top: "Yuxarı qayıt", theme_light: "Açıq tema", theme_dark: "Tünd tema",
       ov_health: "Sağlamlıq balı", ov_year: "12 ay proqnozu", ov_budget: "Büdcə", ov_gas: "Qaz (tipik il)",
       ov_budget_none: "təyin edilməyib", ov_budget_ok: "daxilindəsiniz", ov_budget_over: "aşılacaq",
       ov_no_data: "məlumat az", ov_go: "→",
@@ -34,7 +34,7 @@
       cmp_based: "Hesablama Kalkulyatordakı {kwh} kVt istifadəyə əsaslanır (pilləli tarif).",
     },
     en: {
-      nav_more: "More", theme_light: "Light theme", theme_dark: "Dark theme",
+      nav_more: "More", to_top: "Back to top", theme_light: "Light theme", theme_dark: "Dark theme",
       ov_health: "Health score", ov_year: "12-month forecast", ov_budget: "Budget", ov_gas: "Gas (typical year)",
       ov_budget_none: "not set", ov_budget_ok: "on track", ov_budget_over: "will be exceeded",
       ov_no_data: "little data", ov_go: "→",
@@ -56,7 +56,7 @@
       cmp_based: "Based on the {kwh} kWh in the Calculator (tiered tariff).",
     },
     ru: {
-      nav_more: "Ещё", theme_light: "Светлая тема", theme_dark: "Тёмная тема",
+      nav_more: "Ещё", to_top: "Наверх", theme_light: "Светлая тема", theme_dark: "Тёмная тема",
       ov_health: "Индекс здоровья", ov_year: "Прогноз на 12 мес", ov_budget: "Бюджет", ov_gas: "Газ (типичный год)",
       ov_budget_none: "не задан", ov_budget_ok: "в рамках", ov_budget_over: "будет превышен",
       ov_no_data: "мало данных", ov_go: "→",
@@ -189,6 +189,22 @@
   }
 
   // ===== YENİLƏMƏ (EnergyPro.refresh → EnergyExtras.refresh → burası) =====
+  // ===== SCROLL: irəliləmə xətti + yuxarı qayıt (scroll zolağı gizlədildiyi üçün) =====
+  let scrollRaf = 0;
+  function onScroll() {
+    if (scrollRaf) return;
+    scrollRaf = requestAnimationFrame(() => {
+      scrollRaf = 0;
+      const el = document.documentElement;
+      const max = el.scrollHeight - innerHeight;
+      $("scrollProgress").style.transform = `scaleX(${max > 0 ? Math.min(1, scrollY / max) : 0})`;
+      $("toTop").classList.toggle("show", scrollY > 600);
+    });
+  }
+  addEventListener("scroll", onScroll, { passive: true });
+  addEventListener("resize", onScroll, { passive: true });
+  $("toTop").addEventListener("click", () => { scrollTo({ top: 0, behavior: "smooth" }); });
+
   function refreshUx(state) {
     // Cihaz yoxdursa boş qrafik kartı göstərilmir
     const chartCard = $("appChart").closest(".app-chart-card");
@@ -196,6 +212,8 @@
     renderOverview(state);
     renderBill();
     renderCompare();
+    const tt = $("toTop"); tt.title = T().to_top; tt.setAttribute("aria-label", T().to_top);
+    onScroll();
     renderThemeBtn();
   }
   const origExtras = window.EnergyExtras.refresh;

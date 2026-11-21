@@ -18,7 +18,7 @@
 <meta property="og:locale" content="az_AZ">
 <meta name="twitter:card" content="summary_large_image">
 <!-- Tətbiq versiyası: dəyişəndə həm buradakı ?v=, həm də sw.js-dəki VERSION artırılmalıdır -->
-<meta name="app-version" content="2.4.0">
+<meta name="app-version" content="2.4.1">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon.svg">
 <script>
@@ -45,7 +45,8 @@
   --mid: #E8A33D;
   --high: #E8544D;
   --text-hi: #EDF2F0;
-  --text-lo: #7C9088;
+  --text-lo: #8A9E96;
+  --high-text: #FF8A84;
   --border: rgba(255,255,255,0.08);
   --track: rgba(255,255,255,0.06);
   --line2: #9fb3c8;
@@ -58,7 +59,7 @@
 /* ===== AÇIQ TEMA (sistem seçiminə görə və ya əl ilə) ===== */
 :root[data-theme="light"] {
   --bg: #F3F6F5; --bg2: #E9EFED; --surface: #FFFFFF;
-  --low: #00936F; --mid: #B86E0B; --high: #CC3A33;
+  --low: #006E54; --mid: #8F5400; --high: #B42F29; --high-text: #B42F29;
   --text-hi: #0E1A24; --text-lo: #56675F;
   --border: rgba(10,20,32,0.11); --track: rgba(10,20,32,0.07);
   --line2: #6b7f92; --info-text: #1f5fae; --bad-text: #a52a24;
@@ -226,7 +227,7 @@ input[type=range]::-moz-range-thumb {
 .result-tier-pill { font-size:13px; font-weight:600; padding:6px 14px; border-radius:20px; }
 .result-tier-pill.low { background:rgba(0,217,163,0.15); color:var(--low); }
 .result-tier-pill.mid { background:rgba(232,163,61,0.15); color:var(--mid); }
-.result-tier-pill.high { background:rgba(232,84,77,0.15); color:var(--high); }
+.result-tier-pill.high { background:rgba(232,84,77,0.15); color:var(--high-text); }
 .result-cost { font-size:28px; font-weight:700; font-variant-numeric:tabular-nums; }
 .result-cost span { font-size:14px; color:var(--text-lo); font-weight:400; }
 
@@ -294,6 +295,9 @@ input[type=range]::-moz-range-thumb {
 .msg { font-size:14.5px; padding:10px 14px; border-radius:10px; max-width:85%; line-height:1.5; }
 .msg.user { background:rgba(0,217,163,0.12); align-self:flex-end; }
 .msg.bot { background:var(--track); align-self:flex-start; }
+.msg.typing { animation:chatPulse 1.1s ease-in-out infinite; letter-spacing:2px; }
+@keyframes chatPulse { 50% { opacity:.5; } }
+@media (prefers-reduced-motion: reduce) { .msg.typing { animation:none; } }
 .msg-feedback { display:flex; gap:8px; align-self:flex-start; margin-top:-6px; }
 .msg-feedback button { background:none; border:1px solid var(--border); border-radius:8px; padding:3px 9px;
   font-size:12px; cursor:pointer; color:var(--text-lo); }
@@ -313,8 +317,8 @@ footer { padding:36px 0 48px; border-top:1px solid var(--border); text-align:cen
 footer a { color:var(--text-lo); text-decoration:underline; }
 footer .credit { margin-top:8px; font-size:12px; }
 </style>
-<link rel="stylesheet" href="css/pro.css?v=2.4.0">
-<link rel="stylesheet" href="css/layout.css?v=2.4.0">
+<link rel="stylesheet" href="css/pro.css?v=2.4.1">
+<link rel="stylesheet" href="css/layout.css?v=2.4.1">
 </head>
 <body>
 
@@ -359,6 +363,8 @@ footer .credit { margin-top:8px; font-size:12px; }
   </div>
 </aside>
 
+<div class="scroll-progress" id="scrollProgress" aria-hidden="true"></div>
+<button class="to-top" id="toTop" type="button" aria-label="Yuxarı qayıt" title="Yuxarı qayıt">↑</button>
 <div class="nav-backdrop" onclick="toggleNav(false)"></div>
 
 <div class="shell">
@@ -418,7 +424,7 @@ footer .credit { margin-top:8px; font-size:12px; }
         <div class="forecast-head">
           <span data-i18n="forecast_title">Ay Sonu Proqnozu</span>
           <div class="forecast-days-row">
-            <label data-i18n="forecast_days_label">Neçə gün keçib:</label>
+            <label for="forecastDays" data-i18n="forecast_days_label">Neçə gün keçib:</label>
             <input type="number" id="forecastDays" min="1" max="30" value="15">
           </div>
         </div>
@@ -658,7 +664,7 @@ footer .credit { margin-top:8px; font-size:12px; }
 
   <section class="pro-card">
     <div class="pro-card-head"><h2 data-i18n="heat_title">İstifadə İstilik Xəritəsi</h2><span class="pro-tag" data-i18n="heat_tag">ay × il</span></div>
-    <div class="heatmap-scroll"><div class="heatmap" id="heatmap"></div></div>
+    <div class="heatmap-scroll" tabindex="0" role="region" aria-label="İstifadə istilik xəritəsi"><div class="heatmap" id="heatmap"></div></div>
     <div class="heat-legend"><span class="hl low"></span>≤200 <span class="hl mid"></span>200–300 <span class="hl high"></span>300+ <span class="hl none"></span><span data-i18n="heat_none">məlumat yoxdur</span></div>
   </section>
 
@@ -765,7 +771,7 @@ footer .credit { margin-top:8px; font-size:12px; }
   <section class="pro-card">
     <div class="pro-card-head"><h2 data-i18n="lab_heat_title">Həftə × saat xəritəsi</h2></div>
     <p class="pro-lead" data-i18n="lab_heat_lead">Rəng nə qədər tünddürsə, həmin gün və saatda istifadə bir o qədər çoxdur.</p>
-    <div class="heatmap-scroll"><div class="wk-heat" id="labHeat"></div></div>
+    <div class="heatmap-scroll" tabindex="0" role="region" aria-label="Həftə × saat xəritəsi"><div class="wk-heat" id="labHeat"></div></div>
   </section>
 
   <section class="pro-card wide">
@@ -937,7 +943,7 @@ tarix;saat;kVt·saat
     <section class="pro-card" id="validationCard">
       <div class="pro-card-head"><h2 data-i18n="val_title">Metodun Doğrulanması</h2><span class="pro-tag" data-i18n="val_tag">şəffaflıq</span></div>
       <p class="pro-lead" id="valLead"></p>
-      <div class="table-scroll"><table class="inv-table" id="valTable"></table></div>
+      <div class="table-scroll" tabindex="0" role="region" aria-label="Doğrulama cədvəli"><table class="inv-table" id="valTable"></table></div>
       <p class="pro-note" data-i18n="val_note">Açıq, sayğac-səviyyəli real Azərbaycan istehlak datası mövcud deyil, ona görə bu sınaq REAL data deyil — Bakının iqlim ritmi ilə kalibrlənmiş sintetik ssenaridir. Testi brauzeriniz indi, canlı olaraq aparır.</p>
     </section>
     <div class="about-block">
@@ -965,7 +971,7 @@ tarix;saat;kVt·saat
   <button class="bn-btn" type="button" id="bnMore" onclick="toggleNav(true)"><span class="bn-ico">☰</span><span data-i18n="nav_more">Daha çox</span></button>
 </nav>
 
-<script src="js/engine.js?v=2.4.0"></script>
+<script src="js/engine.js?v=2.4.1"></script>
 <script>
 const API_BASE = "https://energyx-az-kalkulyator.onrender.com";
 
@@ -996,7 +1002,7 @@ const translations = {
     footer_p1:"Bu alət Azərbaycan Respublikasının Gənclər Fondu qrant dəstəyi ilə hazırlanıb. Kodun tamamı açıq mənbədir.",
     footer_github:"GitHub-da baxın →",
     tier_low:"Aşağı pillə", tier_mid:"Orta pillə", tier_high:"Yüksək pillə",
-    chat_error:"Xəta baş verdi.", chat_offline:"Serverə qoşula bilmədim. Backend işə salınıbmı?",
+    chat_error:"Xəta baş verdi.", chat_busy:"Çox tez-tez sual göndərilir — bir dəqiqə gözləyin.", chat_offline:"Serverə qoşula bilmədim. Backend işə salınıbmı?",
     tab_calc:"Kalkulyator", tab_app:"Cihazlar", tab_stats:"Statistika", tab_learn:"Öyrən", tab_about:"Haqqında",
     app_title:"Ev Cihazlarınızı Analiz Edin", app_lead:"Cihazlarınızı əlavə edin, hansının ən çox enerji yediyini görün.",
     app_name_ph:"Cihazın adı (məs. Soyuducu)", app_add_btn:"Əlavə et", app_empty:"Hələ cihaz əlavə etməmisiniz.",
@@ -1055,7 +1061,7 @@ const translations = {
     footer_p1:"Built with support from the Youth Foundation of the Republic of Azerbaijan. Fully open source.",
     footer_github:"View on GitHub →",
     tier_low:"Low tier", tier_mid:"Mid tier", tier_high:"High tier",
-    chat_error:"Something went wrong.", chat_offline:"Couldn't reach the server. Is the backend running?",
+    chat_error:"Something went wrong.", chat_busy:"Too many questions at once — please wait a minute.", chat_offline:"Couldn't reach the server. Is the backend running?",
     tab_calc:"Calculator", tab_app:"Appliances", tab_stats:"Statistics", tab_learn:"Learn", tab_about:"About",
     app_title:"Analyze Your Appliances", app_lead:"Add your appliances to see which uses the most energy.",
     app_name_ph:"Appliance name (e.g. Fridge)", app_add_btn:"Add", app_empty:"You haven't added any appliances yet.",
@@ -1114,7 +1120,7 @@ const translations = {
     footer_p1:"Создано при поддержке Фонда молодёжи Азербайджанской Республики. Полностью открытый код.",
     footer_github:"Смотреть на GitHub →",
     tier_low:"Низкий тариф", tier_mid:"Средний тариф", tier_high:"Высокий тариф",
-    chat_error:"Произошла ошибка.", chat_offline:"Не удалось подключиться к серверу.",
+    chat_error:"Произошла ошибка.", chat_busy:"Слишком много вопросов — подождите минуту.", chat_offline:"Не удалось подключиться к серверу.",
     tab_calc:"Калькулятор", tab_app:"Приборы", tab_stats:"Статистика", tab_learn:"Советы", tab_about:"О проекте",
     app_title:"Анализ ваших приборов", app_lead:"Добавьте приборы, чтобы увидеть, что потребляет больше всего энергии.",
     app_name_ph:"Название прибора (напр. Холодильник)", app_add_btn:"Добавить", app_empty:"Вы ещё не добавили приборы.",
@@ -1313,34 +1319,44 @@ function addMsg(text, cls) {
   div.textContent = text;
   chatLog.appendChild(div);
   chatLog.scrollTop = chatLog.scrollHeight;
+  return div;
 }
 
 // Çoxaddımlı dialoq: AI əvvəlki sual-cavabları xatırlayır (yalnız real AI cavabları saxlanılır)
 const chatHistory = [];
+let chatBusy = false;
 async function sendMessage() {
   const question = chatInput.value.trim().slice(0, 500);
-  if (!question) return;
+  // Cavab gözlənərkən ikinci sorğu (Enter / hazır sual) göndərilmir — yoxsa cavablar qarışır
+  if (!question || chatBusy) return;
+  chatBusy = true;
   addMsg(question, "user");
   chatInput.value = "";
   chatSend.disabled = true;
-  addMsg("...", "bot");
+  const botMsgEl = addMsg("...", "bot");
+  botMsgEl.classList.add("typing");
 
+  // Render-in pulsuz serveri yuxudan oyananda ~50 san gecikə bilər — 25 san sonra oflayn köməkçi cavab verir
+  const ctrl = new AbortController();
+  const timer = setTimeout(() => ctrl.abort(), 25000);
   try {
     const res = await fetch(`${API_BASE}/advise`, {
       method: "POST",
+      signal: ctrl.signal,
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ kwh: slider.value, question, lang: currentLang, history: chatHistory.slice(-6),
         context: window.EnergyPro ? EnergyPro.aiContext() : undefined }),
     });
     const data = await res.json();
-    const botMsgEl = chatLog.lastChild;
+    // Köhnə backend (v1) Gemini xətasında 200 ilə bu mətni qaytarırdı — onu xəta kimi qəbul edirik
+    if (data.answer && /^Üzr istəyirəm, cavab hazırlaya bilmədim/.test(data.answer)) data.answer = null;
     if (data.answer) {
       botMsgEl.textContent = data.answer;
       chatHistory.push({ role: "user", text: question }, { role: "assistant", text: String(data.answer).slice(0, 1200) });
       if (chatHistory.length > 12) chatHistory.splice(0, chatHistory.length - 12);
       addFeedbackRow();
     } else if (res.status === 429) {
-      botMsgEl.textContent = data.error || translations[currentLang].chat_error;
+      botMsgEl.textContent = translations[currentLang].chat_busy;
     } else if (window.EnergyPro) {
       // AI xidməti əlçatmazdırsa — lokal, qayda-əsaslı köməkçi cavab verir
       botMsgEl.textContent = EnergyPro.localAnswer(question);
@@ -1348,9 +1364,13 @@ async function sendMessage() {
       botMsgEl.textContent = data.error || translations[currentLang].chat_error;
     }
   } catch (e) {
-    chatLog.lastChild.textContent = window.EnergyPro ? EnergyPro.localAnswer(question) : translations[currentLang].chat_offline;
+    botMsgEl.textContent = window.EnergyPro ? EnergyPro.localAnswer(question) : translations[currentLang].chat_offline;
   }
+  botMsgEl.classList.remove("typing");
+  chatLog.scrollTop = chatLog.scrollHeight;
+  clearTimeout(timer);
   chatSend.disabled = false;
+  chatBusy = false;
 }
 
 function addFeedbackRow() {
@@ -1659,10 +1679,10 @@ updateCalc();
 updateSim();
 
 </script>
-<script src="js/pro.js?v=2.4.0"></script>
-<script src="js/extras.js?v=2.4.0"></script>
-<script src="js/ux.js?v=2.4.0"></script>
-<script src="js/lab.js?v=2.4.0"></script>
+<script src="js/pro.js?v=2.4.1"></script>
+<script src="js/extras.js?v=2.4.1"></script>
+<script src="js/ux.js?v=2.4.1"></script>
+<script src="js/lab.js?v=2.4.1"></script>
 
 </body>
 </html>
