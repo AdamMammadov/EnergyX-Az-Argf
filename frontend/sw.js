@@ -5,7 +5,7 @@
 //  - Əvvəlcə şəbəkə, keş yalnız oflayn ehtiyat kimi istifadə olunur.
 //  - JS/CSS ünvanları versiyalıdır (?v=...), yeni HTML həmişə yeni faylları istəyir.
 //  - API sorğuları (backend) keşlənmir.
-const VERSION = "2.5.1";
+const VERSION = "2.5.2";
 const CACHE = "energyx-" + VERSION;
 const CORE = ["./", "index.html", "SpaceGrotesk-Bold.ttf", "icon.svg", "manifest.webmanifest",
   "img/azgf-h-color.webp", "img/azgf-h-white.webp", "img/azgf-v-color.webp", "img/azgf-v-white.webp",
