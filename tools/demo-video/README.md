@@ -16,6 +16,9 @@ cd frontend && python3 -m http.server 8765 --bind 127.0.0.1 &
 # 2) İzah klipləri (Meta MMS-TTS, Azərbaycan dili, latın əlifbası)
 python3 tools/demo-video/tts_make.py tools/demo-video/script_az.json out/clips 0.94
 
+#    və ya daha təbii səs: Gemini TTS (x-goog-api-key mühitin şəbəkə sirrində və ya GEMINI_API_KEY dəyişənində)
+python3 tools/demo-video/tts_gemini.py tools/demo-video/script_az.json out/clips Sulafat
+
 # 3) (istəyə bağlı) Anlaşıqlıq yoxlaması: kliplər Whisper ilə yenidən mətnə çevrilir
 python3 tools/demo-video/asr_check.py out/clips/clips.json tools/demo-video/script_az.json
 
