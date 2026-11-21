@@ -287,3 +287,27 @@ main.wrap { padding-bottom:40px; }
   .hero-support .azgf-logo { width:200px; }
   .hero-support .support-label { text-align:center; max-width:none; }
 }
+
+/* ===== v2.4.1: Scroll zolaqları ===== */
+/* Səhifə, yan panel, mobil menyu və söhbət pəncərəsində zolaq gizlədilir — sürüşdürmə
+   (siçan təkəri, toxunma, klaviatura) işləməyə davam edir. Mövqeyi yuxarıdakı nazik
+   irəliləmə xətti göstərir. */
+html, body, .sidebar, .tab-nav, .chat-log { scrollbar-width:none; -ms-overflow-style:none; }
+html::-webkit-scrollbar, body::-webkit-scrollbar, .sidebar::-webkit-scrollbar,
+.tab-nav::-webkit-scrollbar, .chat-log::-webkit-scrollbar { display:none; width:0; height:0; }
+/* Geniş cədvəl və xəritələrdə üfüqi sürüşdürmə qalır, amma incə və sakit */
+.table-scroll, .heatmap-scroll, .csv-example { scrollbar-width:thin; scrollbar-color:var(--border) transparent; }
+.table-scroll::-webkit-scrollbar, .heatmap-scroll::-webkit-scrollbar, .csv-example::-webkit-scrollbar { height:6px; }
+.table-scroll::-webkit-scrollbar-thumb, .heatmap-scroll::-webkit-scrollbar-thumb, .csv-example::-webkit-scrollbar-thumb { background:var(--border); border-radius:6px; }
+.table-scroll::-webkit-scrollbar-track, .heatmap-scroll::-webkit-scrollbar-track, .csv-example::-webkit-scrollbar-track { background:transparent; }
+
+/* Səhifə irəliləmə xətti + yuxarı qayıt düyməsi */
+.scroll-progress { position:fixed; top:0; left:0; height:3px; width:100%; transform-origin:0 50%; transform:scaleX(0);
+  background:linear-gradient(90deg,var(--low),var(--mid)); z-index:120; pointer-events:none; }
+.to-top { position:fixed; right:20px; bottom:24px; z-index:65; width:44px; height:44px; border-radius:50%; border:1px solid var(--border);
+  background:var(--surface); color:var(--text-hi); font-size:20px; cursor:pointer; box-shadow:var(--shadow);
+  opacity:0; transform:translateY(12px); pointer-events:none; transition:opacity .2s, transform .2s, border-color .15s; }
+.to-top.show { opacity:1; transform:none; pointer-events:auto; }
+.to-top:hover, .to-top:focus-visible { border-color:var(--low); }
+@media (max-width:719px) { .to-top { right:14px; bottom:calc(84px + env(safe-area-inset-bottom)); width:40px; height:40px; } }
+@media print { .scroll-progress, .to-top { display:none !important; } }

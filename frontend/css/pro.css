@@ -51,7 +51,7 @@
 .tl-item.anomaly .tl-dot { background:var(--high); box-shadow:0 0 0 4px rgba(232,84,77,0.15); }
 .tl-head { display:flex; align-items:center; gap:8px; flex-wrap:wrap; font-size:14px; }
 .tl-badge { font-size:11px; font-weight:700; padding:2px 9px; border-radius:20px; }
-.tl-badge.anomaly { background:rgba(232,84,77,0.15); color:var(--high); }
+.tl-badge.anomaly { background:rgba(232,84,77,0.15); color:var(--high-text); }
 .tl-badge.watch { background:rgba(232,163,61,0.15); color:var(--mid); }
 .tl-badge.ok { background:rgba(0,217,163,0.15); color:var(--low); }
 .tl-z { font-size:11px; color:var(--text-lo); font-variant-numeric:tabular-nums; }
@@ -169,7 +169,7 @@
 .diag-item.sev-critical, .diag-item.sev-high { border-left-color:var(--high); }
 .diag-item.sev-low { border-left-color:var(--low); }
 .sev-badge { font-size:11px; font-weight:700; padding:2px 9px; border-radius:20px; background:rgba(232,163,61,0.15); color:var(--mid); }
-.sev-badge.sev-critical, .sev-badge.sev-high { background:rgba(232,84,77,0.15); color:var(--high); }
+.sev-badge.sev-critical, .sev-badge.sev-high { background:rgba(232,84,77,0.15); color:var(--high-text); }
 .sev-badge.sev-low { background:rgba(0,217,163,0.15); color:var(--low); }
 .diag-action { font-size:13px; margin-top:8px; line-height:1.5; }
 .diag-months { font-size:11.5px; color:var(--text-lo); margin-top:6px; }
@@ -194,8 +194,11 @@
 .ch-title { font-weight:700; margin-bottom:4px; }
 .badges { display:grid; grid-template-columns:repeat(auto-fill,minmax(118px,1fr)); gap:10px; }
 .badge { min-width:0; overflow-wrap:anywhere; hyphens:auto; }
-.badge { background:var(--bg2); border:1px solid var(--border); border-radius:14px; padding:12px; text-align:center; opacity:.5; filter:grayscale(1); transition:all .3s; }
-.badge.earned { opacity:1; filter:none; border-color:rgba(0,217,163,0.5); }
+.badge { background:var(--bg2); border:1px solid var(--border); border-radius:14px; padding:12px; text-align:center; transition:all .3s; }
+.badge.earned { border-color:rgba(0,217,163,0.5); }
+/* Qazanılmamış nişan: yalnız ikon solğundur — mətn oxunaqlı qalır (WCAG kontrast) */
+.badge:not(.earned) .badge-icon { opacity:.45; filter:grayscale(1); }
+.badge:not(.earned) .badge-name { color:var(--text-lo); }
 .badge-icon { font-size:26px; }
 .badge-name { font-weight:700; font-size:13px; margin-top:4px; }
 .badge-desc { font-size:11px; color:var(--text-lo); margin:3px 0 8px; line-height:1.35; min-height:30px; }
@@ -209,7 +212,7 @@
 .twin-icon { font-size:20px; margin-bottom:auto; }
 .twin-name { font-weight:700; font-size:13px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .twin-val { font-size:11.5px; color:var(--text-hi); font-variant-numeric:tabular-nums; }
-.twin-share { font-size:10.5px; color:var(--text-lo); }
+.twin-share { font-size:10.5px; color:var(--text-hi); opacity:.85; }
 
 /* Qaz */
 .gas-inputs { display:grid; grid-template-columns:2fr 1fr 1fr; gap:12px; align-items:end; }
@@ -307,3 +310,6 @@
   .tv-legend { grid-template-columns:minmax(0,1fr); gap:6px; }
   .tv-range { font-size:10px; right:5px; }
 }
+
+/* Açıq temada rəngli istilik xanalarında ağ mətn (tünd mətn kontrastı çatmır) */
+:root[data-theme="light"] .hm-cell.low, :root[data-theme="light"] .hm-cell.mid, :root[data-theme="light"] .hm-cell.high { color:#fff; }

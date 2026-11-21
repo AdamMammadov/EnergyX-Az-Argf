@@ -98,13 +98,28 @@ Təqdimat rejimi 9 addıma genişləndi (vizual izah və ağıllı sayğac labor
 
 > Qeyd: domen qoşulandan sonra `index.html`-də `og:image` üçün tam ünvan yazılması tövsiyə olunur (məs. `https://energyx.az/og-image.jpg`) — Facebook nisbi ünvanı qəbul etmir.
 
+## 🧹 v2.4.1 — Təmiz görünüş, audit və AI düzəlişləri
+
+| # | Dəyişiklik | Harada |
+|---|-----------|--------|
+| 43 | **Scroll zolaqları gizlədildi** — yan panel, səhifə, mobil menyu və söhbət pəncərəsi əvvəlki kimi sürüşür, amma zolaq yer tutmur; cədvəllərdə nazik zolaq saxlanılıb | Hər yerdə |
+| 44 | **Oxuma irəliləmə xətti** (ekranın yuxarısında) və **"Yuxarı qayıt" düyməsi** — zolaq olmadığı üçün səhifədə harada olduğunuz görünür | Hər yerdə |
+| 45 | **AI modeli yeniləndi** — köhnə `gemini-2.0-flash` 1 iyun 2026-da Google tərəfindən bağlanıb (canlı saytda AI-ın işləməməsinin səbəbi). Default indi `gemini-flash-latest` ləqəbidir; konfiqurasiya edilmiş model bağlansa (404), server avtomatik ehtiyat modelə keçir və onu yadda saxlayır | Backend |
+| 46 | **AI cavab keyfiyyəti** — 2.5 Flash-da "düşünmə" söndürülür, yeni modellərdə düşünmə üçün token yeri saxlanılır (cavablar yarımçıq kəsilmir), boş/bloklanmış cavab artıq "uğurlu" sayılmır, xəta səbəbi (`MAX_TOKENS`, `SAFETY`, `NOT_FOUND` …) loqa yazılır | Backend |
+| 47 | **`GET /ai-check`** — AI açarının və modelin işlədiyini bir kliklə yoxlamaq; `/health` indi versiya, model və iş müddətini göstərir | Backend |
+| 48 | **AI söhbəti** — 25 s sonra oflayn köməkçiyə keçid (Render yuxudan oyananda), köhnə backend-in "Üzr istəyirəm…" cavabı xəta kimi tanınır, cavab gözlənərkən ikinci sual göndərilmir (cavablar qarışmırdı), "çox sorğu" mesajı seçilmiş dildə | Kalkulyator |
+| 49 | **Yedək v2** — qaz, kəsinti planı, ağıllı sayğac CSV-si, cihaz müqayisəsi, sərmayə planı və həssaslıq ayarı da yedəyə düşür; idxalda hər dəyər yoxlanılır və formlar dərhal yenilənir | Analitika |
+| 50 | **Əlçatanlıq (WCAG AA)** — açıq temada rəng kontrastı düzəldildi, sürüşən cədvəllər klaviatura ilə əlçatan oldu, etiketsiz input qalmadı (axe-core: 0 ciddi pozuntu, hər iki tema) | Hər yerdə |
+
+**Audit:** 10 bölmə × 3 dil — tərcümə boşluğu yoxdur, sərhəd dəyərlərində (`-5`, `0`, `99999999`, boş) heç yerdə `NaN`/`undefined` çıxmır, bütün düymələr klikləndi, JS xətası yoxdur, 9 ekran enində üfüqi daşma yoxdur, oflayn (PWA) rejimdə səhifə açılır.
+
 ### 🛡️ Möhkəmlik və təhlükəsizlik
 - **XSS qoruması** — istifadəçinin yazdığı cihaz/sayğac adları HTML-ə təhlükəsiz yerləşdirilir
 - **Səhifə ~13 dəfə yüngülləşdi** (1.09 MB → ~85 KB): PDF şrifti ayrıca fayla çıxarıldı və yalnız PDF yaradılanda yüklənir
 - Backend: təhlükəsizlik başlıqları, `ALLOWED_ORIGINS` ilə CORS, 10 KB sorğu limiti, giriş doğrulaması, `/track` üçün rate-limit və hadisə növü siyahısı, statistikanın atomik yazılması, Gemini açarı URL-də yox başlıqda, 15 s timeout, `/health` endpoint, səliqəli 404/400 cavabları
 - AI-a göndərilən kontekst serverdə təmizlənir (prompt injection riskini azaltmaq üçün)
 - Tarif məntiqi vahid mənbədən gəlir və frontend ↔ backend uyğunluğu testlə yoxlanılır
-- **53 avtomatik test** (`cd backend && npm test`) + GitHub Actions CI
+- **60 avtomatik test** (`cd backend && npm test`; AI cavabları saxta Gemini ilə yoxlanılır) + GitHub Actions CI
 
 > Qeyd: "Nümunə məlumat" və təqdimat rejimindəki məlumat açıq şəkildə **nümunə** kimi etiketlənib — real istifadəçi məlumatı deyil.
 
@@ -144,8 +159,9 @@ npm test
 ### 1. Backend → Render.com (pulsuz tier)
 1. GitHub-a `backend/` qovluğunu yükləyin (yeni, ayrıca repo kimi)
 2. [render.com](https://render.com) → "New Web Service" → GitHub reponuzu seçin
-3. Environment Variables bölməsinə əlavə edin: `GEMINI_API_KEY` = (öz pulsuz Gemini API açarınız — [aistudio.google.com](https://aistudio.google.com/apikey)-dan pulsuz alın). İstəyə bağlı: `GEMINI_MODEL` (default `gemini-2.5-flash`), `ALLOWED_ORIGINS` (məs. `https://energyx.az`)
+3. Environment Variables bölməsinə əlavə edin: `GEMINI_API_KEY` = (öz pulsuz Gemini API açarınız — [aistudio.google.com](https://aistudio.google.com/apikey)-dan pulsuz alın). İstəyə bağlı: `GEMINI_MODEL` (default `gemini-flash-latest`; **köhnə `gemini-2.0-flash` 1 iyun 2026-da bağlanıb — Render-də bu dəyər yazılıbsa, silin**), `ALLOWED_ORIGINS` (məs. `https://energyx.az`)
 4. Deploy edin — sizə bir URL veriləcək (məs. `https://enerji-kalk-backend.onrender.com`)
+5. Yoxlayın: `…/health` → `"ai": true` və `"version"` repodakı ilə eyni olmalıdır; `…/ai-check` → `"ok": true` (AI həqiqətən cavab verir). `ok:false` olarsa `reason` sahəsi səbəbi göstərir (məs. açar səhvdir və ya model adı mövcud deyil)
 
 ### 2. Frontend → Vercel (pulsuz tier)
 1. `frontend/index.html` faylında, ən aşağıdakı sətri tapın:
@@ -177,4 +193,6 @@ Bu layihə açıq mənbədir (MIT lisenziya) — kod GitHub-da ictimai repo kimi
 
 ## 📈 Qeyd: Statistika faylı
 Backend `stats.json` adlı faylı avtomatik yaradır (istifadə statistikasını saxlamaq üçün) — bunu əlavə etməyə ehtiyac yoxdur, server ilk sorğuda özü yaradır.
+
+> ⚠️ Render-in pulsuz planında disk müvəqqətidir — server yenidən başlayanda / yenidən deploy olunanda `stats.json` sıfırlanır. Statistikanın qalıcı olması üçün Render-də "Persistent Disk" (ödənişli) və ya xarici pulsuz verilənlər bazası lazımdır.
 
