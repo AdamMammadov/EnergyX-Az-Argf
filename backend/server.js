@@ -120,9 +120,13 @@ function historyToContents(history) {
 // Default: Google-un "həmişə ən son Flash" ləqəbi. Konkret versiyalar (2.0-flash, 2.5-flash …)
 // vaxtaşırı bağlanır — 2.0-flash 1 iyun 2026-da bağlandı və köhnə backend-də AI məhz buna görə dayandı.
 const GEMINI_MODEL = String(process.env.GEMINI_MODEL || "gemini-flash-latest").trim();
-// Model bağlanıbsa (404 NOT_FOUND) bu ləqəblərə avtomatik keçilir
-const FALLBACK_MODELS = ["gemini-flash-latest", "gemini-flash-lite-latest"];
-let activeModel = GEMINI_MODEL; // son işləyən model yadda saxlanılır
+// Model bağlanıbsa (404) və ya müvəqqəti yüklənibsə (503 "high demand", 429 kvota, 500) bu modellər sınanır.
+// Hər model Google-da ayrı tutum/kvota hovuzundadır — biri yüklənəndə digəri adətən cavab verir.
+const FALLBACK_MODELS = ["gemini-flash-latest", "gemini-flash-lite-latest", "gemini-2.5-flash"];
+const TRANSIENT_STATUS = new Set([429, 500, 503]);
+let activeModel = GEMINI_MODEL; // əsas işləyən model (yalnız əvvəlki model bağlananda dəyişir)
+const goneModels = new Map();   // 404 verən modellər → vaxt; 1 saat ərzində yenidən sınanmır
+const GONE_TTL_MS = 60 * 60 * 1000;
 const AI_TIMEOUT_MS = 20000;    // frontend 25 s gözləyir — backend ondan əvvəl cavab verməlidir
 
 // Generasiya parametrləri modelə görə:
@@ -147,19 +151,47 @@ function extractAnswer(data) {
 }
 
 // Vahid Gemini çağırışı: { ok, text, model } və ya { ok:false, status, reason } qaytarır (açar heç vaxt qaytarılmır).
-// Model bağlanıbsa (404) növbəti ehtiyat modelə keçir və işləyəni yadda saxlayır.
+// - 404 (model bağlanıb): növbəti modelə keçir və işləyəni əsas model kimi yadda saxlayır
+// - 503/429/500 (müvəqqəti): bu sorğu üçün ehtiyat modelə keçir; hamısı yüklənibsə qısa fasilədən sonra
+//   əsas model bir dəfə də sınanır. Ümumi vaxt limiti (timeoutMs) bütün cəhdlərə birlikdə şamil olunur.
 async function callGemini(opts) {
-  const order = [...new Set([activeModel, GEMINI_MODEL, ...FALLBACK_MODELS])];
-  let result;
+  const deadline = Date.now() + (opts.timeoutMs || AI_TIMEOUT_MS);
+  const now = Date.now();
+  const all = [...new Set([activeModel, GEMINI_MODEL, ...FALLBACK_MODELS])];
+  const fresh = all.filter((m) => !(goneModels.has(m) && now - goneModels.get(m) < GONE_TTL_MS));
+  const order = fresh.length ? fresh : all;
+  let firstFailure = null, last = null, primaryTransient = false;
+  const tryModel = async (model) => {
+    const left = deadline - Date.now();
+    if (left < 2500) return null;
+    const r = await callGeminiModel(model, { ...opts, timeoutMs: left });
+    if (r.ok) {
+      goneModels.delete(model);
+      if (model !== activeModel) {
+        if (goneModels.has(activeModel)) {
+          console.warn(`Gemini modeli dəyişdi: ${activeModel} → ${model} (köhnə model bağlanıb)`);
+          activeModel = model;
+        } else console.warn(`Gemini: ${order[0]} müvəqqəti əlçatmazdır, cavab ${model} ilə verildi`);
+      }
+    } else if (r.status === 404) goneModels.set(model, Date.now());
+    return r;
+  };
   for (const model of order) {
-    result = await callGeminiModel(model, opts);
-    if (result.ok && model !== activeModel) {
-      console.warn(`Gemini modeli dəyişdi: ${activeModel} → ${model} (GEMINI_MODEL-i yeniləyin)`);
-      activeModel = model;
-    }
-    if (result.status !== 404) return result;
+    const r = await tryModel(model);
+    if (!r) break;
+    if (r.ok) return r;
+    last = r;
+    if (model === order[0] && TRANSIENT_STATUS.has(r.status)) primaryTransient = true;
+    if (r.status !== 404) firstFailure = firstFailure || r;
+    if (r.status !== 404 && !TRANSIENT_STATUS.has(r.status)) return r;   // açar səhvi, timeout, boş cavab
   }
-  return result;
+  // Hamısı yüklənibsə — əsas modelə qısa fasilədən sonra son cəhd
+  if (primaryTransient && deadline - Date.now() > 4000) {
+    await new Promise((res) => setTimeout(res, 1000));
+    const r = await tryModel(order[0]);
+    if (r && r.ok) return r;
+  }
+  return firstFailure || last || { ok: false, status: 504, reason: "TIMEOUT" };
 }
 
 async function callGeminiModel(model, { system, contents, maxOutputTokens = 1024, timeoutMs = AI_TIMEOUT_MS }) {
@@ -252,7 +284,7 @@ app.get("/ai-check", aiCheckLimiter, async (req, res) => {
   if (!process.env.GEMINI_API_KEY) return res.status(503).json({ ok: false, model: activeModel, reason: "GEMINI_API_KEY_MISSING" });
   const t0 = Date.now();
   const r = await callGemini({ contents: [{ role: "user", parts: [{ text: "Reply with the single word: OK" }] }], maxOutputTokens: 16, timeoutMs: 15000 });
-  res.status(r.ok ? 200 : 502).json({ ok: r.ok, model: activeModel, latencyMs: Date.now() - t0,
+  res.status(r.ok ? 200 : 502).json({ ok: r.ok, model: r.ok ? r.model : activeModel, latencyMs: Date.now() - t0,
     ...(r.ok ? {} : { reason: r.reason, message: r.message || undefined }) });
 });
 
