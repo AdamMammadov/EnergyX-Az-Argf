@@ -1,0 +1,43 @@
+name: Backend-i oyaq saxla
+
+# Render-in pulsuz serveri 15 dəqiqə sorğu almayanda yatır və ilk sorğuda təxminən 50 saniyəyə oyanır.
+# Bu müddətdə saytdakı enerji məsləhətçisi AI əvəzinə oflayn köməkçi ilə cavab verir.
+# Bu iş hər 10 dəqiqədən bir /health ünvanına sorğu göndərir ki, server oyaq qalsın.
+#
+# Qeydlər:
+# - /health statistikaya yazılmır və Gemini-yə sorğu göndərmir (pulsuzdur).
+# - Bir pulsuz Render servisi 24/7 işləyəndə ayda ən çox 744 saat edir, pulsuz limit 750 saatdır.
+# - GitHub yük artanda planlaşdırılmış işləri bir neçə dəqiqə gecikdirə bilər.
+# - Repoda 60 gün heç bir dəyişiklik olmasa, GitHub planlaşdırılmış işləri dayandırır;
+#   Actions bölməsindən yenidən aktivləşdirmək olar.
+# - Backend ünvanı dəyişsə, repo ayarlarında BACKEND_URL dəyişənini (Variables) yazın.
+
+on:
+  schedule:
+    - cron: "*/10 * * * *"
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: keepalive
+  cancel-in-progress: true
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - name: /health sorğusu
+        env:
+          BACKEND_URL: ${{ vars.BACKEND_URL || 'https://energyx-az-kalkulyator.onrender.com' }}
+        run: |
+          for i in 1 2 3; do
+            if curl -fsS --max-time 90 "$BACKEND_URL/health"; then
+              echo
+              exit 0
+            fi
+            echo "Cəhd $i alınmadı, 15 saniyə sonra yenidən yoxlanılacaq"
+            sleep 15
+          done
+          echo "::warning::Backend cavab vermədi: $BACKEND_URL/health"

@@ -13,6 +13,9 @@
   const HT = {
     az: {
       tab_home: "Ana səhifə", home_overview: "Sizin göstəriciləriniz",
+      install_phone: "Telefona quraşdır", install_desktop: "Kompüterə quraşdır", install_note: "İnternet olmadan da açılır",
+      install_ios: "iPhone və ya iPad-də: Safari-də Paylaş düyməsinə toxunun və \"Ana ekrana əlavə et\" seçin.",
+      install_done: "EnergyX Az quraşdırıldı.",
       home_title: "Elektrik və qaz xərcinizi ay bitməmiş bilin",
       home_lead: "EnergyX Az Azərbaycanın rəsmi pilləli tarifləri ilə aylıq ödənişinizi hesablayır, hansı cihazın nə qədər işlətdiyini göstərir və qənaət üçün konkret addımlar təklif edir.",
       home_cta_calc: "Hesablamağa başla", home_cta_demo: "Necə işlədiyinə bax",
@@ -46,6 +49,9 @@
     },
     en: {
       tab_home: "Home", home_overview: "Your numbers",
+      install_phone: "Install on your phone", install_desktop: "Install on this computer", install_note: "Works without internet too",
+      install_ios: "On iPhone or iPad: tap the Share button in Safari and choose \"Add to Home Screen\".",
+      install_done: "EnergyX Az has been installed.",
       home_title: "Know your electricity and gas bill before the month ends",
       home_lead: "EnergyX Az calculates your monthly bill with Azerbaijan's official tiered tariffs, shows how much each appliance uses and suggests concrete ways to save.",
       home_cta_calc: "Start calculating", home_cta_demo: "See how it works",
@@ -79,6 +85,9 @@
     },
     ru: {
       tab_home: "Главная", home_overview: "Ваши показатели",
+      install_phone: "Установить на телефон", install_desktop: "Установить на компьютер", install_note: "Работает и без интернета",
+      install_ios: "На iPhone или iPad: нажмите «Поделиться» в Safari и выберите «На экран „Домой“».",
+      install_done: "EnergyX Az установлен.",
       home_title: "Узнайте счёт за свет и газ до конца месяца",
       home_lead: "EnergyX Az считает ваш ежемесячный счёт по официальным ступенчатым тарифам Азербайджана, показывает, сколько потребляет каждый прибор, и предлагает конкретные шаги для экономии.",
       home_cta_calc: "Начать расчёт", home_cta_demo: "Посмотреть, как это работает",
@@ -163,7 +172,32 @@
     const meters = P.load("energyx_meters", []);
     $("homeOverview").hidden = !((Array.isArray(meters) && meters.length) || appliances.length);
   }
-  function renderHome() { renderGrid(); renderTariffs(); renderQuick(); renderOverviewBox(); }
+  // ===== TƏTBİQ KİMİ QURAŞDIRMA =====
+  // Chrome / Edge / Android: brauzerin quraşdırma pəncərəsi; iPhone / iPad: Safari üçün qısa göstəriş.
+  // Artıq quraşdırılıbsa və ya brauzer dəstəkləmirsə düymə görünmür.
+  const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+  const installed = () => matchMedia("(display-mode: standalone)").matches || navigator.standalone === true;
+  function renderInstall() {
+    const t = T();
+    $("homeInstall").hidden = installed() || !(window.__installPrompt || isIOS);
+    $("installLabel").textContent = isIOS || matchMedia("(pointer: coarse)").matches ? t.install_phone : t.install_desktop;
+    if (!$("installHint").hidden) $("installHint").textContent = t.install_ios;
+  }
+  window.addEventListener("beforeinstallprompt", (e) => { e.preventDefault(); window.__installPrompt = e; renderInstall(); });
+  window.addEventListener("appinstalled", () => { window.__installPrompt = null; renderInstall(); P.toast(T().install_done, "info"); });
+  $("installBtn").addEventListener("click", async () => {
+    const ev = window.__installPrompt;
+    if (ev) {
+      ev.prompt();
+      try { await ev.userChoice; } catch (e) {}
+      window.__installPrompt = null;
+      renderInstall();
+      return;
+    }
+    if (isIOS) { const h = $("installHint"); h.hidden = !h.hidden; h.textContent = T().install_ios; }
+  });
+
+  function renderHome() { renderGrid(); renderTariffs(); renderQuick(); renderOverviewBox(); renderInstall(); }
 
   // ===== HADİSƏLƏR =====
   $("homeKwh").addEventListener("input", renderQuick);
@@ -190,4 +224,11 @@
   const start = $("panel-" + want) ? want : "home";
   switchTab(start, { fromHistory: true });
   try { history.replaceState({ tab: start }, "", start === "home" ? location.pathname + location.search : "#" + start); } catch (e) {}
+
+  // Render-in pulsuz serveri yatıbsa, istifadəçi sual verənə qədər oyansın.
+  // /health statistikaya yazılmır; cavab oxunmur (no-cors), sadəcə serveri oyadır.
+  setTimeout(() => {
+    if (navigator.onLine === false) return;
+    try { fetch(API_BASE + "/health", { mode: "no-cors", cache: "no-store" }).catch(() => {}); } catch (e) {}
+  }, 1500);
 })();

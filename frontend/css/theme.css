@@ -192,3 +192,15 @@ a.brand:hover .sub { color:var(--text-hi); }
 .learn-flow { margin-top:28px; }
 .pres-row { font-size:15px; }
 #presCaption { font-weight:500; }
+
+/* "Telefona quraşdır" */
+:root { --i-install: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='6.5' y='2.5' width='11' height='19' rx='2.2'/%3E%3Cpath d='M12 7v7M9.2 11.4 12 14.2l2.8-2.8M10.5 18.2h3'/%3E%3C/svg%3E"); }
+.ico-install { --ico:var(--i-install); }
+.home-install { display:flex; align-items:center; flex-wrap:wrap; gap:6px 14px; margin-top:18px; }
+.home-install[hidden] { display:none; }
+.btn-install { display:inline-flex; align-items:center; gap:8px; background:var(--surface); color:var(--text-hi); border:1px solid var(--border);
+  border-radius:10px; padding:9px 14px; font-size:14px; font-weight:600; cursor:pointer; }
+.btn-install:hover, .btn-install:focus-visible { border-color:var(--accent); }
+.btn-install .ico { width:18px; height:18px; background:var(--accent); }
+.home-install-note { font-size:13px; color:var(--text-lo); }
+.home-install-hint { flex-basis:100%; font-size:13.5px; color:var(--text-hi); background:var(--accent-soft); border-radius:10px; padding:10px 14px; }
