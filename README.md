@@ -4,6 +4,8 @@ Azərbaycanda ev təsərrüfatları üçün pulsuz elektrik və qaz xərci kalku
 
 Layihə Azərbaycan Respublikasının Gənclər Fondunun qrant dəstəyi ilə hazırlanıb. Kod açıq mənbədir (MIT).
 
+Tanıtım videosu: [youtu.be/bov7zKZije4](https://youtu.be/bov7zKZije4)
+
 ## Saytda nə var
 
 | Bölmə | Nə edir |
@@ -44,6 +46,10 @@ frontend/                Statik sayt (PWA)
   sw.js                  Oflayn keş
 .github/workflows/ci.yml Sintaksis yoxlaması və testlər
 ```
+
+## Tanıtım videosu
+
+`tools/demo-video/` qovluğundakı skriptlər saytın təqdimat rejimindən Azərbaycan dilində izahlı, musiqili və altyazılı video hazırlayır. Addımlar həmin qovluğun README faylındadır.
 
 ## Testlər
 
@@ -93,6 +99,8 @@ Nümunə məlumat və təqdimat rejimindəki rəqəmlər real istifadəçi məlu
 
 ## Versiyalar
 
+- **2.5.3**: tanıtım videosu ana səhifədə və "Haqqında" bölməsində (YouTube yalnız "oynat" basılanda yüklənir).
+- **2.5.2**: səsli tanıtım videosu üçün alətlər (`tools/demo-video/`): Azərbaycan dilində izah, musiqi, altyazı; təqdimat addımlarının müddəti istəyə görə verilə bilir.
 - **2.5.1**: backend-i oyaq saxlayan GitHub Actions işi (AI-ın ilk cavabı gecikmir), "Telefona quraşdır" düyməsi, PNG tətbiq ikonları.
 - **2.5**: ana səhifə, qrafik kitabxanası saytın içinə köçürüldü (canlı saytda qrafiklər boş qalırdı), açılışda avtomatik bildiriş çıxmır, yeni rəng sistemi və oxunaqlı şrift, xətt ikonları, mətnlərin sadələşdirilməsi, brauzerin "geri" düyməsi bölmələr arasında işləyir.
 - **2.4.2**: Gemini yüklənəndə ehtiyat modelə keçid, backend asılılıqlarında zəifliklər bağlandı.

@@ -204,3 +204,22 @@ a.brand:hover .sub { color:var(--text-hi); }
 .btn-install .ico { width:18px; height:18px; background:var(--accent); }
 .home-install-note { font-size:13px; color:var(--text-lo); }
 .home-install-hint { flex-basis:100%; font-size:13.5px; color:var(--text-hi); background:var(--accent-soft); border-radius:10px; padding:10px 14px; }
+
+/* Video: əvvəlcə şəkil, "oynat" basılanda YouTube */
+.home-video { display:grid; grid-template-columns:minmax(0,0.8fr) minmax(0,1.2fr); gap:28px; align-items:center; }
+.home-video-text h2 { font-size:20px; margin-bottom:10px; }
+.home-video-text p { color:var(--text-lo); font-size:15px; line-height:1.6; margin-bottom:14px; }
+.video-frame { position:relative; aspect-ratio:16 / 9; border-radius:var(--radius); overflow:hidden; background:#0F1215;
+  border:1px solid var(--border); }
+.video-frame iframe, .video-play, .video-play img { position:absolute; inset:0; width:100%; height:100%; border:0; }
+.video-play { padding:0; cursor:pointer; background:none; display:block; }
+.video-play img { object-fit:cover; transition:filter .2s; }
+.video-play:hover img, .video-play:focus-visible img { filter:brightness(.92); }
+.video-play-ico { position:absolute; left:50%; top:50%; width:76px; height:76px; margin:-38px 0 0 -38px; border-radius:50%;
+  background:rgba(15,18,21,.78); box-shadow:0 6px 20px rgba(0,0,0,.25); transition:transform .15s, background .15s; }
+.video-play-ico::after { content:""; position:absolute; inset:0; margin:auto; width:30px; height:30px; transform:translateX(3px);
+  background:#fff; -webkit-mask:var(--i-play) center / contain no-repeat; mask:var(--i-play) center / contain no-repeat; }
+.video-play:hover .video-play-ico, .video-play:focus-visible .video-play-ico { transform:scale(1.06); background:var(--accent); }
+.about-video { max-width:880px; margin:20px 0 8px; }
+@media (max-width:900px) { .home-video { grid-template-columns:minmax(0,1fr); gap:16px; } }
+a.btn-link { text-decoration:none; } a.btn-link:hover { text-decoration:underline; }

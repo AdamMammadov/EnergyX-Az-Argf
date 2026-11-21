@@ -952,7 +952,8 @@
   // İstifadəçinin məlumatı əvvəlcə yadda saxlanılır, demo bitəndə tam bərpa olunur.
   const SNAP_KEYS = ["energyx_meters", "energyx_appliances", "energyx_pace", "energyx_ins_source", "energyx_invest", "energyx_sens", "energyx_gas", "energyx_outage", "energyx_lab"];
   let pres = null;
-  function startPresentation() {
+  // opts.durations: hər addımın müddəti (ms) - məsələn səsli izahla sinxron video üçün. Verilməsə 5.5 s.
+  function startPresentation(opts) {
     if (pres) return stopPresentation();
     const snap = {};
     SNAP_KEYS.forEach((k) => { try { snap[k] = localStorage.getItem(k); } catch {} });
@@ -978,6 +979,7 @@
 
     const steps = T().pres_steps;
     const STEP_MS = 5500;
+    const custom = opts && Array.isArray(opts.durations) && opts.durations.length === 9 ? opts.durations : null;
     // Hər addımda göstərilən hissə çərçivə ilə vurğulanır və ekranın ortasına gətirilir
     const focus = (el) => {
       document.querySelectorAll(".pres-focus").forEach((x) => x.classList.remove("pres-focus"));
@@ -991,7 +993,7 @@
       () => { focus(document.querySelector(".forecast-card")); },
       () => { focus($("tierViz"));
               if (window.EnergyLab) EnergyLab.renderTierViz(true);
-              later(() => { switchTab("learn"); focus($("flowViz")); }, 2700); },
+              later(() => { switchTab("learn"); focus($("flowViz")); }, custom ? Math.round(custom[2] * 0.45) : 2700); },
       () => { switchTab("insights"); focus($("healthRing")); },
       () => { focus($("anomTimeline")); },
       () => { focus($("fcChart")); },
@@ -1002,12 +1004,16 @@
       () => { if (window.EnergyLab) EnergyLab.setSource("sample"); switchTab("meter"); window.scrollTo({ top: 0, behavior: "smooth" });
               later(() => focus($("labInsights")), 2800); },
     ];
-    actions.forEach((fn, i) => later(() => {
-      $("presCaption").textContent = steps[i];
-      $("presProg").style.width = ((i + 1) / actions.length) * 100 + "%";
-      fn();
-    }, i * STEP_MS));
-    later(() => stopPresentation(true), actions.length * STEP_MS + 1500);
+    let at = 0;
+    actions.forEach((fn, i) => {
+      later(() => {
+        $("presCaption").textContent = steps[i];
+        $("presProg").style.width = ((i + 1) / actions.length) * 100 + "%";
+        fn();
+      }, at);
+      at += custom ? Math.max(1500, Number(custom[i]) || STEP_MS) : STEP_MS;
+    });
+    later(() => stopPresentation(true), at + 1500);
   }
   function later(fn, ms) { if (pres) pres.timers.push(setTimeout(() => { if (pres) fn(); }, ms)); }
   function presKey(e) { if (e.key === "Escape") stopPresentation(); }

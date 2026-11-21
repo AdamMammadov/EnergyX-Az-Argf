@@ -13,6 +13,8 @@
   const HT = {
     az: {
       tab_home: "Ana səhifə", home_overview: "Sizin göstəriciləriniz",
+      video_title: "Videoda qısa tanışlıq", video_play: "Videonu oynat", video_open: "YouTube-da aç",
+      video_lead: "İki dəqiqəlik videoda saytın əsas bölmələri izah olunur. Video Azərbaycan dilindədir və altyazılıdır.",
       install_phone: "Telefona quraşdır", install_desktop: "Kompüterə quraşdır", install_note: "İnternet olmadan da açılır",
       install_ios: "iPhone və ya iPad-də: Safari-də Paylaş düyməsinə toxunun və \"Ana ekrana əlavə et\" seçin.",
       install_done: "EnergyX Az quraşdırıldı.",
@@ -49,6 +51,8 @@
     },
     en: {
       tab_home: "Home", home_overview: "Your numbers",
+      video_title: "A short video tour", video_play: "Play the video", video_open: "Open on YouTube",
+      video_lead: "A two-minute video walks through the main sections of the site. It is in Azerbaijani with subtitles.",
       install_phone: "Install on your phone", install_desktop: "Install on this computer", install_note: "Works without internet too",
       install_ios: "On iPhone or iPad: tap the Share button in Safari and choose \"Add to Home Screen\".",
       install_done: "EnergyX Az has been installed.",
@@ -85,6 +89,8 @@
     },
     ru: {
       tab_home: "Главная", home_overview: "Ваши показатели",
+      video_title: "Короткое видео о сайте", video_play: "Воспроизвести видео", video_open: "Открыть на YouTube",
+      video_lead: "Двухминутное видео показывает основные разделы сайта. Видео на азербайджанском языке, с субтитрами.",
       install_phone: "Установить на телефон", install_desktop: "Установить на компьютер", install_note: "Работает и без интернета",
       install_ios: "На iPhone или iPad: нажмите «Поделиться» в Safari и выберите «На экран „Домой“».",
       install_done: "EnergyX Az установлен.",
@@ -197,7 +203,24 @@
     if (isIOS) { const h = $("installHint"); h.hidden = !h.hidden; h.textContent = T().install_ios; }
   });
 
-  function renderHome() { renderGrid(); renderTariffs(); renderQuick(); renderOverviewBox(); renderInstall(); }
+  // ===== VİDEO =====
+  // YouTube yalnız "oynat" basılanda yüklənir: səhifə yüngül qalır, YouTube çərəzləri əvvəlcədən yazılmır.
+  function renderVideo() {
+    document.querySelectorAll(".video-play").forEach((b) => b.setAttribute("aria-label", T().video_play));
+  }
+  document.querySelectorAll(".video-frame").forEach((frame) => {
+    frame.querySelector(".video-play").addEventListener("click", () => {
+      const f = document.createElement("iframe");
+      f.src = `https://www.youtube-nocookie.com/embed/${encodeURIComponent(frame.dataset.yt)}?autoplay=1&rel=0&modestbranding=1&hl=${currentLang}`;
+      f.title = T().video_title;
+      f.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
+      f.allowFullscreen = true;
+      f.referrerPolicy = "strict-origin-when-cross-origin";
+      frame.replaceChildren(f);
+    });
+  });
+
+  function renderHome() { renderGrid(); renderTariffs(); renderQuick(); renderOverviewBox(); renderInstall(); renderVideo(); }
 
   // ===== HADİSƏLƏR =====
   $("homeKwh").addEventListener("input", renderQuick);
