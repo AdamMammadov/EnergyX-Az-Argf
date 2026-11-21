@@ -18,7 +18,7 @@ Layihə Azərbaycan Respublikasının Gənclər Fondunun qrant dəstəyi ilə ha
 | İşıq kəsiləndə | Vacib cihazlar üçün ehtiyat enerji, soyuducudakı qidanın təhlükəsizliyi, təcili nömrələr |
 | Enerji məsləhətçisi | Gemini əsaslı söhbət. Server əlçatmaz olanda saytın öz oflayn köməkçisi cavab verir |
 
-Əlavə olaraq: açıq və tünd tema, Azərbaycan, ingilis və rus dilləri, oflayn iş (PWA), məlumatların JSON yedəyi, 9 addımlı təqdimat rejimi.
+Əlavə olaraq: açıq və tünd tema, Azərbaycan, ingilis və rus dilləri, oflayn iş və telefona tətbiq kimi quraşdırma (PWA), məlumatların JSON yedəyi, 9 addımlı təqdimat rejimi.
 
 Bütün hesablamalar istifadəçinin brauzerində aparılır. Sayğac və cihaz məlumatları serverə göndərilmir. Məsləhətçiyə sual veriləndə yalnız sual və bir neçə ümumi göstərici (kVt·saat, proqnoz) cavab hazırlamaq üçün serverə gedir.
 
@@ -68,6 +68,8 @@ Testlər tarif hesablamasını, analitika funksiyalarını, API-ni, frontend fay
    - `/health`: `"ai": true` və `"version"` repodakı versiya ilə eyni olmalıdır.
    - `/ai-check`: `"ok": true` olmalıdır. `ok: false` olarsa, `reason` sahəsi səbəbi göstərir.
 
+Render-in pulsuz serveri 15 dəqiqə sorğu almayanda yatır. `.github/workflows/keepalive.yml` hər 10 dəqiqədən bir `/health` ünvanına sorğu göndərir ki, server oyaq qalsın (bir servis üçün pulsuz 750 saatlıq limit kifayətdir). Backend ünvanı dəyişsə, repo ayarlarında `BACKEND_URL` dəyişənini yazın. Sayt da açılan kimi serveri səssizcə oyadır.
+
 Model müvəqqəti yüklənəndə (503), kvota bitəndə (429) və ya model bağlananda (404) server avtomatik ehtiyat modelə (`gemini-flash-lite-latest`, `gemini-2.5-flash`) keçir.
 
 ### Frontend (Vercel)
@@ -91,6 +93,7 @@ Nümunə məlumat və təqdimat rejimindəki rəqəmlər real istifadəçi məlu
 
 ## Versiyalar
 
+- **2.5.1**: backend-i oyaq saxlayan GitHub Actions işi (AI-ın ilk cavabı gecikmir), "Telefona quraşdır" düyməsi, PNG tətbiq ikonları.
 - **2.5**: ana səhifə, qrafik kitabxanası saytın içinə köçürüldü (canlı saytda qrafiklər boş qalırdı), açılışda avtomatik bildiriş çıxmır, yeni rəng sistemi və oxunaqlı şrift, xətt ikonları, mətnlərin sadələşdirilməsi, brauzerin "geri" düyməsi bölmələr arasında işləyir.
 - **2.4.2**: Gemini yüklənəndə ehtiyat modelə keçid, backend asılılıqlarında zəifliklər bağlandı.
 - **2.4.1**: gizli scroll zolaqları, oxuma xətti və "yuxarı qayıt" düyməsi, `/ai-check`, yedəkdə bütün ayarlar, əlçatanlıq (WCAG AA) düzəlişləri.
