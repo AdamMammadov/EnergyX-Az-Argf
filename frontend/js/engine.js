@@ -673,7 +673,270 @@
       tenYearNet: round2(monthlyAzn * 120 - price), co2YearKg: Math.round(savedKwh * 12 * CO2_FACTOR) };
   }
 
+  // =====================================================================
+  // v2.4 — Ağıllı sayğac AI laboratoriyası + vizual izah
+  // Saatlıq (smart meter) məlumatın simulyasiyası, CSV idxalı, yük profili
+  // analizi, saatlıq anomaliya aşkarlanması və qayda-əsaslı tövsiyələr.
+  // =====================================================================
+
+  // 24 saatlıq istifadə çəkiləri: [başlanğıc saat, son saat (daxil deyil), çəki], əsas = qalan saatlar
+  function hourPattern(base, ranges) {
+    const w = new Array(24).fill(base);
+    ranges.forEach(([a, b, v]) => { for (let h = a; h < b; h++) w[h % 24] = v; });
+    return w;
+  }
+  const HOUR_PATTERNS = {
+    fridge:       hourPattern(1, [[12, 19, 1.2]]),                       // kompressor gün boyu, istidə çox
+    ac:           hourPattern(0, [[0, 2, 1], [12, 17, 2], [17, 23, 3], [23, 24, 1.5]]),
+    heater:       hourPattern(0.3, [[0, 2, 1.5], [6, 9, 2.5], [17, 24, 3]]),
+    lighting:     hourPattern(0.05, [[0, 1, 1], [6, 8, 1], [18, 24, 3]]),
+    tv:           hourPattern(0, [[8, 12, 0.5], [19, 24, 3]]),
+    computer:     hourPattern(0.05, [[9, 18, 1.5], [20, 24, 2]]),
+    washer:       hourPattern(0, [[10, 13, 2], [18, 20, 1]]),
+    water_heater: hourPattern(0.2, [[6, 9, 3], [19, 23, 2.5]]),
+    kettle:       hourPattern(0, [[7, 9, 3], [13, 14, 1.5], [17, 20, 2]]),
+    microwave:    hourPattern(0, [[7, 8, 1], [13, 14, 2], [19, 21, 2]]),
+    other:        hourPattern(0.1, [[7, 23, 1]]),
+  };
+  // Həftəsonu evdə daha çox vaxt keçirilir — bu kateqoriyalar şənbə/bazar 20% artır
+  const WEEKEND_BOOST = { tv: 1.2, washer: 1.4, kettle: 1.2, microwave: 1.2, lighting: 1.1, computer: 1.1, other: 1.1 };
+
+  function hourKey(ts) { const d = new Date(ts); d.setMinutes(0, 0, 0); return d.getTime(); }
+  function dayKey(ts) { const d = new Date(ts); return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0"); }
+
+  // Cihaz siyahısından saatlıq "ağıllı sayğac" məlumatı yaradır (aylıq kVt saxlanılır)
+  function simulateLoadProfile({ appliances, days = 28, end, seed = 7, standbyW = 35, noise = 0.1, anomalies } = {}) {
+    const rnd = mulberry32(seed);
+    const endD = end ? new Date(end) : new Date();
+    const start = new Date(endD.getFullYear(), endD.getMonth(), endD.getDate() - days, 0, 0, 0, 0);
+    const items = (appliances || []).filter((a) => a && a.monthlyKwh > 0).map((a) => {
+      const cat = classify(a.name);
+      const w = HOUR_PATTERNS[cat] || HOUR_PATTERNS.other;
+      const sumW = w.reduce((x, y) => x + y, 0) || 1;
+      const boost = WEEKEND_BOOST[cat] || 1;
+      // həftə üzrə orta 1 olsun deyə: (5·k + 2·k·boost)/7 = 1
+      const k = 7 / (5 + 2 * boost);
+      return { daily: a.monthlyKwh / 30, w, sumW, weekday: k, weekend: k * boost };
+    });
+    const extra = {};
+    (anomalies || []).forEach((an) => an.hours.forEach((h) => { extra[an.day * 24 + h] = (extra[an.day * 24 + h] || 0) + an.extraKw; }));
+    const points = [];
+    for (let d = 0; d < days; d++) {
+      const date = new Date(start.getFullYear(), start.getMonth(), start.getDate() + d);
+      const wknd = date.getDay() === 0 || date.getDay() === 6;
+      for (let h = 0; h < 24; h++) {
+        let kwh = standbyW / 1000;
+        items.forEach((it) => { kwh += it.daily * (wknd ? it.weekend : it.weekday) * (it.w[h] / it.sumW); });
+        kwh *= Math.max(0.3, 1 + noise * gauss(rnd));
+        kwh += extra[d * 24 + h] || 0;
+        points.push({ ts: new Date(date.getFullYear(), date.getMonth(), date.getDate(), h).getTime(), kwh: Math.round(kwh * 1000) / 1000 });
+      }
+    }
+    return points;
+  }
+
+  // Nümunə: "Nümunə ev"in cihazları + 2 gecə unudulmuş elektrik qızdırıcısı (açıq şəkildə nümunə)
+  function sampleMeterProfile(now) {
+    const s = sampleData(now);
+    const apps = s.appliances.concat([{ name: "Wi-Fi router", watts: 12, hours: 24, monthlyKwh: 8.64 }]);
+    return simulateLoadProfile({ appliances: apps, days: 28, end: now, seed: 11,
+      anomalies: [{ day: 19, hours: [0, 1, 2, 3, 4, 5], extraKw: 1.8 }, { day: 20, hours: [1, 2, 3, 4, 5], extraKw: 1.8 }] });
+  }
+
+  // "2026-10-01 13:00", "2026-10-01T13:00:00", "01.10.2026 13:00", "01/10/2026" (+ ayrıca saat sütunu)
+  function parseMeterDate(s, hourCell) {
+    s = String(s || "").trim();
+    let y, mo, d, h = 0, mi = 0, m;
+    if ((m = /^(\d{4})-(\d{1,2})-(\d{1,2})(?:[T\s]+(\d{1,2})(?::(\d{2}))?(?::\d{2}(?:\.\d+)?)?)?(?:Z|[+-]\d{2}:?\d{2})?$/.exec(s))) {
+      y = +m[1]; mo = +m[2]; d = +m[3]; if (m[4] != null) { h = +m[4]; mi = +(m[5] || 0); }
+    } else if ((m = /^(\d{1,2})[./](\d{1,2})[./](\d{4})(?:\s+(\d{1,2})(?::(\d{2}))?(?::\d{2})?)?$/.exec(s))) {
+      d = +m[1]; mo = +m[2]; y = +m[3]; if (m[4] != null) { h = +m[4]; mi = +(m[5] || 0); }
+    } else return NaN;
+    if (hourCell != null) {
+      const hm = /^(\d{1,2})(?::(\d{2}))?/.exec(String(hourCell).trim());
+      if (!hm) return NaN;
+      h = +hm[1]; mi = +(hm[2] || 0);
+    }
+    if (mo < 1 || mo > 12 || d < 1 || d > 31 || h > 24 || mi > 59) return NaN;
+    return new Date(y, mo - 1, d, h, mi).getTime();
+  }
+
+  function parseMeterCsv(text, maxRows = 100000) {
+    const lines = String(text || "").replace(/^﻿/, "").split(/\r?\n/).map((l) => l.trim()).filter(Boolean).slice(0, maxRows);
+    if (!lines.length) return { points: [], skipped: 0, errorLines: [], unit: "kWh" };
+    const first = lines[0];
+    const delim = first.includes("\t") ? "\t" : first.split(";").length > first.split(",").length ? ";" : ",";
+    const points = [], errorLines = [];
+    let skipped = 0;
+    lines.forEach((line, i) => {
+      const cells = line.split(delim).map((c) => c.trim().replace(/^"(.*)"$/, "$1"));
+      let ts = NaN, raw;
+      if (cells.length >= 3 && /^\d{1,2}(:\d{2})?$/.test(cells[1])) { ts = parseMeterDate(cells[0], cells[1]); raw = cells[2]; }
+      else if (cells.length >= 2) { ts = parseMeterDate(cells[0]); raw = cells[1]; }
+      const v = parseFloat(String(raw == null ? "" : raw).replace(",", "."));
+      if (!isFinite(ts) || !isFinite(v) || v < 0) {
+        if (i === 0) return; // başlıq sətri
+        skipped++; if (errorLines.length < 5) errorLines.push(i + 1);
+        return;
+      }
+      points.push({ ts, kwh: v });
+    });
+    // Saatlıq məişət istifadəsi 20 kVt·saatdan çox ola bilməz — belə dəyərlər Vt·saatdır
+    let unit = "kWh";
+    if (points.length && median(points.map((p) => p.kwh)) > 20) { unit = "Wh"; points.forEach((p) => { p.kwh /= 1000; }); }
+    return { points, skipped, errorLines, unit };
+  }
+
+  function profileToCsv(points) {
+    const pad = (n) => String(n).padStart(2, "0");
+    return "timestamp,kwh\n" + points.map((p) => {
+      const d = new Date(p.ts);
+      return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:00,${p.kwh.toFixed(3)}`;
+    }).join("\n") + "\n";
+  }
+
+  function percentile(sorted, q) {
+    if (!sorted.length) return 0;
+    const pos = (sorted.length - 1) * q, lo = Math.floor(pos), hi = Math.ceil(pos);
+    return sorted[lo] + (sorted[hi] - sorted[lo]) * (pos - lo);
+  }
+
+  // Saatlıq yük profilinin analizi (GridPulse robust z-score metodu saat səviyyəsində)
+  function analyzeLoadProfile(points) {
+    const agg = new Map();
+    (points || []).forEach((p) => { if (p && isFinite(p.ts) && p.kwh >= 0) { const k = hourKey(p.ts); agg.set(k, (agg.get(k) || 0) + p.kwh); } });
+    const hours = [...agg.entries()].sort((a, b) => a[0] - b[0]).map(([ts, kwh]) => ({ ts, kwh, h: new Date(ts).getHours(), dow: (new Date(ts).getDay() + 6) % 7 }));
+    if (hours.length < 48) return null;
+    const vals = hours.map((x) => x.kwh);
+    const total = vals.reduce((a, b) => a + b, 0);
+    const days = hours.length / 24;
+    const avgDaily = total / days;
+    const sorted = [...vals].sort((a, b) => a - b);
+
+    const hod = new Array(24).fill(0), hodN = new Array(24).fill(0);
+    const matrix = Array.from({ length: 7 }, () => new Array(24).fill(0)), matrixN = Array.from({ length: 7 }, () => new Array(24).fill(0));
+    const byHod = Array.from({ length: 24 }, () => []);
+    hours.forEach((x) => { hod[x.h] += x.kwh; hodN[x.h]++; matrix[x.dow][x.h] += x.kwh; matrixN[x.dow][x.h]++; byHod[x.h].push(x.kwh); });
+    const hourlyAvgKw = hod.map((v, i) => (hodN[i] ? v / hodN[i] : 0));
+    const weekHour = matrix.map((row, d) => row.map((v, h) => (matrixN[d][h] ? v / matrixN[d][h] : null)));
+
+    const baseloadKw = percentile(sorted, 0.1);
+    const peak = hours.reduce((m, x) => (x.kwh > m.kwh ? x : m), hours[0]);
+    const peakHour = hourlyAvgKw.indexOf(Math.max(...hourlyAvgKw));
+    const mean = total / hours.length;
+    const sumWhere = (fn) => hours.filter(fn).reduce((a, x) => a + x.kwh, 0);
+    const nightShare = total ? sumWhere((x) => x.h >= 23 || x.h < 7) / total : 0;
+    const eveningShare = total ? sumWhere((x) => x.h >= 18 && x.h < 23) / total : 0;
+
+    const daily = new Map();
+    hours.forEach((x) => { const k = dayKey(x.ts); const e = daily.get(k) || { date: k, kwh: 0, wknd: x.dow >= 5 }; e.kwh += x.kwh; daily.set(k, e); });
+    const dailyTotals = [...daily.values()].map((e) => ({ ...e, kwh: Math.round(e.kwh * 100) / 100 }));
+    const avgOf = (arr) => (arr.length ? arr.reduce((a, e) => a + e.kwh, 0) / arr.length : 0);
+    const weekendAvg = avgOf(dailyTotals.filter((e) => e.wknd)), weekdayAvg = avgOf(dailyTotals.filter((e) => !e.wknd));
+
+    // Saatlıq anomaliyalar: eyni saat-of-day üzrə median/MAD bazasına görə
+    const base = byHod.map((arr) => { const med = median(arr); return { med, mad: median(arr.map((v) => Math.abs(v - med))) }; });
+    const flagged = hours.map((x) => {
+      const b = base[x.h];
+      const scale = Math.max(b.mad / 0.6745, 0.05 + 0.1 * b.med);
+      const z = (x.kwh - b.med) / scale;
+      return { ...x, z: round2(z), expected: b.med, flag: z >= 4 && x.kwh - b.med >= 0.25 };
+    });
+    const events = [];
+    flagged.forEach((x, i) => {
+      if (!x.flag) return;
+      const prev = events[events.length - 1];
+      if (prev && x.ts - prev.endTs <= 3600000) { prev.endTs = x.ts; prev.extraKwh += x.kwh - x.expected; prev.peakKw = Math.max(prev.peakKw, x.kwh); prev.hours.push(x.h); }
+      else events.push({ startTs: x.ts, endTs: x.ts, extraKwh: x.kwh - x.expected, peakKw: x.kwh, hours: [x.h] });
+    });
+    events.forEach((e) => {
+      const night = e.hours.filter((h) => h < 7 || h >= 23).length;
+      e.type = night >= e.hours.length / 2 ? "night" : "day";
+      e.extraKwh = round2(e.extraKwh); e.peakKw = round2(e.peakKw); e.durationH = e.hours.length;
+      delete e.hours;
+    });
+
+    const monthKwh = avgDaily * 30;
+    const month = calcTariff(monthKwh);
+    const rate = marginalRate(monthKwh);
+    const standbyYearKwh = baseloadKw * 8760;
+    return {
+      hours: hours.length, days: round2(days), from: hours[0].ts, to: hours[hours.length - 1].ts,
+      totalKwh: round2(total), avgDailyKwh: round2(avgDaily),
+      hourlyAvgKw: hourlyAvgKw.map((v) => Math.round(v * 1000) / 1000), weekHour,
+      baseloadW: Math.round(baseloadKw * 1000), peakKw: round2(peak.kwh), peakTs: peak.ts, peakHour,
+      loadFactor: round2(peak.kwh ? mean / peak.kwh : 0), nightShare: round2(nightShare), eveningShare: round2(eveningShare),
+      weekendAvgKwh: round2(weekendAvg), weekdayAvgKwh: round2(weekdayAvg),
+      dailyTotals, events,
+      monthKwh: Math.round(monthKwh), monthCost: month.cost, monthTier: month.tier, marginalRate: rate,
+      standbyYearKwh: Math.round(standbyYearKwh), standbyYearAzn: round2(standbyYearKwh * rate),
+      co2MonthKg: Math.round(monthKwh * CO2_FACTOR),
+    };
+  }
+
+  // Qayda-əsaslı "AI" tövsiyələri (hər biri ölçülə bilən göstəriciyə əsaslanır)
+  function profileInsights(a) {
+    if (!a) return [];
+    const out = [];
+    const add = (key, severity, vars) => out.push({ key, severity, vars: vars || {} });
+    // Baza yükü soyuducu + router + gözləmə rejimidir. Faktiki ölçü: hər 10 Vt azalma = ildə 87.6 kVt·saat
+    const per10 = { per10Kwh: 88, per10Azn: (87.6 * a.marginalRate).toFixed(1) };
+    if (a.baseloadW > 120) add("baseload_high", "high", { w: a.baseloadW, yearKwh: a.standbyYearKwh, yearAzn: a.standbyYearAzn.toFixed(0), ...per10 });
+    else if (a.baseloadW > 60) add("baseload_mid", "medium", { w: a.baseloadW, yearKwh: a.standbyYearKwh, yearAzn: a.standbyYearAzn.toFixed(0), ...per10 });
+    else add("baseload_ok", "good", { w: a.baseloadW });
+    if (a.events.length) {
+      const extra = a.events.reduce((s, e) => s + e.extraKwh, 0);
+      add(a.events.some((e) => e.type === "night") ? "anomaly_night" : "anomaly_day", "high", { n: a.events.length, kwh: extra.toFixed(1), azn: (extra * a.marginalRate).toFixed(2) });
+    }
+    if (a.monthTier !== "low") {
+      const limit = a.monthTier === "high" ? 300 : 200;
+      add("tier_projection", a.monthTier === "high" ? "high" : "medium", { kwh: a.monthKwh, cost: a.monthCost.toFixed(2), perDay: ((a.monthKwh - limit) / 30).toFixed(1), limit });
+    }
+    if (a.eveningShare > 0.4) add("evening_peak", "medium", { pct: Math.round(a.eveningShare * 100), hour: a.peakHour });
+    if (a.nightShare > 0.35) add("night_heavy", "medium", { pct: Math.round(a.nightShare * 100) });
+    if (a.loadFactor < 0.25) add("peaky", "low", { lf: a.loadFactor, peak: a.peakKw });
+    if (a.weekdayAvgKwh && Math.abs(a.weekendAvgKwh / a.weekdayAvgKwh - 1) > 0.2) {
+      add("weekend_diff", "low", { pct: Math.round((a.weekendAvgKwh / a.weekdayAvgKwh - 1) * 100) });
+    }
+    const order = { high: 0, medium: 1, low: 2, good: 3 };
+    return out.sort((x, y) => order[x.severity] - order[y.severity]);
+  }
+
+  // ===== VİZUAL İZAH: pillələrin doldurulması =====
+  function tierBreakdown(kwh) {
+    kwh = Math.max(0, Number(kwh) || 0);
+    const names = ["low", "mid", "high"];
+    let prev = 0;
+    return TIERS.map((t, i) => {
+      const used = Math.max(0, Math.min(kwh, t.max) - prev);
+      const row = { tier: names[i], from: prev, to: t.max, used: round2(used), rate: t.rate, cost: round2(used * t.rate) };
+      prev = t.max;
+      return row;
+    });
+  }
+
+  // ===== VİZUAL İZAH: enerji axını (stansiya → şəbəkə itkisi → ev → cihazlar) =====
+  function energyFlow(kwh, appliances, maxParts = 4) {
+    kwh = Math.max(0, Number(kwh) || 0);
+    const generated = kwh / (1 - AZ_TD_LOSS_PCT / 100);
+    const byCat = {};
+    (appliances || []).forEach((a) => { const c = classify(a.name); byCat[c] = (byCat[c] || 0) + (a.monthlyKwh || 0); });
+    const appTotal = Object.values(byCat).reduce((s, v) => s + v, 0);
+    const scale = appTotal > kwh && appTotal > 0 ? kwh / appTotal : 1;
+    let parts = Object.entries(byCat).map(([key, v]) => ({ key, kwh: v * scale })).sort((a, b) => b.kwh - a.kwh);
+    if (parts.length > maxParts) {
+      const rest = parts.slice(maxParts).reduce((s, p) => s + p.kwh, 0);
+      parts = parts.slice(0, maxParts).concat([{ key: "other", kwh: rest }]);
+    }
+    const known = parts.reduce((s, p) => s + p.kwh, 0);
+    if (kwh - known > 0.5) parts.push({ key: "unknown", kwh: kwh - known });
+    parts = parts.filter((p) => p.kwh > 0).map((p) => ({ ...p, kwh: round2(p.kwh), share: kwh ? round2(p.kwh / kwh) : 0 }));
+    return { consumed: round2(kwh), generated: round2(generated), loss: round2(generated - kwh), co2Kg: Math.round(kwh * CO2_FACTOR), parts };
+  }
+
   return {
+    HOUR_PATTERNS, simulateLoadProfile, sampleMeterProfile, parseMeterDate, parseMeterCsv, profileToCsv,
+    analyzeLoadProfile, profileInsights, tierBreakdown, energyFlow,
     billCheck, compareAppliances,
     SENSITIVITY, diagnoseMeter, syntheticHouseholds, validateDetector,
     GAS_TIERS, GAS_SEASON, GAS_CO2_KG_PER_M3, gasCost, gasForecast, gasLeakTest,

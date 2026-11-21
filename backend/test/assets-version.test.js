@@ -26,7 +26,7 @@ test("bütün yerli JS/CSS faylları versiyalıdır və SW ilə eyni versiyadad�
 });
 
 test("sw.js eyni faylları oflayn üçün öncədən keşləyir", () => {
-  for (const f of ["css/pro.css", "css/layout.css", "js/engine.js", "js/pro.js", "js/extras.js", "js/ux.js"]) {
+  for (const f of ["css/pro.css", "css/layout.css", "js/engine.js", "js/pro.js", "js/extras.js", "js/ux.js", "js/lab.js"]) {
     assert.ok(sw.includes(`"${f}"`), `${f} sw.js CORE siyahısında yoxdur`);
   }
 });

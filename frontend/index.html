@@ -9,8 +9,16 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <meta name="theme-color" content="#0A1420">
+<meta property="og:type" content="website">
+<meta property="og:title" content="EnergyX Az — Açıq Enerji Kalkulyatoru">
+<meta property="og:description" content="Azərbaycanın pilləli elektrik və qaz tarifləri üzrə pulsuz kalkulyator, AI enerji məsləhətçisi, ağıllı sayğac analitikası. Gənclər Fondunun dəstəyi ilə.">
+<meta property="og:image" content="og-image.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="az_AZ">
+<meta name="twitter:card" content="summary_large_image">
 <!-- Tətbiq versiyası: dəyişəndə həm buradakı ?v=, həm də sw.js-dəki VERSION artırılmalıdır -->
-<meta name="app-version" content="2.3.0">
+<meta name="app-version" content="2.4.0">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon.svg">
 <script>
@@ -305,8 +313,8 @@ footer { padding:36px 0 48px; border-top:1px solid var(--border); text-align:cen
 footer a { color:var(--text-lo); text-decoration:underline; }
 footer .credit { margin-top:8px; font-size:12px; }
 </style>
-<link rel="stylesheet" href="css/pro.css?v=2.3.0">
-<link rel="stylesheet" href="css/layout.css?v=2.3.0">
+<link rel="stylesheet" href="css/pro.css?v=2.4.0">
+<link rel="stylesheet" href="css/layout.css?v=2.4.0">
 </head>
 <body>
 
@@ -320,6 +328,7 @@ footer .credit { margin-top:8px; font-size:12px; }
   <nav class="tab-nav" id="tabNav" aria-label="Bölmələr">
   <button class="tab-btn active" data-tab="calc" data-icon="🧮" onclick="switchTab('calc')" data-i18n="tab_calc">Kalkulyator</button>
   <button class="tab-btn" data-tab="app" data-icon="🔌" onclick="switchTab('app')" data-i18n="tab_app">Cihazlar</button>
+  <button class="tab-btn" data-tab="meter" data-icon="📟" onclick="switchTab('meter')" data-i18n="tab_meter">Ağıllı sayğac</button>
   <button class="tab-btn" data-tab="gas" data-icon="🔥" onclick="switchTab('gas')" data-i18n="tab_gas">Qaz</button>
   <button class="tab-btn" data-tab="insights" data-icon="📊" onclick="switchTab('insights')" data-i18n="tab_insights">Analitika</button>
   <button class="tab-btn" data-tab="plan" data-icon="🎯" onclick="switchTab('plan')" data-i18n="tab_plan">Planlaşdır</button>
@@ -327,6 +336,10 @@ footer .credit { margin-top:8px; font-size:12px; }
   <button class="tab-btn" data-tab="stats" data-icon="📈" onclick="switchTab('stats')" data-i18n="tab_stats">Statistika</button>
   <button class="tab-btn" data-tab="learn" data-icon="💡" onclick="switchTab('learn')" data-i18n="tab_learn">Öyrən</button>
   <button class="tab-btn" data-tab="about" data-icon="ℹ️" onclick="switchTab('about')" data-i18n="tab_about">Haqqında</button>
+  <a class="support-block nav-support" href="https://youthfoundation.az" target="_blank" rel="noopener">
+    <span class="support-label" data-i18n="supported_by">Dəstəkləyən</span>
+    <img class="azgf-logo logo-on-light" src="img/azgf-h-color.webp" alt="Azərbaycan Respublikasının Gənclər Fondu" width="260" height="51" loading="lazy" decoding="async"><img class="azgf-logo logo-on-dark" src="img/azgf-h-white.webp" alt="Azərbaycan Respublikasının Gənclər Fondu" width="260" height="51" loading="lazy" decoding="async">
+  </a>
 </nav>
   <div class="side-foot">
     <button class="present-btn" id="presentBtn" onclick="EnergyPro.startPresentation()" data-i18n="present_btn" title="Avtomatik demo">▶ Təqdimat</button>
@@ -339,6 +352,10 @@ footer .credit { margin-top:8px; font-size:12px; }
       </div>
     </div>
     <div class="oss-badge" data-i18n="oss_badge">🔓 Açıq mənbə, pulsuz</div>
+    <a class="support-block side-support" href="https://youthfoundation.az" target="_blank" rel="noopener">
+      <span class="support-label" data-i18n="supported_by">Dəstəkləyən</span>
+      <img class="azgf-logo logo-on-light " src="img/azgf-h-color.webp" alt="Azərbaycan Respublikasının Gənclər Fondu" width="360" height="71" loading="lazy" decoding="async"><img class="azgf-logo logo-on-dark " src="img/azgf-h-white.webp" alt="Azərbaycan Respublikasının Gənclər Fondu" width="360" height="71" loading="lazy" decoding="async">
+    </a>
   </div>
 </aside>
 
@@ -352,6 +369,10 @@ footer .credit { margin-top:8px; font-size:12px; }
     <div class="reminder" id="reminderBanner" hidden></div>
     <h1 data-i18n="calc_title">Bu ay nə qədər ödəyəcəksiniz?</h1>
     <p class="lead" data-i18n="calc_lead">Sürüşdürücünü hərəkət etdirin, aylıq elektrik istifadənizə uyğun tarif pilləsini və xərcinizi anında görün.</p>
+    <a class="hero-support" href="https://youthfoundation.az" target="_blank" rel="noopener">
+      <span class="support-label" data-i18n="supported_by_long">Azərbaycan Respublikasının Gənclər Fondunun dəstəyi ilə</span>
+      <img class="azgf-logo logo-on-light " src="img/azgf-h-color.webp" alt="Azərbaycan Respublikasının Gənclər Fondu" width="240" height="47" loading="eager" decoding="async"><img class="azgf-logo logo-on-dark " src="img/azgf-h-white.webp" alt="Azərbaycan Respublikasının Gənclər Fondu" width="240" height="47" loading="eager" decoding="async">
+    </a>
 
     <div class="overview" id="overview" aria-label="Ümumi baxış"></div>
 
@@ -446,7 +467,10 @@ footer .credit { margin-top:8px; font-size:12px; }
   </section>
 
   <section class="tiers-explain pro-card">
-    <h2 data-i18n="tiers_title">Tarif necə işləyir</h2>
+    <div class="pro-card-head"><h2 data-i18n="tiers_title">Tarif necə işləyir</h2>
+      <button class="ghost-btn tv-replay" id="tierReplay" type="button" data-i18n="tv_replay">▶ Animasiyanı təkrarla</button></div>
+    <div class="tierviz" id="tierViz" aria-live="polite"></div>
+    <p class="tv-explain" id="tierExplain"></p>
     <div class="tier-row">
       <span class="tier-dot low"></span>
       <span class="range">0 – 200 kVt</span>
@@ -476,6 +500,12 @@ footer .credit { margin-top:8px; font-size:12px; }
       <span class="sim-result-label" data-i18n="sim_savings_label">Aylıq qənaətiniz</span>
       <span class="sim-result-value" id="simSavings">3.02 ₼</span>
     </div>
+  </section>
+
+  <section class="pro-card flow-card">
+    <div class="pro-card-head"><h2 data-i18n="flow_title">Enerjiniz haradan gəlir, hara gedir?</h2><span class="pro-tag" data-i18n="flow_tag">canlı axın</span></div>
+    <p class="pro-lead" data-i18n="flow_lead">Stansiyada istehsal olunan enerjinin bir hissəsi şəbəkədə itir, qalanı sayğacınızdan keçib cihazlarınıza paylanır. Xəttlərin qalınlığı enerji miqdarına mütənasibdir.</p>
+    <div class="flow-wrap" id="flowViz" role="img" aria-label="Enerji axını diaqramı"></div>
   </section>
 
   <section class="summary-section pro-card">
@@ -508,6 +538,7 @@ footer .credit { margin-top:8px; font-size:12px; }
       <div class="suggestions">
         <button data-i18n="sugg1" onclick="askSuggested(this.textContent)">Necə qənaət edə bilərəm?</button>
         <button data-i18n="sugg2" onclick="askSuggested(this.textContent)">Növbəti pilləyə nə qalıb?</button>
+        <button data-i18n="sugg3" onclick="askSuggested(this.textContent)">Gecə nə qədər enerji itirirəm?</button>
       </div>
       <div class="chat-log" id="chatLog"></div>
       <div class="chat-input-row">
@@ -698,6 +729,65 @@ footer .credit { margin-top:8px; font-size:12px; }
   </section>
 </div>
 
+<div class="tab-panel grid-panel" id="panel-meter">
+  <h1 class="panel-title" data-i18n="lab_title">Ağıllı Sayğac AI Laboratoriyası</h1>
+  <p class="panel-lead" data-i18n="lab_lead">Ağıllı sayğaclar enerjini saatbasaat ölçür. Bu laboratoriya saatlıq məlumatı analiz edir: gün ərzində yük əyrisi, heç vaxt sönməyən baza yükü, pik saatlar, gecə anomaliyaları və konkret tövsiyələr. Məlumat cihazlarınızdan simulyasiya oluna, nümunədən götürülə və ya ağıllı sayğacdan CSV kimi yüklənə bilər.</p>
+  <div class="source-row lab-sources" role="group" aria-label="Məlumat mənbəyi">
+    <button class="ghost-btn" type="button" data-lab-src="sim" data-i18n="lab_src_sim">🔌 Cihazlarımdan simulyasiya</button>
+    <button class="ghost-btn" type="button" data-lab-src="sample" data-i18n="lab_src_sample">🧪 Nümunə sayğac datası</button>
+    <label class="ghost-btn" tabindex="0"><span data-i18n="lab_src_csv">📂 CSV yüklə</span>
+      <input type="file" id="labCsv" accept=".csv,text/csv,text/plain" hidden></label>
+    <button class="ghost-btn" type="button" id="labCsvDownload" data-i18n="lab_csv_download">⬇️ CSV-ni endir</button>
+  </div>
+  <div class="hint-box" id="labHint" hidden></div>
+
+  <section class="pro-card wide live-card">
+    <div class="live-meter">
+      <div class="live-head"><span class="live-dot" aria-hidden="true"></span><span data-i18n="lab_live">Canlı güc (simulyasiya)</span></div>
+      <div class="live-w" id="liveW" aria-live="off">—</div>
+      <div class="live-bar"><div id="liveBar"></div><span id="liveBase"></span></div>
+      <div class="live-sub" id="liveSub"></div>
+    </div>
+    <div class="kpi-grid lab-kpis" id="labKpis"></div>
+  </section>
+
+  <section class="pro-card wide">
+    <div class="pro-card-head"><h2 data-i18n="lab_curve_title">Gün ərzində yük əyrisi</h2><span class="pro-tag" id="labPeriod"></span></div>
+    <p class="pro-lead" data-i18n="lab_curve_lead">Hər saat üçün orta güc. Qırıq xətt — baza yükü: evinizdə heç vaxt sönməyən cihazların (soyuducu, router, gözləmə rejimi) gücü.</p>
+    <div class="chart-box"><canvas id="labCurve" aria-label="24 saatlıq yük əyrisi"></canvas></div>
+  </section>
+
+  <section class="pro-card">
+    <div class="pro-card-head"><h2 data-i18n="lab_ai_title">AI tövsiyələri</h2><span class="pro-tag" data-i18n="lab_ai_tag">ölçülə bilən</span></div>
+    <div id="labInsights"></div>
+  </section>
+
+  <section class="pro-card">
+    <div class="pro-card-head"><h2 data-i18n="lab_heat_title">Həftə × saat xəritəsi</h2></div>
+    <p class="pro-lead" data-i18n="lab_heat_lead">Rəng nə qədər tünddürsə, həmin gün və saatda istifadə bir o qədər çoxdur.</p>
+    <div class="heatmap-scroll"><div class="wk-heat" id="labHeat"></div></div>
+  </section>
+
+  <section class="pro-card wide">
+    <div class="pro-card-head"><h2 data-i18n="lab_daily_title">Gündəlik istifadə və anomaliyalar</h2><span class="pro-tag">robust z-score · saatlıq</span></div>
+    <div class="chart-box"><canvas id="labDaily" aria-label="Gündəlik istifadə"></canvas></div>
+    <h3 class="pro-sub" data-i18n="lab_events_title">Aşkarlanan hadisələr</h3>
+    <div id="labEvents"></div>
+  </section>
+
+  <section class="pro-card wide">
+    <div class="pro-card-head"><h2 data-i18n="lab_csv_title">CSV formatı</h2></div>
+    <p class="pro-lead" data-i18n="lab_csv_lead">Ağıllı sayğacınızın və ya Azərişıq kabinetinin saatlıq məlumatını CSV kimi yükləyin. Dəstəklənən formatlar (vergül, nöqtəli vergül və ya tab ilə ayrılmış):</p>
+    <pre class="csv-example">timestamp,kwh
+2026-10-01 00:00,0.412
+2026-10-01 01:00,0.385
+
+tarix;saat;kVt·saat
+01.10.2026;00;0,412</pre>
+    <p class="pro-note" data-i18n="lab_csv_note">Dəyərlər Vt·saat ilədirsə, avtomatik kVt·saata çevrilir. 15 dəqiqəlik məlumat saatlıq cəmlənir. Fayl yalnız brauzerinizdə emal olunur — heç yerə göndərilmir.</p>
+  </section>
+</div>
+
 <div class="tab-panel grid-panel" id="panel-gas">
   <h1 class="panel-title" data-i18n="gas_title">Təbii Qaz Kalkulyatoru</h1>
   <p class="panel-lead" data-i18n="gas_lead">Qaz tarifi İLLİK həcmə görə pillələnir: ilin əvvəlindən yığılan istifadə 1200 m³-i keçdikdən sonra hər kubmetr bahalaşır. Qışda istilik səbəbindən istifadə kəskin artır.</p>
@@ -833,6 +923,9 @@ footer .credit { margin-top:8px; font-size:12px; }
       <h3 data-i18n="about_h1">Niyə yaradıldı</h3>
       <p data-i18n="about_p1">Azərbaycanda pillə-əsaslı elektrik tarifini izah edən, sərbəst istifadə oluna bilən heç bir ixtisaslaşmış alət yox idi. Bu alət həmin boşluğu doldurmaq üçün yaradılıb — tam pulsuz, hər kəsə açıq.</p>
     </div>
+    <div class="about-block about-support">
+      <img class="azgf-logo logo-on-light " src="img/azgf-v-color.webp" alt="Azərbaycan Respublikasının Gənclər Fondu" width="320" height="173" loading="lazy" decoding="async"><img class="azgf-logo logo-on-dark " src="img/azgf-v-white.webp" alt="Azərbaycan Respublikasının Gənclər Fondu" width="320" height="173" loading="lazy" decoding="async">
+    </div>
     <div class="about-block">
       <h3 data-i18n="about_h2">Dəstək</h3>
       <p data-i18n="about_p2">Bu layihə Azərbaycan Respublikasının Gənclər Fondu tərəfindən "İnkişaf, İnnovasiya və Sosial Təşəbbüslər" qrant müsabiqəsi çərçivəsində maliyyələşdirilib.</p>
@@ -856,6 +949,8 @@ footer .credit { margin-top:8px; font-size:12px; }
 </main>
 
 <footer class="wrap">
+  <a class="footer-logo" href="https://youthfoundation.az" target="_blank" rel="noopener"><img class="azgf-logo logo-on-light " src="img/azgf-h-color.webp" alt="Azərbaycan Respublikasının Gənclər Fondu" width="300" height="59" loading="lazy" decoding="async"><img class="azgf-logo logo-on-dark " src="img/azgf-h-white.webp" alt="Azərbaycan Respublikasının Gənclər Fondu" width="300" height="59" loading="lazy" decoding="async"></a>
+  <p class="fund-disclaimer" data-i18n="fund_disclaimer">Bu nəşr Azərbaycan Respublikasının Gənclər Fondunun maliyyə yardımı ilə hazırlanmışdır. Fond nəşrin məzmununa görə məsuliyyət daşımır.</p>
   <p data-i18n="footer_p1">Bu alət Azərbaycan Respublikasının Gənclər Fondu qrant dəstəyi ilə hazırlanıb. Kodun tamamı açıq mənbədir.</p>
   <p><a href="https://github.com/AdamMammadov/EnergyX-Az-Argf" target="_blank" rel="noopener" data-i18n="footer_github">GitHub-da baxın →</a></p>
   <p class="credit">EnergyX Az · 2026</p>
@@ -870,7 +965,7 @@ footer .credit { margin-top:8px; font-size:12px; }
   <button class="bn-btn" type="button" id="bnMore" onclick="toggleNav(true)"><span class="bn-ico">☰</span><span data-i18n="nav_more">Daha çox</span></button>
 </nav>
 
-<script src="js/engine.js?v=2.3.0"></script>
+<script src="js/engine.js?v=2.4.0"></script>
 <script>
 const API_BASE = "https://energyx-az-kalkulyator.onrender.com";
 
@@ -1220,8 +1315,10 @@ function addMsg(text, cls) {
   chatLog.scrollTop = chatLog.scrollHeight;
 }
 
+// Çoxaddımlı dialoq: AI əvvəlki sual-cavabları xatırlayır (yalnız real AI cavabları saxlanılır)
+const chatHistory = [];
 async function sendMessage() {
-  const question = chatInput.value.trim();
+  const question = chatInput.value.trim().slice(0, 500);
   if (!question) return;
   addMsg(question, "user");
   chatInput.value = "";
@@ -1232,13 +1329,15 @@ async function sendMessage() {
     const res = await fetch(`${API_BASE}/advise`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ kwh: slider.value, question, lang: currentLang,
+      body: JSON.stringify({ kwh: slider.value, question, lang: currentLang, history: chatHistory.slice(-6),
         context: window.EnergyPro ? EnergyPro.aiContext() : undefined }),
     });
     const data = await res.json();
     const botMsgEl = chatLog.lastChild;
     if (data.answer) {
       botMsgEl.textContent = data.answer;
+      chatHistory.push({ role: "user", text: question }, { role: "assistant", text: String(data.answer).slice(0, 1200) });
+      if (chatHistory.length > 12) chatHistory.splice(0, chatHistory.length - 12);
       addFeedbackRow();
     } else if (res.status === 429) {
       botMsgEl.textContent = data.error || translations[currentLang].chat_error;
@@ -1560,9 +1659,10 @@ updateCalc();
 updateSim();
 
 </script>
-<script src="js/pro.js?v=2.3.0"></script>
-<script src="js/extras.js?v=2.3.0"></script>
-<script src="js/ux.js?v=2.3.0"></script>
+<script src="js/pro.js?v=2.4.0"></script>
+<script src="js/extras.js?v=2.4.0"></script>
+<script src="js/ux.js?v=2.4.0"></script>
+<script src="js/lab.js?v=2.4.0"></script>
 
 </body>
 </html>

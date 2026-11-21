@@ -80,7 +80,7 @@
   };
   Object.keys(UT).forEach((l) => Object.assign(translations[l], UT[l]));
 
-  const TABS = ["calc", "app", "gas", "insights", "plan", "ready", "stats", "learn", "about"];
+  const TABS = ["calc", "app", "meter", "gas", "insights", "plan", "ready", "stats", "learn", "about"];
   let currentTab = (document.querySelector(".tab-btn.active") || { dataset: {} }).dataset.tab || "calc";
 
   // ===== TEMA =====

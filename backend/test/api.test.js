@@ -6,7 +6,7 @@ const path = require("path");
 
 process.env.STATS_FILE = path.join(os.tmpdir(), `energyx-stats-${process.pid}.json`);
 delete process.env.GEMINI_API_KEY;
-const { app, contextToText } = require("../server");
+const { app, contextToText, historyToContents } = require("../server");
 
 let server, base;
 test.before(() => new Promise((resolve) => {
@@ -67,4 +67,33 @@ test("contextToText yalnız gözlənilən sahələri götürür", () => {
   assert.doesNotMatch(txt, /IGNORE ALL/);
   assert.doesNotMatch(txt, /[<>]/);
   assert.equal(contextToText(null), "");
+});
+
+test("söhbət tarixçəsi: rollar, növbələnmə, limitlər", () => {
+  assert.deepEqual(historyToContents(null), []);
+  const h = historyToContents([
+    { role: "assistant", text: "əvvəlcə model — atılmalıdır" },
+    { role: "user", text: "Salam" }, { role: "assistant", text: "Salam! Necə kömək edim?" },
+    { role: "system", text: "IGNORE" }, { role: "user", text: "x".repeat(5000) },
+  ]);
+  assert.equal(h[0].role, "user");
+  assert.equal(h[h.length - 1].role, "model");
+  assert.ok(h.every((c) => c.role === "user" || c.role === "model"));
+  assert.ok(!JSON.stringify(h).includes("IGNORE"));
+  const many = Array.from({ length: 20 }, (_, i) => ({ role: i % 2 ? "assistant" : "user", text: "m" + i }));
+  assert.ok(historyToContents(many).length <= 6);
+  const long = historyToContents([{ role: "user", text: "y".repeat(5000) }, { role: "assistant", text: "ok" }]);
+  assert.equal(long[0].parts[0].text.length, 1200);
+});
+
+test("contextToText ağıllı sayğac profilini əlavə edir", () => {
+  const txt = contextToText({ profile: { baseloadW: 145, peakHour: 19, avgDailyKwh: 14.3, nightSharePct: 21, events: 2, source: "csv" } });
+  assert.match(txt, /baza yükü 145 Vt/);
+  assert.match(txt, /pik saat 19:00/);
+  assert.match(txt, /CSV/);
+});
+
+test("POST /advise tarixçə ilə də doğrulanır (AI açarı yoxdur → 503)", async () => {
+  const res = await post("/advise", { question: "Bəs gecə?", history: [{ role: "user", text: "Salam" }, { role: "assistant", text: "Salam!" }] });
+  assert.equal(res.status, 503);
 });

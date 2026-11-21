@@ -75,13 +75,15 @@
       sample_loaded: "Nümunə məlumat yükləndi (\"Nümunə ev\" — real deyil).", sample_cleared: "Nümunə məlumat silindi.",
       pres_stop: "Dayandır", pres_done: "Təqdimat bitdi — məlumatlarınız bərpa olundu.",
       pres_steps: [
-        "1/7 · Kalkulyator: sürüşdürücü hərəkət etdikcə pillə, xərc və CO₂ anında yenilənir.",
-        "2/7 · Ay sonu proqnozu və növbəti pilləyə geri sayım — istifadəçi bahalaşmanı əvvəlcədən görür.",
-        "3/7 · Enerji Sağlamlıq Balı: problemlər kök-səbəb payı ilə sıralanır.",
-        "4/7 · Anomaliya Aşkarlayıcısı: son 2 ayda davamlı artım tapıldı — ehtimal olunan səbəb izah olunur.",
-        "5/7 · 12 aylıq proqnoz Bakının iqlim normalarına əsaslanır, 95% etibarlılıq aralığı ilə.",
-        "6/7 · \"Əgər...?\" simulyatoru: bir neçə sadə vərdiş istifadəçini ucuz pilləyə qaytarır.",
-        "7/7 · Sərmayə planı: hansı alış özünü ən tez ödəyir — pilləli tarifə görə real hesab.",
+        "1/9 · Kalkulyator: sürüşdürücü hərəkət etdikcə pillə, xərc və CO₂ anında yenilənir.",
+        "2/9 · Ay sonu proqnozu və növbəti pilləyə geri sayım — istifadəçi bahalaşmanı əvvəlcədən görür.",
+        "3/9 · Vizual izah: pilləli tarifin necə hesablandığı animasiya ilə, enerji isə stansiyadan cihazlara qədər canlı axında göstərilir.",
+        "4/9 · Enerji Sağlamlıq Balı: problemlər kök-səbəb payı ilə sıralanır.",
+        "5/9 · Anomaliya Aşkarlayıcısı: son 2 ayda davamlı artım tapıldı — ehtimal olunan səbəb izah olunur.",
+        "6/9 · 12 aylıq proqnoz Bakının iqlim normalarına əsaslanır, 95% etibarlılıq aralığı ilə.",
+        "7/9 · \"Əgər...?\" simulyatoru: bir neçə sadə vərdiş istifadəçini ucuz pilləyə qaytarır.",
+        "8/9 · Sərmayə planı: hansı alış özünü ən tez ödəyir — pilləli tarifə görə real hesab.",
+        "9/9 · Ağıllı sayğac AI laboratoriyası: saatlıq məlumatdan baza yükü, pik saatlar və gecə anomaliyaları tapılır, konkret ₼ tövsiyəsi verilir.",
       ],
       local_prefix: "🤖 (Oflayn köməkçi) ",
       local_save: "Ən effektiv addımlar: {list}. Bunlarla ayda təxminən {azn} ₼ ({kwh} kVt) qənaət edə bilərsiniz.",
@@ -163,13 +165,15 @@
       sample_loaded: "Sample data loaded (\"Nümunə ev\" — not real).", sample_cleared: "Sample data removed.",
       pres_stop: "Stop", pres_done: "Demo finished — your data has been restored.",
       pres_steps: [
-        "1/7 · Calculator: tier, cost and CO₂ update instantly as the slider moves.",
-        "2/7 · Month-end forecast and next-tier countdown — users see price jumps coming.",
-        "3/7 · Energy Health Score: problems ranked by root-cause share.",
-        "4/7 · Anomaly Detector: a sustained rise over the last 2 months is found and explained.",
-        "5/7 · 12-month forecast built on Baku's climate normals, with a 95% confidence range.",
-        "6/7 · \"What if\" simulator: a few simple habits bring the user back to a cheaper tier.",
-        "7/7 · Investment plan: which purchase pays back fastest — computed on the real tiered tariff.",
+        "1/9 · Calculator: tier, cost and CO₂ update instantly as the slider moves.",
+        "2/9 · Month-end forecast and next-tier countdown — users see price jumps coming.",
+        "3/9 · Visual explainer: an animation shows how the tiered tariff is calculated, and a live flow traces energy from the plant to your appliances.",
+        "4/9 · Energy Health Score: problems ranked by root-cause share.",
+        "5/9 · Anomaly Detector: a sustained rise over the last 2 months is found and explained.",
+        "6/9 · 12-month forecast built on Baku's climate normals, with a 95% confidence range.",
+        "7/9 · \"What if\" simulator: a few simple habits bring the user back to a cheaper tier.",
+        "8/9 · Investment plan: which purchase pays back fastest — computed on the real tiered tariff.",
+        "9/9 · Smart Meter AI Lab: hourly data reveals the baseload, peak hours and night anomalies, with concrete ₼ recommendations.",
       ],
       local_prefix: "🤖 (Offline assistant) ",
       local_save: "Most effective steps: {list}. Together they could save about {azn} ₼ ({kwh} kWh) per month.",
@@ -251,13 +255,15 @@
       sample_loaded: "Пример загружен («Nümunə ev» — не реальные данные).", sample_cleared: "Пример удалён.",
       pres_stop: "Стоп", pres_done: "Демо завершено — ваши данные восстановлены.",
       pres_steps: [
-        "1/7 · Калькулятор: тариф, стоимость и CO₂ обновляются мгновенно.",
-        "2/7 · Прогноз на конец месяца и отсчёт до следующего тарифа.",
-        "3/7 · Индекс энергоздоровья: проблемы ранжированы по доле причин.",
-        "4/7 · Детектор аномалий: найден и объяснён устойчивый рост за 2 месяца.",
-        "5/7 · Прогноз на 12 месяцев по климатическим нормам Баку с интервалом 95%.",
-        "6/7 · «Что если?»: несколько простых привычек возвращают на дешёвый тариф.",
-        "7/7 · План инвестиций: что окупится быстрее — по реальному ступенчатому тарифу.",
+        "1/9 · Калькулятор: тариф, стоимость и CO₂ обновляются мгновенно.",
+        "2/9 · Прогноз на конец месяца и отсчёт до следующего тарифа.",
+        "3/9 · Визуальное объяснение: анимация показывает расчёт ступенчатого тарифа, а живой поток — путь энергии от станции до приборов.",
+        "4/9 · Индекс энергоздоровья: проблемы ранжированы по доле причин.",
+        "5/9 · Детектор аномалий: найден и объяснён устойчивый рост за 2 месяца.",
+        "6/9 · Прогноз на 12 месяцев по климатическим нормам Баку с интервалом 95%.",
+        "7/9 · «Что если?»: несколько простых привычек возвращают на дешёвый тариф.",
+        "8/9 · План инвестиций: что окупится быстрее — по реальному ступенчатому тарифу.",
+        "9/9 · AI-лаборатория умного счётчика: по почасовым данным находит базовую нагрузку, пики и ночные аномалии и даёт рекомендации в ₼.",
       ],
       local_prefix: "🤖 (Офлайн-помощник) ",
       local_save: "Самые эффективные шаги: {list}. Вместе они сэкономят около {azn} ₼ ({kwh} кВт·ч) в месяц.",
@@ -777,7 +783,16 @@
   }
 
   // ===== PDF HESABAT (şrift lazım olanda yüklənir — səhifə 1 MB yüngülləşdi) =====
-  let fontB64 = null;
+  let fontB64 = null, logoData = null;
+  // Gənclər Fondunun loqosu (Siyahı 2.5.1: çap materiallarında görünən yerdə olmalıdır)
+  async function loadLogo() {
+    if (logoData) return logoData;
+    const res = await fetch("img/azgf-h-color-pdf.jpg");
+    if (!res.ok) throw new Error("logo");
+    const blob = await res.blob();
+    logoData = await new Promise((ok, fail) => { const r = new FileReader(); r.onload = () => ok(r.result); r.onerror = fail; r.readAsDataURL(blob); });
+    return logoData;
+  }
   async function loadFont() {
     if (fontB64) return fontB64;
     const res = await fetch("fonts/DejaVuSans.ttf");
@@ -808,7 +823,9 @@
     };
     const para = (txt) => { const ls = doc.splitTextToSize(txt, 170); ls.forEach((l) => { if (y > 266) { doc.addPage(); y = 22; } doc.text(l, 20, y); y += 6; }); };
 
-    doc.setFontSize(20); doc.setTextColor(20); doc.text("EnergyX Az — " + t.pdf_title, 20, y); y += 8;
+    // Loqo sağ yuxarı küncdə (900×177 px → 62×12.2 mm); yüklənməsə hesabat yenə yaranır
+    try { doc.addImage(await loadLogo(), "JPEG", 128, 10, 62, 12.2); } catch {}
+    doc.setFontSize(18); doc.setTextColor(20); doc.text("EnergyX Az — " + t.pdf_title, 20, y + 4); y += 12;
     doc.setFontSize(10); doc.setTextColor(120); doc.text(new Date().toLocaleDateString(locale()), 20, y); y += 4;
     doc.setDrawColor(220); doc.line(20, y, 190, y); y += 6;
     doc.setFontSize(11); doc.setTextColor(30);
@@ -852,7 +869,7 @@
     const pages = doc.getNumberOfPages();
     for (let i = 1; i <= pages; i++) {
       doc.setPage(i);
-      doc.text(doc.splitTextToSize(t.pdf_disclaimer + " " + t.footer_p1, 170), 20, 280);
+      doc.text(doc.splitTextToSize(t.pdf_disclaimer + " " + (t.fund_disclaimer || t.footer_p1), 170), 20, 280);
     }
     doc.save(`energyx-az-hesabat-${kwh}kwh.pdf`);
     trackEvent("pdf_export");
@@ -860,7 +877,7 @@
 
   // ===== TƏQDİMAT REJİMİ (PanoPulse Presentation Mode) =====
   // İstifadəçinin məlumatı əvvəlcə yadda saxlanılır, demo bitəndə tam bərpa olunur.
-  const SNAP_KEYS = ["energyx_meters", "energyx_appliances", "energyx_pace", "energyx_ins_source", "energyx_invest", "energyx_sens", "energyx_gas", "energyx_outage"];
+  const SNAP_KEYS = ["energyx_meters", "energyx_appliances", "energyx_pace", "energyx_ins_source", "energyx_invest", "energyx_sens", "energyx_gas", "energyx_outage", "energyx_lab"];
   let pres = null;
   function startPresentation() {
     if (pres) return stopPresentation();
@@ -891,6 +908,9 @@
     const actions = [
       () => { switchTab("calc"); window.scrollTo({ top: 0, behavior: "smooth" }); animateSlider(120, 330, 2600); },
       () => { document.querySelector(".forecast-card").scrollIntoView({ behavior: "smooth", block: "center" }); },
+      () => { $("tierViz").scrollIntoView({ behavior: "smooth", block: "center" });
+              if (window.EnergyLab) EnergyLab.renderTierViz(true);
+              later(() => $("flowViz").scrollIntoView({ behavior: "smooth", block: "center" }), 2700); },
       () => { switchTab("insights"); window.scrollTo({ top: 0, behavior: "smooth" }); },
       () => { $("anomTimeline").scrollIntoView({ behavior: "smooth", block: "center" }); },
       () => { $("fcChart").scrollIntoView({ behavior: "smooth", block: "center" }); },
@@ -898,6 +918,8 @@
               [["wiLed", 600], ["wiStandby", 1300], ["wiWh", 2000]].forEach(([id, d]) => later(() => { $(id).checked = true; renderWhatIf(); }, d));
               later(() => { $("wiAc").value = 2; renderWhatIf(); }, 2700); },
       () => { $("invTable").scrollIntoView({ behavior: "smooth", block: "center" }); },
+      () => { if (window.EnergyLab) EnergyLab.setSource("sample"); switchTab("meter"); window.scrollTo({ top: 0, behavior: "smooth" });
+              later(() => $("labInsights").scrollIntoView({ behavior: "smooth", block: "center" }), 2800); },
     ];
     actions.forEach((fn, i) => later(() => {
       $("presCaption").textContent = steps[i];
