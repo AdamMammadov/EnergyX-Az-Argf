@@ -16,7 +16,7 @@ const marks = {};                                    // seqmentlərin başlanğ�
 const TXT = {
   az: { sub: "Azərbaycanda ev təsərrüfatları üçün pulsuz elektrik və qaz xərci kalkulyatoru",
         sup: "Azərbaycan Respublikasının Gənclər Fondunun dəstəyi ilə",
-        credit: "Musiqi: Kevin MacLeod, \"Inspired\" (incompetech.com), CC BY 4.0 · Səs: Meta MMS-TTS, CC BY-NC 4.0",
+        credit: "Musiqi: Kevin MacLeod, \"Inspired\" (incompetech.com), CC BY 4.0 · " + (process.env.VOICE_CREDIT || "Səs: Google Gemini (süni intellekt)"),
         disc: "Bu nəşr Azərbaycan Respublikasının Gənclər Fondunun maliyyə yardımı ilə hazırlanmışdır. Fond nəşrin məzmununa görə məsuliyyət daşımır." },
   en: { sub: "A free electricity and gas cost calculator for households in Azerbaijan",
         sup: "Supported by the Youth Foundation of the Republic of Azerbaijan",

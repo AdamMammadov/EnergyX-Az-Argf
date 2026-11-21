@@ -29,9 +29,11 @@ node tools/demo-video/record.js out/frames az light out/clips/clips.json
 python3 tools/demo-video/assemble.py out/frames out/clips/clips.json Inspired.mp3 frontend/fonts out/energyx-az-tanitim.mp4
 ```
 
+Gemini pulsuz planında TTS modeli üçün gündə 10 sorğu limiti var, video isə 12 hissədir. Limit bitəndə qalan hissələr limiti ayrı olan modellə tamamlana bilər (eyni səs): `TTS_MODEL=gemini-3.8-flash-lite-tts python3 tools/demo-video/tts_gemini.py ... Sulafat outro`. Skript artıq hazır olan klipləri saxlayır, yalnız göstərilən hissələri yenidən səsləndirir.
+
 İzah mətni `script_az.json` faylındadır: `sub` altyazıda görünən mətndir, `tts` isə səsləndirilən formadır (rəqəmlər sözlə, durğu işarəsiz).
 
 ## Lisenziyalar
-- Səs modeli: [facebook/mms-tts-azj-script_latin](https://huggingface.co/facebook/mms-tts-azj-script_latin), CC BY-NC 4.0 (yalnız qeyri-kommersiya istifadə).
+- Səs: Google Gemini TTS (`tts_gemini.py`, tövsiyə olunur) və ya açıq model [facebook/mms-tts-azj-script_latin](https://huggingface.co/facebook/mms-tts-azj-script_latin), CC BY-NC 4.0 (`tts_make.py`). Videonun sonundakı səs qeydi `VOICE_CREDIT` dəyişəni ilə dəyişdirilir.
 - Musiqi: Kevin MacLeod, "Inspired", CC BY 4.0.
 - Hər ikisinin adı videonun sonunda göstərilir.
