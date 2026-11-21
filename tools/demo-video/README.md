@@ -36,4 +36,4 @@ Gemini pulsuz planında TTS modeli üçün gündə 10 sorğu limiti var, video i
 ## Lisenziyalar
 - Səs: Google Gemini TTS (`tts_gemini.py`, tövsiyə olunur) və ya açıq model [facebook/mms-tts-azj-script_latin](https://huggingface.co/facebook/mms-tts-azj-script_latin), CC BY-NC 4.0 (`tts_make.py`). Videonun sonundakı səs qeydi `VOICE_CREDIT` dəyişəni ilə dəyişdirilir.
 - Musiqi: Kevin MacLeod, "Inspired", CC BY 4.0.
-- Hər ikisinin adı videonun sonunda göstərilir.
+- Müəllif qeydləri default olaraq videoda göstərilmir (paylaşım mətnində yazılır). Videonun sonunda göstərmək üçün: `SHOW_CREDITS=1 node tools/demo-video/record.js ...`. Musiqinin CC BY 4.0 lisenziyası müəllifin adının paylaşımda göstərilməsini tələb edir.

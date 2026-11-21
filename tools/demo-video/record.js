@@ -125,7 +125,7 @@ const TXT = {
   marks.outro = Date.now() / 1000;
   await card(`<img src="${logo}" alt="" style="height:96px"><div class="vdisc">${t.disc}</div>
     <div class="vtags">#EnergyXAz #AzGF #GenclerFondu</div><div class="vsup">EnergyX Az · 2026</div>
-    <div class="vcredit">${t.credit}</div>`, segMs("outro", 1.8, 6));
+    ${process.env.SHOW_CREDITS ? `<div class="vcredit">${t.credit}</div>` : ""}`, segMs("outro", 1.8, 6));
 
   const tEnd = Date.now() / 1000;
   await client.send("Page.stopScreencast");
