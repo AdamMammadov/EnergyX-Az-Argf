@@ -110,6 +110,7 @@ Təqdimat rejimi 9 addıma genişləndi (vizual izah və ağıllı sayğac labor
 | 48 | **AI söhbəti** — 25 s sonra oflayn köməkçiyə keçid (Render yuxudan oyananda), köhnə backend-in "Üzr istəyirəm…" cavabı xəta kimi tanınır, cavab gözlənərkən ikinci sual göndərilmir (cavablar qarışmırdı), "çox sorğu" mesajı seçilmiş dildə | Kalkulyator |
 | 49 | **Yedək v2** — qaz, kəsinti planı, ağıllı sayğac CSV-si, cihaz müqayisəsi, sərmayə planı və həssaslıq ayarı da yedəyə düşür; idxalda hər dəyər yoxlanılır və formlar dərhal yenilənir | Analitika |
 | 50 | **Əlçatanlıq (WCAG AA)** — açıq temada rəng kontrastı düzəldildi, sürüşən cədvəllər klaviatura ilə əlçatan oldu, etiketsiz input qalmadı (axe-core: 0 ciddi pozuntu, hər iki tema) | Hər yerdə |
+| 51 | **v2.4.2: yüklənmə zamanı ehtiyat model** — Google modeli "high demand" (503), kvota (429) və ya 500 qaytaranda həmin sual avtomatik `gemini-flash-lite-latest` / `gemini-2.5-flash` ilə cavablanır; hamısı yüklənibsə əsas model 1 s sonra bir də sınanır. Bağlanmış (404) model 1 saat sınanmır. Backend asılılıqlarında 2 zəiflik bağlandı (`npm audit`: 0) | Backend |
 
 **Audit:** 10 bölmə × 3 dil — tərcümə boşluğu yoxdur, sərhəd dəyərlərində (`-5`, `0`, `99999999`, boş) heç yerdə `NaN`/`undefined` çıxmır, bütün düymələr klikləndi, JS xətası yoxdur, 9 ekran enində üfüqi daşma yoxdur, oflayn (PWA) rejimdə səhifə açılır.
 
@@ -119,7 +120,7 @@ Təqdimat rejimi 9 addıma genişləndi (vizual izah və ağıllı sayğac labor
 - Backend: təhlükəsizlik başlıqları, `ALLOWED_ORIGINS` ilə CORS, 10 KB sorğu limiti, giriş doğrulaması, `/track` üçün rate-limit və hadisə növü siyahısı, statistikanın atomik yazılması, Gemini açarı URL-də yox başlıqda, 15 s timeout, `/health` endpoint, səliqəli 404/400 cavabları
 - AI-a göndərilən kontekst serverdə təmizlənir (prompt injection riskini azaltmaq üçün)
 - Tarif məntiqi vahid mənbədən gəlir və frontend ↔ backend uyğunluğu testlə yoxlanılır
-- **60 avtomatik test** (`cd backend && npm test`; AI cavabları saxta Gemini ilə yoxlanılır) + GitHub Actions CI
+- **62 avtomatik test** (`cd backend && npm test`; AI cavabları saxta Gemini ilə yoxlanılır) + GitHub Actions CI
 
 > Qeyd: "Nümunə məlumat" və təqdimat rejimindəki məlumat açıq şəkildə **nümunə** kimi etiketlənib — real istifadəçi məlumatı deyil.
 

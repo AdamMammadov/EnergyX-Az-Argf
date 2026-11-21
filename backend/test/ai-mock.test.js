@@ -69,7 +69,7 @@ test("bloklanmış sorğu və köhnəlmiş model səbəbi ilə xəta qaytarır",
   res = await ask({ question: "Salam" });
   assert.equal(res.status, 502); assert.equal((await res.json()).reason, "NOT_FOUND");
   // bütün ehtiyat modellər sınanır (təkrarsız), sonra xəta qaytarılır
-  assert.deepEqual(urls.map((u) => u.match(/models\/([^:]+):/)[1]), ["gemini-flash-latest", "gemini-flash-lite-latest"]);
+  assert.deepEqual(urls.map((u) => u.match(/models\/([^:]+):/)[1]), ["gemini-flash-latest", "gemini-flash-lite-latest", "gemini-2.5-flash"]);
 });
 
 test("/ai-check: uğur, yanlış açar, açar yoxdur", async () => {
