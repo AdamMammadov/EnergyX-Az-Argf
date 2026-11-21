@@ -19,7 +19,7 @@
 <meta property="og:locale" content="az_AZ">
 <meta name="twitter:card" content="summary_large_image">
 <!-- Tətbiq versiyası: dəyişəndə həm buradakı ?v=, həm də sw.js-dəki VERSION artırılmalıdır -->
-<meta name="app-version" content="2.5.2">
+<meta name="app-version" content="2.5.3">
 <link rel="manifest" href="manifest.webmanifest">
 <script>window.addEventListener("beforeinstallprompt", function (e) { e.preventDefault(); window.__installPrompt = e; });</script>
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
@@ -321,9 +321,9 @@ footer { padding:36px 0 48px; border-top:1px solid var(--border); text-align:cen
 footer a { color:var(--text-lo); text-decoration:underline; }
 footer .credit { margin-top:8px; font-size:12px; }
 </style>
-<link rel="stylesheet" href="css/pro.css?v=2.5.2">
-<link rel="stylesheet" href="css/layout.css?v=2.5.2">
-<link rel="stylesheet" href="css/theme.css?v=2.5.2">
+<link rel="stylesheet" href="css/pro.css?v=2.5.3">
+<link rel="stylesheet" href="css/layout.css?v=2.5.3">
+<link rel="stylesheet" href="css/theme.css?v=2.5.3">
 </head>
 <body>
 
@@ -416,6 +416,20 @@ footer .credit { margin-top:8px; font-size:12px; }
   <section class="home-section">
     <h2 data-i18n="home_sections">Saytda nə var</h2>
     <div class="home-grid" id="homeGrid"></div>
+  </section>
+
+  <section class="home-section home-video">
+    <div class="home-video-text">
+      <h2 data-i18n="video_title">Videoda qısa tanışlıq</h2>
+      <p data-i18n="video_lead">İki dəqiqəlik videoda saytın əsas bölmələri izah olunur. Video Azərbaycan dilindədir və altyazılıdır.</p>
+      <a class="btn-link" href="https://youtu.be/bov7zKZije4" target="_blank" rel="noopener" data-i18n="video_open">YouTube-da aç</a>
+    </div>
+    <div class="video-frame" data-yt="bov7zKZije4">
+      <button type="button" class="video-play" aria-label="Videonu oynat">
+        <img src="img/video-thumb.webp" alt="" width="1280" height="720" loading="lazy" decoding="async">
+        <span class="video-play-ico" aria-hidden="true"></span>
+      </button>
+    </div>
   </section>
 
   <section class="home-section home-two">
@@ -980,6 +994,12 @@ tarix;saat;kVt·saat
 
 <div class="tab-panel" id="panel-about">
   <h1 class="panel-title" data-i18n="about_title">Layihə haqqında</h1>
+  <div class="video-frame about-video" data-yt="bov7zKZije4">
+      <button type="button" class="video-play" aria-label="Videonu oynat">
+        <img src="img/video-thumb.webp" alt="" width="1280" height="720" loading="lazy" decoding="async">
+        <span class="video-play-ico" aria-hidden="true"></span>
+      </button>
+    </div>
   <div class="about-grid">
     <div class="about-block">
       <h3 data-i18n="about_h1">Niyə yaradıldı</h3>
@@ -1027,7 +1047,7 @@ tarix;saat;kVt·saat
   <button class="bn-btn" type="button" id="bnMore" onclick="toggleNav(true)"><span class="bn-ico" aria-hidden="true"></span><span data-i18n="nav_more">Daha çox</span></button>
 </nav>
 
-<script src="js/engine.js?v=2.5.2"></script>
+<script src="js/engine.js?v=2.5.3"></script>
 <script>
 const API_BASE = "https://energyx-az-kalkulyator.onrender.com";
 
@@ -1746,11 +1766,11 @@ updateCalc();
 updateSim();
 
 </script>
-<script src="js/pro.js?v=2.5.2"></script>
-<script src="js/extras.js?v=2.5.2"></script>
-<script src="js/ux.js?v=2.5.2"></script>
-<script src="js/lab.js?v=2.5.2"></script>
-<script src="js/home.js?v=2.5.2"></script>
+<script src="js/pro.js?v=2.5.3"></script>
+<script src="js/extras.js?v=2.5.3"></script>
+<script src="js/ux.js?v=2.5.3"></script>
+<script src="js/lab.js?v=2.5.3"></script>
+<script src="js/home.js?v=2.5.3"></script>
 
 </body>
 </html>
