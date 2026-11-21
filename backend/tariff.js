@@ -1,9 +1,9 @@
 // ==========================================
-// 🔌 RƏSMİ TARİF PİLLƏLƏRİ (2026)
+// RƏSMİ TARİF PİLLƏLƏRİ (2026)
 // Mənbə: Azərbaycan Respublikası Energetika Nazirliyi / Tarif Şurası
 // DİQQƏT: bu rəqəmlər köhnə layihələrdəki (13/18 qəpik)
-// səhv rəqəmlərdən fərqlidir — bunlar RƏSMİ, DOĞRU rəqəmlərdir.
-// Frontend-dəki js/engine.js ilə eyni məntiq — testlər hər ikisini yoxlayır.
+// səhv rəqəmlərdən fərqlidir - bunlar RƏSMİ, DOĞRU rəqəmlərdir.
+// Frontend-dəki js/engine.js ilə eyni məntiq - testlər hər ikisini yoxlayır.
 // ==========================================
 const TARIFF = {
   LOW: { max: 200, rate: 0.084 },   // 0-200 kWh: 8.4 qəpik

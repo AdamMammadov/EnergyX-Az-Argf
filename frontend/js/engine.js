@@ -1,8 +1,8 @@
 // ==========================================
-// EnergyX Az — Analitika mühərriki (təmiz funksiyalar, DOM yoxdur)
+// EnergyX Az - Analitika mühərriki (təmiz funksiyalar, DOM yoxdur)
 // Həm brauzerdə (window.EnergyEngine), həm Node testlərində
 // (require) işləyir. Bütün hesablamalar istifadəçinin öz cihazında
-// aparılır — heç bir məlumat serverə göndərilmir.
+// aparılır - heç bir məlumat serverə göndərilmir.
 //
 // İlham mənbələri (müəllifin əvvəlki layihələri):
 //  - GridPulse: robust z-score anomaliya aşkarlanması + davamlılıq
@@ -24,11 +24,11 @@
     { max: 300, rate: 0.10 },
     { max: Infinity, rate: 0.15 },
   ];
-  const CO2_FACTOR = 0.719;              // kq CO₂/kVt·saat — Asian Transport Outlook, 2022
+  const CO2_FACTOR = 0.719;              // kq CO₂/kVt·saat - Asian Transport Outlook, 2022
   const TREE_ABSORPTION_KG_YEAR = 21;    // 1 ağacın illik udumu (ümumi qəbul edilmiş orta)
   const CAR_KG_PER_KM = 0.17;            // orta minik avtomobili, təxmini
-  const AZ_TD_LOSS_PCT = 7.6;            // ötürmə/paylama itkisi, 2023 — Dünya Bankı WDI
-  const STANDBY_SHARE = 0.05;            // gözləmə rejimi payı — IEA: 5–10%, aşağı həddi götürülür
+  const AZ_TD_LOSS_PCT = 7.6;            // ötürmə/paylama itkisi, 2023 - Dünya Bankı WDI
+  const STANDBY_SHARE = 0.05;            // gözləmə rejimi payı - IEA: 5-10%, aşağı həddi götürülür
 
   // Bakının aylıq orta temperatur normaları (°C), yanvar → dekabr
   const BAKU_TEMP_C = [5.5, 6.5, 9.5, 14.5, 20.0, 25.5, 28.5, 28.0, 23.5, 17.5, 12.0, 7.5];
@@ -56,7 +56,7 @@
     return TIERS[2].rate;
   }
 
-  // Verilmiş büdcə (₼) ilə neçə kVt·saat istifadə etmək olar — tarifin tərsi
+  // Verilmiş büdcə (₼) ilə neçə kVt·saat istifadə etmək olar - tarifin tərsi
   function kwhForBudget(budget) {
     budget = Math.max(0, Number(budget) || 0);
     const c1 = 200 * TIERS[0].rate;           // 16.8
@@ -66,7 +66,7 @@
     return 300 + (budget - c2) / TIERS[2].rate;
   }
 
-  // ===== MÖVSÜMİ AMİL (GridPulse: 1 + 0.028·|T − 20|) =====
+  // ===== MÖVSÜMİ AMİL (GridPulse: 1 + 0.028·|T - 20|) =====
   // Orta dəyəri 1 olacaq şəkildə normallaşdırılır: yayda kondisioner,
   // qışda qızdırıcı yükü artır.
   const _rawSeason = BAKU_TEMP_C.map((t) => 1 + 0.028 * Math.abs(t - 20));
@@ -149,13 +149,13 @@
     return out;
   }
 
-  // Səbəb təxmini — qayda-əsaslı, ehtimal kimi təqdim olunur (fakt kimi yox)
+  // Səbəb təxmini - qayda-əsaslı, ehtimal kimi təqdim olunur (fakt kimi yox)
   function guessCause(p) {
     if (p.direction > 0) return p.sustained ? "up_sustained" : "up_spike";
     return p.sustained ? "down_sustained" : "down_spike";
   }
 
-  // ===== TREND (deseasonalized, ən kiçik kvadratlar) — %/ay =====
+  // ===== TREND (deseasonalized, ən kiçik kvadratlar) - %/ay =====
   function linearSlope(ys) {
     const n = ys.length;
     if (n < 2) return 0;
@@ -214,14 +214,14 @@
   }
 
   // ===== AY İÇİ TEMP + PİLLƏ/BÜDCƏ GERİ SAYIMI (PanoPulse FailureCountdown) =====
-  // readings: [{day, cum}] — ayın günü və həmin günədək yığılmış kVt·saat
+  // readings: [{day, cum}] - ayın günü və həmin günədək yığılmış kVt·saat
   function monthPace(readings, daysInMonth, budget) {
     const pts = (readings || []).filter((r) => r.day >= 1 && r.cum >= 0).sort((a, b) => a.day - b.day);
     if (!pts.length) return null;
     let slope;
     if (pts.length === 1) slope = pts[0].cum / pts[0].day;
     else {
-      // (0,0) nöqtəsi ayın başlanğıcı kimi əlavə olunur — sayğac ay başı sıfırlanır
+      // (0,0) nöqtəsi ayın başlanğıcı kimi əlavə olunur - sayğac ay başı sıfırlanır
       const xs = [0, ...pts.map((p) => p.day)], ys = [0, ...pts.map((p) => p.cum)];
       const n = xs.length, mx = xs.reduce((s, v) => s + v, 0) / n, my = ys.reduce((s, v) => s + v, 0) / n;
       let num = 0, den = 0;
@@ -311,7 +311,7 @@
   }
 
   // ===== "ƏGƏR...?" SİMULYATORU (PanoPulse What-If) =====
-  // Real vəziyyəti dəyişmir — yalnız proqnoz qaytarır.
+  // Real vəziyyəti dəyişmir - yalnız proqnoz qaytarır.
   function whatIf({ kwh, appliances, levers }) {
     levers = levers || {};
     const parts = [];
@@ -412,19 +412,19 @@
 
 
   // =====================================================================
-  // v2.1 — GridPulse/PanoPulse-dan əlavə ssenarilər
+  // v2.1 - GridPulse/PanoPulse-dan əlavə ssenarilər
   // =====================================================================
 
   // ===== SAYĞAC DİAQNOZU (GridPulse diagnose_meters + SecurityAlertsPanel) =====
   // Nasazlığı icazəsiz müdaxilədən və real istifadə dəyişikliyindən ayırmağa çalışır.
-  // Nəticələr ehtimaldır, fakt deyil — UI-da belə təqdim olunur.
+  // Nəticələr ehtimaldır, fakt deyil - UI-da belə təqdim olunur.
   const DIAG_SEVERITY = { meter_zero: "high", suspicious_drop: "critical", sustained_rise: "high",
     spike: "medium", gradual_rise: "medium", gradual_decline: "low" };
   function diagnoseMeter(readings, opts) {
     const pts = detectAnomalies(readings, opts);
     const findings = [];
     if (pts.length < 2) return findings;
-    // 1) Sıfır göstərici: əvvəl normal idi, sonra tam sıfır — sayğac/rabitə nasazlığı
+    // 1) Sıfır göstərici: əvvəl normal idi, sonra tam sıfır - sayğac/rabitə nasazlığı
     const zeros = pts.filter((p, i) => i > 0 && p.kwh === 0 && pts.slice(0, i).some((q) => q.kwh > 20));
     if (zeros.length) findings.push({ type: "meter_zero", months: zeros.map((p) => p.month) });
     // 2) Davamlı kəskin azalma (sıfır deyil): bypass / icazəsiz müdaxilə əlaməti ola bilər
@@ -496,7 +496,7 @@
     opts = opts || {};
     const homes = syntheticHouseholds(opts);
     const thresholds = opts.thresholds || [2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0];
-    // z-score həddən asılı deyil — bir dəfə hesablanır
+    // z-score həddən asılı deyil - bir dəfə hesablanır
     const scored = homes.map((h) => ({ ...h, z: detectAnomalies(h.readings).map((p, i) => (i < MIN_HISTORY ? 0 : Math.abs(p.z))) }));
     const sweep = thresholds.map((th) => {
       let tp = 0, fp = 0, fn = 0, normalMonths = 0;
@@ -582,7 +582,7 @@
     const h = Math.max(0.1, Number(hours) || 0);
     if (d < 0) return { status: "invalid" };
     const perHour = d / h;
-    // 0.001 m³ — mexaniki sayğacın ən kiçik bölgüsü
+    // 0.001 m³ - mexaniki sayğacın ən kiçik bölgüsü
     return { status: d >= 0.001 ? "leak" : "ok", deltaM3: round2(d * 1000) / 1000, perHour: Math.round(perHour * 10000) / 10000,
       perMonthM3: round2(perHour * 24 * 30) };
   }
@@ -639,7 +639,7 @@
   }
 
   // =====================================================================
-  // v2.2 — Hesab yoxlayıcısı və cihaz müqayisəsi
+  // v2.2 - Hesab yoxlayıcısı və cihaz müqayisəsi
   // =====================================================================
   // Azərişıq hesabındakı kVt·saat və məbləğ rəsmi tariflə uyğun gəlirmi?
   function billCheck(kwh, amount) {
@@ -674,7 +674,7 @@
   }
 
   // =====================================================================
-  // v2.4 — Ağıllı sayğac AI laboratoriyası + vizual izah
+  // v2.4 - Ağıllı sayğac AI laboratoriyası + vizual izah
   // Saatlıq (smart meter) məlumatın simulyasiyası, CSV idxalı, yük profili
   // analizi, saatlıq anomaliya aşkarlanması və qayda-əsaslı tövsiyələr.
   // =====================================================================
@@ -698,7 +698,7 @@
     microwave:    hourPattern(0, [[7, 8, 1], [13, 14, 2], [19, 21, 2]]),
     other:        hourPattern(0.1, [[7, 23, 1]]),
   };
-  // Həftəsonu evdə daha çox vaxt keçirilir — bu kateqoriyalar şənbə/bazar 20% artır
+  // Həftəsonu evdə daha çox vaxt keçirilir - bu kateqoriyalar şənbə/bazar 20% artır
   const WEEKEND_BOOST = { tv: 1.2, washer: 1.4, kettle: 1.2, microwave: 1.2, lighting: 1.1, computer: 1.1, other: 1.1 };
 
   function hourKey(ts) { const d = new Date(ts); d.setMinutes(0, 0, 0); return d.getTime(); }
@@ -781,7 +781,7 @@
       }
       points.push({ ts, kwh: v });
     });
-    // Saatlıq məişət istifadəsi 20 kVt·saatdan çox ola bilməz — belə dəyərlər Vt·saatdır
+    // Saatlıq məişət istifadəsi 20 kVt·saatdan çox ola bilməz - belə dəyərlər Vt·saatdır
     let unit = "kWh";
     if (points.length && median(points.map((p) => p.kwh)) > 20) { unit = "Wh"; points.forEach((p) => { p.kwh /= 1000; }); }
     return { points, skipped, errorLines, unit };

@@ -1,5 +1,5 @@
 // ==========================================
-// EnergyX Az v2.4 — Ağıllı Sayğac AI Laboratoriyası, canlı sayğac,
+// EnergyX Az v2.4 - Ağıllı Sayğac AI Laboratoriyası, canlı sayğac,
 // tarif pillələrinin animasiyalı izahı, enerji axını diaqramı,
 // Gənclər Fondu ilə bağlı mətnlər. ux.js-dən SONRA yüklənir.
 // ==========================================
@@ -16,9 +16,9 @@
       fund_disclaimer: "Bu nəşr Azərbaycan Respublikasının Gənclər Fondunun maliyyə yardımı ilə hazırlanmışdır. Fond nəşrin məzmununa görə məsuliyyət daşımır.",
       sugg3: "Gecə nə qədər enerji itirirəm?",
       tab_meter: "Ağıllı sayğac",
-      tv_replay: "▶ Animasiyanı təkrarla",
+      tv_replay: "Animasiyanı təkrarla",
       tv_seg: "{used} kVt × {rate} qəp = {cost} ₼", tv_empty: "bu pilləyə çatmamısınız", tv_total: "Cəmi: {kwh} kVt·saat = {cost} ₼",
-      tv_explain_low: "Bütün {kwh} kVt·saat ən ucuz — 8.4 qəpiklik pillədədir.",
+      tv_explain_low: "Bütün {kwh} kVt·saat ən ucuz, 8.4 qəpiklik pillədədir.",
       tv_explain_up: "Pilləli tarif belə işləyir: {kwh} kVt·saatın hamısı bahalı qiymətlə hesablanmır. İlk 200 kVt həmişə 8.4 qəpik, növbəti 100 kVt 10 qəpik, yalnız {over} kVt {rate} qəpikdir. Orta qiymətiniz: {avg} qəpik/kVt.",
       flow_title: "Enerjiniz haradan gəlir, hara gedir?", flow_tag: "canlı axın",
       flow_lead: "Stansiyada istehsal olunan enerjinin bir hissəsi şəbəkədə itir, qalanı sayğacınızdan keçib cihazlarınıza paylanır. Xəttlərin qalınlığı enerji miqdarına mütənasibdir.",
@@ -27,42 +27,42 @@
       cat_ac: "Kondisioner", cat_lighting: "İşıqlandırma", cat_washer: "Paltaryuyan", cat_fridge: "Soyuducu", cat_water_heater: "Su qızdırıcı",
       cat_heater: "Qızdırıcı", cat_tv: "Televizor", cat_computer: "Kompüter", cat_microwave: "Mikrodalğa", cat_kettle: "Çaydan",
       cat_other: "Digər cihazlar", cat_unknown: "Naməlum / siyahıda yoxdur",
-      lab_title: "Ağıllı Sayğac AI Laboratoriyası",
-      lab_lead: "Ağıllı sayğaclar enerjini saatbasaat ölçür. Bu laboratoriya saatlıq məlumatı analiz edir: gün ərzində yük əyrisi, heç vaxt sönməyən baza yükü, pik saatlar, gecə anomaliyaları və konkret tövsiyələr. Məlumat cihazlarınızdan simulyasiya oluna, nümunədən götürülə və ya ağıllı sayğacdan CSV kimi yüklənə bilər.",
-      lab_src_sim: "🔌 Cihazlarımdan simulyasiya", lab_src_sample: "🧪 Nümunə sayğac datası", lab_src_csv: "📂 CSV yüklə", lab_csv_download: "⬇️ CSV-ni endir",
+      lab_title: "Ağıllı sayğac analizi",
+      lab_lead: "Ağıllı sayğac enerjini saat-saat ölçür. Burada saatlıq məlumatdan gün ərzində yük əyrisi, heç vaxt sönməyən baza yükü, pik saatlar və gecə artımları çıxarılır. Məlumatı cihazlarınızdan simulyasiya etmək, nümunədən götürmək və ya sayğacdan CSV kimi yükləmək olar.",
+      lab_src_sim: "Cihazlarımdan simulyasiya", lab_src_sample: "Nümunə sayğac datası", lab_src_csv: "CSV yüklə", lab_csv_download: "CSV-ni endir",
       lab_src_label_sim: "Mənbə: Cihazlar siyahınızdan 4 həftəlik saatlıq simulyasiya",
-      lab_src_label_sample: "Mənbə: NÜMUNƏ ağıllı sayğac datası (real deyil) — 2 gecə unudulmuş qızdırıcı ssenarisi ilə",
+      lab_src_label_sample: "Mənbə: nümunə ağıllı sayğac məlumatı (real deyil), iki gecə unudulmuş qızdırıcı ilə",
       lab_src_label_csv: "Mənbə: yüklədiyiniz CSV faylı ({n} saatlıq nöqtə{unit})",
-      lab_no_apps: "Cihazlar siyahınız boşdur — nümunə məlumat göstərilir. Simulyasiya üçün Cihazlar bölməsinə cihaz əlavə edin.",
-      lab_csv_bad: "CSV oxunmadı: ən azı 48 saatlıq düzgün sətir lazımdır. Formata baxın.",
+      lab_no_apps: "Cihaz siyahınız boşdur, ona görə nümunə məlumat göstərilir. Simulyasiya üçün Cihazlar bölməsinə cihaz əlavə edin.",
+      lab_csv_bad: "CSV oxunmadı: ən azı 48 düzgün saatlıq sətir lazımdır. Aşağıdakı formata baxın.",
       lab_csv_ok: "CSV yükləndi: {n} saatlıq nöqtə{skip}.", lab_csv_skipped: ", {n} sətir buraxıldı",
       lab_unit_wh: ", Vt·saatdan çevrildi",
       lab_live: "Canlı güc (simulyasiya)", lab_live_sub: "Bu saat üçün orta: {avg} W · baza yükü: {base} W",
       lab_kpi_daily: "Orta gündəlik", lab_kpi_base: "Baza yükü (həmişə açıq)", lab_kpi_peak: "Pik saat", lab_kpi_lf: "Yük əmsalı",
       lab_kpi_month: "Ay proqnozu", lab_kpi_standby: "Baza yükünün illik xərci",
-      lab_period: "{from} – {to}",
+      lab_period: "{from} - {to}",
       lab_curve_title: "Gün ərzində yük əyrisi",
-      lab_curve_lead: "Hər saat üçün orta güc. Qırıq xətt — baza yükü: evinizdə heç vaxt sönməyən cihazların (soyuducu, router, gözləmə rejimi) gücü.",
-      lab_chart_avg: "Orta güc, kVt", lab_chart_base: "Baza yükü", lab_chart_daily: "Gündəlik kVt·saat", lab_chart_event: "Anomaliya günü",
-      lab_ai_title: "AI tövsiyələri", lab_ai_tag: "ölçülə bilən",
+      lab_curve_lead: "Hər saat üçün orta güc. Qırıq xətt baza yükünü göstərir: heç vaxt sönməyən cihazların (soyuducu, router, gözləmə rejimi) gücü.",
+      lab_chart_avg: "Orta güc, kVt", lab_chart_base: "Baza yükü", lab_chart_daily: "Gündəlik kVt·saat", lab_chart_event: "Qeyri-adi gün",
+      lab_ai_title: "Tövsiyələr", lab_ai_tag: "ölçülə bilən",
       lab_heat_title: "Həftə × saat xəritəsi", lab_heat_lead: "Rəng nə qədər tünddürsə, həmin gün və saatda istifadə bir o qədər çoxdur.",
-      lab_daily_title: "Gündəlik istifadə və anomaliyalar", lab_events_title: "Aşkarlanan hadisələr",
-      lab_events_none: "Qeyri-adi saat aşkarlanmayıb ✅",
-      lab_event: "{date} {from}–{to} · {h} saat · +{kwh} kVt·saat · pik {peak} kVt",
+      lab_daily_title: "Gündəlik istifadə", lab_events_title: "Qeyri-adi saatlar",
+      lab_events_none: "Qeyri-adi saat aşkarlanmayıb",
+      lab_event: "{date} {from}-{to} · {h} saat · +{kwh} kVt·saat · pik {peak} kVt",
       lab_event_night: "Gecə ərzində gözlənilməz yük: elektrik qızdırıcısı, kondisioner və ya su qızdırıcısı açıq qalmış ola bilər.",
       lab_event_day: "Gündüz qeyri-adi yüksək yük: eyni anda bir neçə güclü cihaz və ya nasaz cihaz ola bilər.",
       lab_csv_title: "CSV formatı",
       lab_csv_lead: "Ağıllı sayğacınızın və ya Azərişıq kabinetinin saatlıq məlumatını CSV kimi yükləyin. Dəstəklənən formatlar (vergül, nöqtəli vergül və ya tab ilə ayrılmış):",
-      lab_csv_note: "Dəyərlər Vt·saat ilədirsə, avtomatik kVt·saata çevrilir. 15 dəqiqəlik məlumat saatlıq cəmlənir. Fayl yalnız brauzerinizdə emal olunur — heç yerə göndərilmir.",
+      lab_csv_note: "Dəyərlər Vt·saat ilədirsə, avtomatik kVt·saata çevrilir. 15 dəqiqəlik məlumat saatlıq cəmlənir. Fayl yalnız brauzerinizdə oxunur, heç yerə göndərilmir.",
       dow: ["B.e", "Ç.a", "Ç", "C.a", "C", "Ş", "B"],
-      ins_baseload_high: "Evinizdə gecə-gündüz {w} Vt heç vaxt sönmür — ildə {yearKwh} kVt·saat (≈ {yearAzn} ₼). Soyuducu və router normaldır, amma gözləmə rejimindəki TV, konsol, köhnə adapterlər bu rəqəmi şişirdir. Hər 10 Vt azalma ildə ~{per10Kwh} kVt·saat (≈ {per10Azn} ₼) qənaətdir.",
-      ins_baseload_mid: "Baza yükünüz {w} Vt-dır (ildə {yearKwh} kVt·saat ≈ {yearAzn} ₼) — orta səviyyədir. Gecə istifadə olunmayan cihazları rozetkadan ayırmaqla hər 10 Vt üçün ildə ~{per10Azn} ₼ qənaət edə bilərsiniz.",
-      ins_baseload_ok: "Baza yükünüz cəmi {w} Vt-dır — əla! Gözləmə rejimi itkisi minimaldır.",
+      ins_baseload_high: "Evinizdə gecə-gündüz {w} Vt heç vaxt sönmür, bu ildə {yearKwh} kVt·saat (≈ {yearAzn} ₼) edir. Soyuducu və router normaldır, amma gözləmə rejimindəki TV, konsol, köhnə adapterlər bu rəqəmi şişirdir. Hər 10 Vt azalma ildə ~{per10Kwh} kVt·saat (≈ {per10Azn} ₼) qənaətdir.",
+      ins_baseload_mid: "Baza yükünüz {w} Vt-dır (ildə {yearKwh} kVt·saat ≈ {yearAzn} ₼), bu orta səviyyədir. Gecə işlənməyən cihazları rozetkadan ayırsanız, hər 10 Vt üçün ildə təxminən {per10Azn} ₼ qənaət edərsiniz.",
+      ins_baseload_ok: "Baza yükünüz cəmi {w} Vt-dır, gözləmə rejimi itkisi azdır.",
       ins_anomaly_night: "{n} dəfə gecə saatlarında gözlənilməz yük aşkarlandı (+{kwh} kVt·saat ≈ {azn} ₼). Qızdırıcı və ya kondisioner gecə açıq qalıbmı? Taymerli rozetka bu riski aradan qaldırır.",
       ins_anomaly_day: "{n} qeyri-adi yüksək yük epizodu aşkarlandı (+{kwh} kVt·saat ≈ {azn} ₼). Hadisələr siyahısında saatlarına baxın.",
       ins_tier_projection: "Bu templə ay sonu ~{kwh} kVt·saat ({cost} ₼) olacaq və {limit} kVt həddini keçəcəksiniz. Gündə ~{perDay} kVt·saat azaltmaq sizi ucuz pillədə saxlayar.",
-      ins_evening_peak: "İstifadənin {pct}%-i axşam 18:00–23:00 arasındadır (pik saat {hour}:00). Paltaryuyan və su qızdırıcısını gündüzə keçirmək şəbəkə yükünü azaldır.",
-      ins_night_heavy: "Enerjinin {pct}%-i gecə (23:00–07:00) istifadə olunur — bu, adətən gecə işləyən qızdırıcı və ya kondisionerdən gəlir.",
+      ins_evening_peak: "İstifadənin {pct}%-i axşam 18:00-23:00 arasındadır (pik saat {hour}:00). Paltaryuyan və su qızdırıcısını gündüzə keçirmək şəbəkə yükünü azaldır.",
+      ins_night_heavy: "Enerjinin {pct}%-i gecə (23:00-07:00) işlənir. Bu adətən gecə açıq qalan qızdırıcı və ya kondisionerdən olur.",
       ins_peaky: "Yük əmsalınız {lf}-dir: istifadə qısa, kəskin piklərlə gəlir ({peak} kVt-a qədər). Güclü cihazları eyni anda işlətməmək elektrik xəttini də qoruyur.",
       ins_weekend_diff: "Həftəsonu istifadəniz iş günlərindən {pct}% fərqlidir.",
       sev_good: "Yaxşı",
@@ -73,7 +73,7 @@
       fund_disclaimer: "This publication was prepared with the financial support of the Youth Foundation of the Republic of Azerbaijan. The Foundation is not responsible for its content.",
       sugg3: "How much energy do I waste at night?",
       tab_meter: "Smart meter",
-      tv_replay: "▶ Replay animation",
+      tv_replay: "Replay animation",
       tv_seg: "{used} kWh × {rate} q = {cost} ₼", tv_empty: "not reached", tv_total: "Total: {kwh} kWh = {cost} ₼",
       tv_explain_low: "All {kwh} kWh are in the cheapest 8.4-qapik tier.",
       tv_explain_up: "This is how tiered pricing works: not all {kwh} kWh are charged at the higher price. The first 200 kWh always cost 8.4 qapik, the next 100 kWh 10 qapik, and only {over} kWh cost {rate} qapik. Your average price: {avg} qapik/kWh.",
@@ -84,42 +84,42 @@
       cat_ac: "Air conditioner", cat_lighting: "Lighting", cat_washer: "Washing machine", cat_fridge: "Fridge", cat_water_heater: "Water heater",
       cat_heater: "Heater", cat_tv: "TV", cat_computer: "Computer", cat_microwave: "Microwave", cat_kettle: "Kettle",
       cat_other: "Other appliances", cat_unknown: "Unknown / not listed",
-      lab_title: "Smart Meter AI Lab",
+      lab_title: "Smart meter analysis",
       lab_lead: "Smart meters measure energy hour by hour. This lab analyses hourly data: the daily load curve, the always-on baseload, peak hours, night anomalies and concrete recommendations. Data can be simulated from your appliances, taken from a sample, or uploaded from a smart meter as CSV.",
-      lab_src_sim: "🔌 Simulate from my appliances", lab_src_sample: "🧪 Sample meter data", lab_src_csv: "📂 Upload CSV", lab_csv_download: "⬇️ Download CSV",
+      lab_src_sim: "Simulate from my appliances", lab_src_sample: "Sample meter data", lab_src_csv: "Upload CSV", lab_csv_download: "Download CSV",
       lab_src_label_sim: "Source: 4-week hourly simulation from your Appliances list",
-      lab_src_label_sample: "Source: SAMPLE smart meter data (not real) — with a heater left on for 2 nights",
+      lab_src_label_sample: "Source: sample smart meter data (not real), with a heater left on for two nights",
       lab_src_label_csv: "Source: your uploaded CSV ({n} hourly points{unit})",
-      lab_no_apps: "Your Appliances list is empty — showing sample data. Add appliances to simulate your own home.",
+      lab_no_apps: "Your Appliances list is empty. Showing sample data. Add appliances to simulate your own home.",
       lab_csv_bad: "Could not read the CSV: at least 48 valid hourly rows are needed. Check the format.",
       lab_csv_ok: "CSV loaded: {n} hourly points{skip}.", lab_csv_skipped: ", {n} rows skipped",
       lab_unit_wh: ", converted from Wh",
       lab_live: "Live power (simulated)", lab_live_sub: "Average for this hour: {avg} W · baseload: {base} W",
       lab_kpi_daily: "Average per day", lab_kpi_base: "Baseload (always on)", lab_kpi_peak: "Peak hour", lab_kpi_lf: "Load factor",
       lab_kpi_month: "Month forecast", lab_kpi_standby: "Yearly cost of baseload",
-      lab_period: "{from} – {to}",
+      lab_period: "{from} - {to}",
       lab_curve_title: "Daily load curve",
-      lab_curve_lead: "Average power for each hour. Dashed line — baseload: the power of devices that never switch off (fridge, router, standby).",
-      lab_chart_avg: "Average power, kW", lab_chart_base: "Baseload", lab_chart_daily: "Daily kWh", lab_chart_event: "Anomaly day",
-      lab_ai_title: "AI recommendations", lab_ai_tag: "measurable",
+      lab_curve_lead: "Average power for each hour. Dashed line: baseload: the power of devices that never switch off (fridge, router, standby).",
+      lab_chart_avg: "Average power, kW", lab_chart_base: "Baseload", lab_chart_daily: "Daily kWh", lab_chart_event: "Unusual day",
+      lab_ai_title: "Recommendations", lab_ai_tag: "measurable",
       lab_heat_title: "Week × hour map", lab_heat_lead: "The darker the cell, the more energy used on that day and hour.",
-      lab_daily_title: "Daily usage and anomalies", lab_events_title: "Detected events",
-      lab_events_none: "No unusual hours detected ✅",
-      lab_event: "{date} {from}–{to} · {h} h · +{kwh} kWh · peak {peak} kW",
+      lab_daily_title: "Daily usage", lab_events_title: "Unusual hours",
+      lab_events_none: "No unusual hours detected",
+      lab_event: "{date} {from}-{to} · {h} h · +{kwh} kWh · peak {peak} kW",
       lab_event_night: "Unexpected night-time load: a heater, AC or water heater may have been left on.",
       lab_event_day: "Unusually high daytime load: several powerful appliances at once, or a faulty one.",
       lab_csv_title: "CSV format",
       lab_csv_lead: "Upload hourly data from your smart meter or Azerishig account as CSV. Supported formats (comma, semicolon or tab separated):",
-      lab_csv_note: "Values in Wh are converted to kWh automatically. 15-minute data is summed per hour. The file is processed only in your browser — it is never uploaded.",
+      lab_csv_note: "Values in Wh are converted to kWh automatically. 15-minute data is summed per hour. The file is processed only in your browser. It is never uploaded.",
       dow: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
-      ins_baseload_high: "{w} W in your home never switches off — {yearKwh} kWh a year (≈ {yearAzn} ₼). The fridge and router are normal, but TVs, consoles and old adapters on standby inflate it. Every 10 W less saves ~{per10Kwh} kWh (≈ {per10Azn} ₼) a year.",
-      ins_baseload_mid: "Your baseload is {w} W ({yearKwh} kWh/year ≈ {yearAzn} ₼) — average. Unplugging unused devices at night saves ~{per10Azn} ₼ a year per 10 W.",
-      ins_baseload_ok: "Your baseload is only {w} W — excellent! Standby losses are minimal.",
+      ins_baseload_high: "{w} W in your home never switches off. {yearKwh} kWh a year (≈ {yearAzn} ₼). The fridge and router are normal, but TVs, consoles and old adapters on standby inflate it. Every 10 W less saves ~{per10Kwh} kWh (≈ {per10Azn} ₼) a year.",
+      ins_baseload_mid: "Your baseload is {w} W ({yearKwh} kWh/year ≈ {yearAzn} ₼), which is average. Unplugging unused devices at night saves ~{per10Azn} ₼ a year per 10 W.",
+      ins_baseload_ok: "Your baseload is only {w} W, so standby losses are small.",
       ins_anomaly_night: "Unexpected load was detected {n} times at night (+{kwh} kWh ≈ {azn} ₼). Was a heater or AC left on? A timer plug removes this risk.",
       ins_anomaly_day: "{n} unusually high load episodes detected (+{kwh} kWh ≈ {azn} ₼). See the event list for the hours.",
       ins_tier_projection: "At this pace the month will end at ~{kwh} kWh ({cost} ₼), above the {limit} kWh threshold. Cutting ~{perDay} kWh a day keeps you in the cheaper tier.",
       ins_evening_peak: "{pct}% of your usage is between 18:00 and 23:00 (peak at {hour}:00). Moving the washer and water heater to daytime eases grid load.",
-      ins_night_heavy: "{pct}% of your energy is used at night (23:00–07:00) — usually a heater or AC running overnight.",
+      ins_night_heavy: "{pct}% of your energy is used at night (23:00-07:00): usually a heater or AC running overnight.",
       ins_peaky: "Your load factor is {lf}: usage comes in short, sharp peaks (up to {peak} kW). Not running powerful appliances at the same time also protects your wiring.",
       ins_weekend_diff: "Your weekend usage differs from weekdays by {pct}%.",
       sev_good: "Good",
@@ -130,10 +130,10 @@
       fund_disclaimer: "Это издание подготовлено при финансовой поддержке Фонда молодёжи Азербайджанской Республики. Фонд не несёт ответственности за его содержание.",
       sugg3: "Сколько энергии я теряю ночью?",
       tab_meter: "Умный счётчик",
-      tv_replay: "▶ Повторить анимацию",
+      tv_replay: "Повторить анимацию",
       tv_seg: "{used} кВт·ч × {rate} гяп = {cost} ₼", tv_empty: "не достигнут", tv_total: "Итого: {kwh} кВт·ч = {cost} ₼",
-      tv_explain_low: "Все {kwh} кВт·ч — в самом дешёвом тарифе 8.4 гяпика.",
-      tv_explain_up: "Так работает ступенчатый тариф: не все {kwh} кВт·ч считаются по высокой цене. Первые 200 кВт·ч всегда стоят 8.4 гяпика, следующие 100 — 10 гяпиков, и только {over} кВт·ч — {rate} гяпиков. Ваша средняя цена: {avg} гяпика/кВт·ч.",
+      tv_explain_low: "Все {kwh} кВт·ч - в самом дешёвом тарифе 8.4 гяпика.",
+      tv_explain_up: "Так работает ступенчатый тариф: не все {kwh} кВт·ч считаются по высокой цене. Первые 200 кВт·ч всегда стоят 8.4 гяпика, следующие 100 - 10 гяпиков, и только {over} кВт·ч - {rate} гяпиков. Ваша средняя цена: {avg} гяпика/кВт·ч.",
       flow_title: "Откуда приходит и куда уходит ваша энергия?", flow_tag: "живой поток",
       flow_lead: "Часть энергии, произведённой на станции, теряется в сети, остальное проходит через ваш счётчик к приборам. Толщина линий пропорциональна энергии.",
       flow_plant: "Электростанция", flow_grid: "Сеть передачи", flow_home: "Ваш счётчик", flow_loss: "Потери в сети",
@@ -141,43 +141,43 @@
       cat_ac: "Кондиционер", cat_lighting: "Освещение", cat_washer: "Стиральная машина", cat_fridge: "Холодильник", cat_water_heater: "Водонагреватель",
       cat_heater: "Обогреватель", cat_tv: "Телевизор", cat_computer: "Компьютер", cat_microwave: "Микроволновка", cat_kettle: "Чайник",
       cat_other: "Другие приборы", cat_unknown: "Неизвестно / нет в списке",
-      lab_title: "AI-лаборатория умного счётчика",
+      lab_title: "Анализ умного счётчика",
       lab_lead: "Умные счётчики измеряют энергию каждый час. Лаборатория анализирует почасовые данные: суточную кривую нагрузки, постоянную базовую нагрузку, пиковые часы, ночные аномалии и даёт конкретные рекомендации. Данные можно смоделировать по вашим приборам, взять пример или загрузить CSV со счётчика.",
-      lab_src_sim: "🔌 Моделировать по приборам", lab_src_sample: "🧪 Пример данных", lab_src_csv: "📂 Загрузить CSV", lab_csv_download: "⬇️ Скачать CSV",
+      lab_src_sim: "Моделировать по приборам", lab_src_sample: "Пример данных", lab_src_csv: "Загрузить CSV", lab_csv_download: "Скачать CSV",
       lab_src_label_sim: "Источник: 4-недельная почасовая модель по вашему списку приборов",
-      lab_src_label_sample: "Источник: ПРИМЕР данных умного счётчика (не реальные) — обогреватель, забытый на 2 ночи",
+      lab_src_label_sample: "Источник: пример данных умного счётчика (не реальные), обогреватель забыт на две ночи",
       lab_src_label_csv: "Источник: ваш CSV-файл ({n} почасовых точек{unit})",
-      lab_no_apps: "Список приборов пуст — показан пример. Добавьте приборы, чтобы смоделировать свой дом.",
+      lab_no_apps: "Список приборов пуст - показан пример. Добавьте приборы, чтобы смоделировать свой дом.",
       lab_csv_bad: "CSV не прочитан: нужно минимум 48 корректных почасовых строк. Проверьте формат.",
       lab_csv_ok: "CSV загружен: {n} почасовых точек{skip}.", lab_csv_skipped: ", пропущено строк: {n}",
       lab_unit_wh: ", переведено из Вт·ч",
       lab_live: "Мощность сейчас (модель)", lab_live_sub: "Среднее для этого часа: {avg} Вт · базовая нагрузка: {base} Вт",
       lab_kpi_daily: "В среднем за день", lab_kpi_base: "Базовая нагрузка", lab_kpi_peak: "Пиковый час", lab_kpi_lf: "Коэф. нагрузки",
       lab_kpi_month: "Прогноз на месяц", lab_kpi_standby: "Годовая стоимость базовой нагрузки",
-      lab_period: "{from} – {to}",
+      lab_period: "{from} - {to}",
       lab_curve_title: "Суточная кривая нагрузки",
-      lab_curve_lead: "Средняя мощность для каждого часа. Пунктир — базовая нагрузка: приборы, которые никогда не выключаются (холодильник, роутер, режим ожидания).",
-      lab_chart_avg: "Средняя мощность, кВт", lab_chart_base: "Базовая нагрузка", lab_chart_daily: "кВт·ч в день", lab_chart_event: "День аномалии",
-      lab_ai_title: "Рекомендации AI", lab_ai_tag: "измеримо",
+      lab_curve_lead: "Средняя мощность для каждого часа. Пунктир - базовая нагрузка: приборы, которые никогда не выключаются (холодильник, роутер, режим ожидания).",
+      lab_chart_avg: "Средняя мощность, кВт", lab_chart_base: "Базовая нагрузка", lab_chart_daily: "кВт·ч в день", lab_chart_event: "Необычный день",
+      lab_ai_title: "Рекомендации", lab_ai_tag: "измеримо",
       lab_heat_title: "Карта неделя × час", lab_heat_lead: "Чем темнее ячейка, тем больше потребление в этот день и час.",
-      lab_daily_title: "Потребление по дням и аномалии", lab_events_title: "Обнаруженные события",
-      lab_events_none: "Необычных часов не обнаружено ✅",
-      lab_event: "{date} {from}–{to} · {h} ч · +{kwh} кВт·ч · пик {peak} кВт",
+      lab_daily_title: "Потребление по дням", lab_events_title: "Необычные часы",
+      lab_events_none: "Необычных часов не обнаружено",
+      lab_event: "{date} {from}-{to} · {h} ч · +{kwh} кВт·ч · пик {peak} кВт",
       lab_event_night: "Неожиданная ночная нагрузка: возможно, оставлен включённым обогреватель, кондиционер или водонагреватель.",
       lab_event_day: "Необычно высокая дневная нагрузка: несколько мощных приборов одновременно или неисправный прибор.",
       lab_csv_title: "Формат CSV",
       lab_csv_lead: "Загрузите почасовые данные умного счётчика или кабинета Azərişıq в CSV. Поддерживаемые форматы (запятая, точка с запятой или табуляция):",
       lab_csv_note: "Значения в Вт·ч автоматически переводятся в кВт·ч. 15-минутные данные суммируются по часам. Файл обрабатывается только в браузере и никуда не отправляется.",
       dow: ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"],
-      ins_baseload_high: "В вашем доме {w} Вт никогда не выключаются — {yearKwh} кВт·ч в год (≈ {yearAzn} ₼). Холодильник и роутер — норма, но телевизоры, приставки и старые адаптеры в режиме ожидания завышают это число. Каждые 10 Вт меньше — экономия ~{per10Kwh} кВт·ч (≈ {per10Azn} ₼) в год.",
-      ins_baseload_mid: "Базовая нагрузка {w} Вт ({yearKwh} кВт·ч в год ≈ {yearAzn} ₼) — средняя. Отключая неиспользуемые приборы на ночь, вы экономите ~{per10Azn} ₼ в год на каждые 10 Вт.",
-      ins_baseload_ok: "Базовая нагрузка всего {w} Вт — отлично! Потери в режиме ожидания минимальны.",
+      ins_baseload_high: "В вашем доме {w} Вт никогда не выключаются - {yearKwh} кВт·ч в год (≈ {yearAzn} ₼). Холодильник и роутер - норма, но телевизоры, приставки и старые адаптеры в режиме ожидания завышают это число. Каждые 10 Вт меньше - экономия ~{per10Kwh} кВт·ч (≈ {per10Azn} ₼) в год.",
+      ins_baseload_mid: "Базовая нагрузка {w} Вт ({yearKwh} кВт·ч в год ≈ {yearAzn} ₼) - средняя. Отключая неиспользуемые приборы на ночь, вы экономите ~{per10Azn} ₼ в год на каждые 10 Вт.",
+      ins_baseload_ok: "Базовая нагрузка всего {w} Вт, потери в режиме ожидания невелики.",
       ins_anomaly_night: "Ночью {n} раза обнаружена неожиданная нагрузка (+{kwh} кВт·ч ≈ {azn} ₼). Не оставался ли обогреватель или кондиционер включённым? Розетка с таймером устранит этот риск.",
-      ins_anomaly_day: "Обнаружено {n} эпизодов необычно высокой нагрузки (+{kwh} кВт·ч ≈ {azn} ₼). Часы — в списке событий.",
-      ins_tier_projection: "При таком темпе месяц закончится на ~{kwh} кВт·ч ({cost} ₼) — выше порога {limit} кВт·ч. Сокращение на ~{perDay} кВт·ч в день удержит вас в дешёвом тарифе.",
-      ins_evening_peak: "{pct}% потребления приходится на 18:00–23:00 (пик в {hour}:00). Перенос стирки и нагрева воды на день снижает нагрузку на сеть.",
-      ins_night_heavy: "{pct}% энергии расходуется ночью (23:00–07:00) — обычно это обогреватель или кондиционер.",
-      ins_peaky: "Коэффициент нагрузки {lf}: потребление идёт короткими резкими пиками (до {peak} кВт). Не включайте мощные приборы одновременно — это бережёт и проводку.",
+      ins_anomaly_day: "Обнаружено {n} эпизодов необычно высокой нагрузки (+{kwh} кВт·ч ≈ {azn} ₼). Часы - в списке событий.",
+      ins_tier_projection: "При таком темпе месяц закончится на ~{kwh} кВт·ч ({cost} ₼) - выше порога {limit} кВт·ч. Сокращение на ~{perDay} кВт·ч в день удержит вас в дешёвом тарифе.",
+      ins_evening_peak: "{pct}% потребления приходится на 18:00-23:00 (пик в {hour}:00). Перенос стирки и нагрева воды на день снижает нагрузку на сеть.",
+      ins_night_heavy: "{pct}% энергии расходуется ночью (23:00-07:00) - обычно это обогреватель или кондиционер.",
+      ins_peaky: "Коэффициент нагрузки {lf}: потребление идёт короткими резкими пиками (до {peak} кВт). Не включайте мощные приборы одновременно - это бережёт и проводку.",
       ins_weekend_diff: "Потребление в выходные отличается от будних дней на {pct}%.",
       sev_good: "Хорошо",
       local_profile: "По анализу умного счётчика: базовая нагрузка {base} Вт, пиковый час {hour}:00, в среднем {daily} кВт·ч в день. {tip}",
@@ -185,10 +185,8 @@
   };
   Object.keys(LT).forEach((l) => Object.assign(translations[l], LT[l]));
 
-  const CAT_COLOR = { ac: "#2F8FFF", lighting: "#E8D44D", washer: "#B084F0", fridge: "#4DD9E8", water_heater: "#E8544D",
-    heater: "#F07B3F", tv: "#9AE85C", computer: "#F06BA8", microwave: "#E8A33D", kettle: "#C77DFF", other: "#7C9088", unknown: "#5A6B66" };
-  const CAT_ICON = { ac: "❄️", lighting: "💡", washer: "👕", fridge: "🧊", water_heater: "🚿", heater: "🔥", tv: "📺",
-    computer: "💻", microwave: "🍲", kettle: "☕", other: "🔌", unknown: "❓" };
+  const CAT_COLOR = { ac: "#3A86D4", lighting: "#CDB43A", washer: "#8C6BC8", fridge: "#2D9FB0", water_heater: "#D2574E",
+    heater: "#D9773A", tv: "#7FA14A", computer: "#C8678F", microwave: "#D69A2D", kettle: "#A57BD6", other: "#7D8893", unknown: "#5A6B66" };
   const reduceMotion = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
   const num = (v, d) => Number(v).toLocaleString(currentLang === "en" ? "en-US" : currentLang === "ru" ? "ru-RU" : "az-AZ", { maximumFractionDigits: d == null ? 0 : d, minimumFractionDigits: d || 0 });
 
@@ -207,7 +205,7 @@
     if (!box.dataset.built) {
       box.innerHTML = `<div class="tv-track">${rows.map((r, i) => `
         <div class="tv-seg ${r.tier}" style="flex-grow:${spans[i]}"><div class="tv-fill" style="transition-delay:${i * 0.35}s"></div>
-          <span class="tv-range">${r.from}–${r.to === Infinity ? "" : r.to}</span></div>`).join("")}</div>
+          <span class="tv-range">${r.from}-${r.to === Infinity ? "" : r.to}</span></div>`).join("")}</div>
         <div class="tv-legend">${rows.map((r) => `<div class="tv-cell ${r.tier}"><span class="tier-dot ${r.tier}"></span><span class="tv-val"></span></div>`).join("")}</div>
         <div class="tv-total"></div>`;
       box.dataset.built = "1";
@@ -241,6 +239,12 @@
   // =========================================================
   // 2) ENERJİ AXINI DİAQRAMI (SVG, animasiyalı)
   // =========================================================
+  // Diaqram ikonları (24x24 xətt): elektrik stansiyası, şəbəkə, ev
+  const FLOW_ICON = {
+    plant: "M3 21V11l5 3v-3l5 3V8l8 4v9zM3 21h18M7 17h2M12 17h2M17 17h2",
+    grid: "M12 2 7.5 22M12 2l4.5 20M8.5 8h7M7.2 13h9.6M6 18h12M10 5h4",
+    home: "M3 10.5 12 3l9 7.5M5 9.5V20h5v-6h4v6h5V9.5",
+  };
   function renderFlow() {
     const box = $("flowViz");
     if (!box) return;
@@ -262,7 +266,7 @@
       const branches = parts.map((p, i) => {
         const y = 20 + gap * i + gap / 2, w = wOf(p.kwh), c = CAT_COLOR[p.key] || "#7C9088";
         return `${line(`M${X.home + 34},${cy} C${X.home + 110},${cy} ${X.app - 70},${y} ${X.app - 14},${y}`, w, c)}
-          <circle cx="${X.app + 6}" cy="${y}" r="14" fill="${c}" opacity=".18"/><text x="${X.app + 6}" y="${y + 5}" text-anchor="middle" class="flow-ico">${CAT_ICON[p.key] || "🔌"}</text>
+          <circle cx="${X.app + 6}" cy="${y}" r="14" fill="${c}" opacity=".18"/><circle cx="${X.app + 6}" cy="${y}" r="5" fill="${c}"/>
           <text x="${X.app + 28}" y="${y - 3}" class="flow-t">${esc(label(p.key))}</text>
           <text x="${X.app + 28}" y="${y + 14}" class="flow-s">${num(p.kwh)} kVt · ${Math.round(p.share * 100)}%</text>`;
       }).join("");
@@ -273,10 +277,10 @@
         <text x="${X.grid + 106}" y="${H - 30}" class="flow-t loss-t">${esc(t.flow_loss)}</text>
         <text x="${X.grid + 106}" y="${H - 14}" class="flow-s">${num(f.loss)} kVt · 7.6%</text>
         ${branches}
-        ${node(X.plant, cy, "🏭", t.flow_plant, num(f.generated) + " kVt")}
-        ${node(X.grid, cy, "🗼", t.flow_grid, "", false, true)}
-        ${node(X.home, cy, "🏠", t.flow_home, num(f.consumed) + " kVt")}
-        <text x="${X.plant}" y="${cy - 48}" text-anchor="middle" class="flow-s co2">☁️ ${num(f.co2Kg)} kq CO₂</text>
+        ${node(X.plant, cy, "plant", t.flow_plant, num(f.generated) + " kVt")}
+        ${node(X.grid, cy, "grid", t.flow_grid, "", false, true)}
+        ${node(X.home, cy, "home", t.flow_home, num(f.consumed) + " kVt")}
+        <text x="${X.plant}" y="${cy - 48}" text-anchor="middle" class="flow-s co2">${num(f.co2Kg)} kq CO₂</text>
       </svg>`;
     } else {
       // Şaquli (mobil): yuxarıdan aşağı
@@ -284,9 +288,9 @@
       const Y = { plant: 50, grid: 160, home: 270 };
       const branches = parts.map((p, i) => {
         const y = 372 + i * 52, w = Math.min(wOf(p.kwh), 14), c = CAT_COLOR[p.key] || "#7C9088";
-        // Budaqlar sol kənar boyunca enir — mətnlərin üstündən keçmir
+        // Budaqlar sol kənar boyunca enir - mətnlərin üstündən keçmir
         return `${line(`M${W / 2 - 30},${Y.home + 14} C30,${Y.home + 14} 30,${Y.home + 30} 30,${Y.home + 60} L30,${y - 14} Q30,${y} 48,${y}`, w, c)}
-          <circle cx="66" cy="${y}" r="15" fill="${c}" opacity=".18"/><text x="66" y="${y + 6}" text-anchor="middle" class="flow-ico">${CAT_ICON[p.key] || "🔌"}</text>
+          <circle cx="66" cy="${y}" r="15" fill="${c}" opacity=".18"/><circle cx="66" cy="${y}" r="5" fill="${c}"/>
           <text x="92" y="${y - 2}" class="flow-t">${esc(label(p.key))}</text>
           <text x="92" y="${y + 15}" class="flow-s">${num(p.kwh)} kVt · ${Math.round(p.share * 100)}%</text>`;
       }).join("");
@@ -297,16 +301,16 @@
         <text x="${W - 8}" y="${Y.grid + 62}" text-anchor="end" class="flow-t loss-t">${esc(t.flow_loss)}</text>
         <text x="${W - 8}" y="${Y.grid + 78}" text-anchor="end" class="flow-s">${num(f.loss)} kVt</text>
         ${branches}
-        ${node(W / 2, Y.plant, "🏭", t.flow_plant, num(f.generated) + " kVt", true)}
-        ${node(W / 2, Y.grid, "🗼", t.flow_grid, "", true)}
-        ${node(W / 2, Y.home, "🏠", t.flow_home, num(f.consumed) + " kVt", true)}
-        <text x="16" y="${Y.plant + 4}" class="flow-s co2">☁️ ${num(f.co2Kg)} kq CO₂</text>
+        ${node(W / 2, Y.plant, "plant", t.flow_plant, num(f.generated) + " kVt", true)}
+        ${node(W / 2, Y.grid, "grid", t.flow_grid, "", true)}
+        ${node(W / 2, Y.home, "home", t.flow_home, num(f.consumed) + " kVt", true)}
+        <text x="16" y="${Y.plant + 4}" class="flow-s co2">${num(f.co2Kg)} kq CO₂</text>
       </svg>`;
     }
     box.innerHTML = svg + `<p class="pro-note">${esc(t.flow_note)}</p>`;
     function node(x, y, ico, title, sub, side, above) {
       const lx = side ? x + 46 : x, ly = side ? y - 4 : above ? y - 46 : y + 54;
-      return `<circle cx="${x}" cy="${y}" r="34" class="flow-node"/><text x="${x}" y="${y + 9}" text-anchor="middle" class="flow-big">${ico}</text>
+      return `<circle cx="${x}" cy="${y}" r="34" class="flow-node"/><g transform="translate(${x - 13} ${y - 13}) scale(1.08)" class="flow-ic"><path d="${FLOW_ICON[ico]}"/></g>
         <text x="${lx}" y="${ly}" text-anchor="${side ? "start" : "middle"}" class="flow-t">${esc(title)}</text>
         ${sub ? `<text x="${lx}" y="${ly + 17}" text-anchor="${side ? "start" : "middle"}" class="flow-s">${esc(sub)}</text>` : ""}`;
     }
@@ -379,7 +383,7 @@
       html += `<div class="wk-row"><span class="wk-day">${esc(t.dow[d])}</span>` + row.map((v, h) => {
         if (v == null) return `<span class="wk-cell none"></span>`;
         const k = max ? v / max : 0;
-        return `<span class="wk-cell" style="--k:${k.toFixed(3)}" title="${esc(t.dow[d])} ${String(h).padStart(2, "0")}:00 — ${num(v * 1000)} W"></span>`;
+        return `<span class="wk-cell" style="--k:${k.toFixed(3)}" title="${esc(t.dow[d])} ${String(h).padStart(2, "0")}:00 - ${num(v * 1000)} W"></span>`;
       }).join("") + `</div>`;
     });
     $("labHeat").innerHTML = html;
@@ -399,7 +403,7 @@
     const curveData = {
       labels: Array.from({ length: 24 }, (_, h) => String(h).padStart(2, "0")),
       datasets: [
-        { label: t.lab_chart_avg, data: a.hourlyAvgKw, borderColor: low, backgroundColor: "rgba(0,217,163,0.18)", fill: true, tension: 0.35, pointRadius: 2, borderWidth: 2.5 },
+        { label: t.lab_chart_avg, data: a.hourlyAvgKw, borderColor: low, backgroundColor: P.tint("--low", 0.18), fill: true, tension: 0.35, pointRadius: 2, borderWidth: 2.5 },
         { label: t.lab_chart_base, data: new Array(24).fill(a.baseloadW / 1000), borderColor: P.cssVar("--line2"), borderDash: [6, 5], pointRadius: 0, borderWidth: 1.5, fill: false },
       ],
     };
@@ -412,7 +416,7 @@
     const dailyData = {
       labels: dd.map((d) => { const [y, m, day] = d.date.split("-").map(Number); return dateLabel(new Date(y, m - 1, day).getTime()); }),
       datasets: [{ label: t.lab_chart_daily, data: dd.map((d) => d.kwh), borderRadius: 4,
-        backgroundColor: dd.map((d) => { const [y, m, day] = d.date.split("-").map(Number); return evDays.has(new Date(y, m - 1, day).toDateString()) ? high : d.wknd ? "rgba(0,217,163,0.55)" : low; }) }],
+        backgroundColor: dd.map((d) => { const [y, m, day] = d.date.split("-").map(Number); return evDays.has(new Date(y, m - 1, day).toDateString()) ? high : d.wknd ? P.tint("--low", 0.55) : low; }) }],
     };
     const o2 = P.chartBase();
     if (dailyChart) { dailyChart.data = dailyData; dailyChart.options = o2; dailyChart.update(); }
@@ -472,7 +476,7 @@
     const blob = new Blob([E.profileToCsv(lab.points)], { type: "text/csv" });
     const a = document.createElement("a");
     a.href = URL.createObjectURL(blob);
-    a.download = `energyx-az-meter-${lab.src}.csv`; // ASCII ad — bəzi brauzerlər "ğ"-li adı nəzərə almır
+    a.download = `energyx-az-meter-${lab.src}.csv`; // ASCII ad - bəzi brauzerlər "ğ"-li adı nəzərə almır
     document.body.appendChild(a); a.click(); a.remove();
     setTimeout(() => URL.revokeObjectURL(a.href), 1000);
   }
@@ -514,7 +518,7 @@
     const prevTab = activeTab;
     activeTab = tab || activeTab;
     renderTierViz(false);
-    if (activeTab === "calc") { renderFlow(); flowWidth = $("flowViz").clientWidth; }
+    if (activeTab === "learn") { renderFlow(); flowWidth = $("flowViz").clientWidth; }
     if (activeTab === "meter") {
       if (!lab.analysis || prevTab !== "meter") computeLab();
       renderLab(true);
@@ -538,7 +542,7 @@
   let rT = null;
   window.addEventListener("resize", () => {
     clearTimeout(rT);
-    rT = setTimeout(() => { const w = $("flowViz").clientWidth; if (activeTab === "calc" && Math.abs(w - flowWidth) > 40) { renderFlow(); flowWidth = w; } }, 200);
+    rT = setTimeout(() => { const w = $("flowViz").clientWidth; if (activeTab === "learn" && Math.abs(w - flowWidth) > 40) { renderFlow(); flowWidth = w; } }, 200);
   });
   document.addEventListener("visibilitychange", () => { if (!document.hidden && activeTab === "meter") tickLive(); });
 

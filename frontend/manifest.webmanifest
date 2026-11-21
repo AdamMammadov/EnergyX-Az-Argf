@@ -1,13 +1,13 @@
 {
-  "name": "EnergyX Az — Açıq Enerji Kalkulyatoru",
+  "name": "EnergyX Az - elektrik və qaz kalkulyatoru",
   "short_name": "EnergyX Az",
-  "description": "Azərbaycanın pilləli elektrik tarifi üzrə pulsuz, açıq mənbə enerji kalkulyatoru və analitika aləti.",
+  "description": "Azərbaycanın rəsmi pilləli tarifləri ilə elektrik və qaz xərcini hesablamaq üçün pulsuz alət.",
   "lang": "az",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#0A1420",
-  "theme_color": "#0A1420",
+  "background_color": "#0F1215",
+  "theme_color": "#0F1215",
   "icons": [
     { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
   ]

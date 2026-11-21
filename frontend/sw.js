@@ -1,21 +1,19 @@
-// EnergyX Az — Service Worker (oflayn dəstək)
+// EnergyX Az: Service Worker (oflayn dəstək)
 //
 // Strategiya:
-//  - Öz fayllarımız (HTML, JS, CSS): ƏVVƏLCƏ ŞƏBƏKƏ, keş yalnız oflayn ehtiyat kimi.
-//    (Əvvəlki "stale-while-revalidate" yeniləmədən sonra köhnə JS/CSS-i yeni HTML ilə
-//    qarışdırırdı — mobil menyu bu səbəbdən sınırdı.)
-//  - Fayl URL-ləri versiyalıdır (?v=...), yeni HTML həmişə yeni faylları istəyir.
-//  - CDN kitabxanaları (Chart.js, jsPDF) versiyalı URL-lərdir və dəyişmir: əvvəlcə keş.
+//  - Bütün fayllar saytın öz serverindədir (Chart.js və jsPDF də vendor/ qovluğunda).
+//  - Əvvəlcə şəbəkə, keş yalnız oflayn ehtiyat kimi istifadə olunur.
+//  - JS/CSS ünvanları versiyalıdır (?v=...), yeni HTML həmişə yeni faylları istəyir.
 //  - API sorğuları (backend) keşlənmir.
-const VERSION = "2.4.2";
+const VERSION = "2.5.0";
 const CACHE = "energyx-" + VERSION;
 const CORE = ["./", "index.html", "SpaceGrotesk-Bold.ttf", "icon.svg", "manifest.webmanifest",
   "img/azgf-h-color.webp", "img/azgf-h-white.webp", "img/azgf-v-color.webp", "img/azgf-v-white.webp",
-  ...["css/pro.css", "css/layout.css", "js/engine.js", "js/pro.js", "js/extras.js", "js/ux.js", "js/lab.js"].map((f) => f + "?v=" + VERSION)];
-const CDN = "https://cdnjs.cloudflare.com/";
+  "vendor/chart-4.5.1.min.js",
+  ...["css/pro.css", "css/layout.css", "css/theme.css", "js/engine.js", "js/pro.js", "js/extras.js", "js/ux.js", "js/lab.js", "js/home.js"].map((f) => f + "?v=" + VERSION)];
 
 self.addEventListener("install", (e) => {
-  // cache: "reload" — brauzerin HTTP keşindəki köhnə nüsxələr götürülməsin
+  // cache: "reload" - brauzerin HTTP keşindəki köhnə nüsxələr götürülməsin
   e.waitUntil(caches.open(CACHE)
     .then((c) => c.addAll(CORE.map((u) => new Request(u, { cache: "reload" }))))
     .then(() => self.skipWaiting()));
@@ -41,11 +39,5 @@ self.addEventListener("fetch", (e) => {
   if (url.origin === self.location.origin) {
     e.respondWith(networkFirst(req, req.mode === "navigate" ? "index.html" : null));
     return;
-  }
-  if (req.url.startsWith(CDN)) {
-    e.respondWith(caches.match(req).then((hit) => hit || fetch(req).then((res) => {
-      if (res.ok) { const copy = res.clone(); caches.open(CACHE).then((c) => c.put(req, copy)); }
-      return res;
-    })));
   }
 });

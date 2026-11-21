@@ -26,7 +26,7 @@ test("bütün yerli JS/CSS faylları versiyalıdır və SW ilə eyni versiyadad�
 });
 
 test("sw.js eyni faylları oflayn üçün öncədən keşləyir", () => {
-  for (const f of ["css/pro.css", "css/layout.css", "js/engine.js", "js/pro.js", "js/extras.js", "js/ux.js", "js/lab.js"]) {
+  for (const f of ["css/pro.css", "css/layout.css", "css/theme.css", "js/engine.js", "js/pro.js", "js/extras.js", "js/ux.js", "js/lab.js", "js/home.js"]) {
     assert.ok(sw.includes(`"${f}"`), `${f} sw.js CORE siyahısında yoxdur`);
   }
 });
@@ -34,4 +34,20 @@ test("sw.js eyni faylları oflayn üçün öncədən keşləyir", () => {
 test("app-version meta etiketi SW versiyası ilə eynidir", () => {
   const meta = (html.match(/<meta name="app-version" content="([^"]+)">/) || [])[1];
   assert.equal(meta, swVersion);
+});
+
+// Canlı saytda Chart.js CDN ünvanı 404 verirdi və bütün qrafiklər boş qalırdı.
+// Kitabxanalar saytın öz serverində saxlanılır: xarici skript olmamalı, vendor faylları mövcud olmalıdır.
+test("index.html xarici skript yükləmir, vendor kitabxanaları yerindədir", () => {
+  const external = [...html.matchAll(/<script[^>]+src="(https?:\/\/[^"]+)"/g)].map((m) => m[1]);
+  assert.deepEqual(external, [], "xarici skriptlər: " + external.join(", "));
+  const vendor = [...html.matchAll(/<script[^>]+src="(vendor\/[^"?]+)"/g)].map((m) => m[1]);
+  assert.ok(vendor.length >= 1, "vendor skripti tapılmadı");
+  for (const v of vendor) {
+    assert.ok(fs.existsSync(path.join(root, v)), `${v} mövcud deyil`);
+    assert.ok(sw.includes(`"${v}"`), `${v} sw.js CORE siyahısında yoxdur`);
+  }
+  const pro = fs.readFileSync(path.join(root, "js", "pro.js"), "utf8");
+  const lazy = (pro.match(/s\.src = "(vendor\/[^"]+)"/) || [])[1];
+  assert.ok(lazy && fs.existsSync(path.join(root, lazy)), "jsPDF faylı tapılmadı: " + lazy);
 });

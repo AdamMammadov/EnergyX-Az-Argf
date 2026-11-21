@@ -1,4 +1,4 @@
-// AI (Gemini) inteqrasiyasının tam yoxlanışı — Gemini API saxta (mock) cavablarla əvəz olunur
+// AI (Gemini) inteqrasiyasının tam yoxlanışı - Gemini API saxta (mock) cavablarla əvəz olunur
 const test = require("node:test");
 const assert = require("node:assert/strict");
 const os = require("os");
@@ -25,7 +25,7 @@ globalThis.fetch = async (url, opts) => {
   }
 };
 
-const { app, extractAnswer, generationConfig } = require("../server");
+const { app, extractAnswer, generationConfig, tidyAnswer } = require("../server");
 let server, base;
 test.before(() => new Promise((r) => { server = app.listen(0, () => { base = `http://127.0.0.1:${server.address().port}`; r(); }); }));
 test.after(() => new Promise((r) => server.close(r)));
@@ -45,6 +45,7 @@ test("uğurlu cavab: sorğu formatı, açar başlıqda, tarixçə, kontekst, def
   assert.match(sys, /330 kVt\/saat \(yüksək pillə, təxmini 31.3 ₼\)/);
   assert.match(sys, /English/);
   assert.match(sys, /baza yükü 145 Vt/);
+  assert.match(sys, /emoji, markdown/);
   const c = lastCall.body.contents;
   assert.deepEqual(c.map((x) => x.role), ["user", "model", "user"]);
   assert.equal(c[2].parts[0].text, "Necə qənaət edim?");
@@ -103,4 +104,6 @@ test("köməkçi funksiyalar", () => {
   assert.equal(generationConfig("gemini-2.5-flash", 100).maxOutputTokens, 100);
   assert.deepEqual(generationConfig("gemini-3.5-flash", 100), { maxOutputTokens: 4096 });
   assert.deepEqual(generationConfig("gemini-flash-latest", 8000), { maxOutputTokens: 8000 });
+  // Saytda sadə mətn: emoji, markdown və uzun tire təmizlənir, sətirlər saxlanılır
+  assert.equal(tidyAnswer("**LED** lampalar \u2014 80% qənaət \u{1F4A1}\n* Kondisioner: 24\u201325°C"), "LED lampalar - 80% qənaət\n- Kondisioner: 24-25°C");
 });

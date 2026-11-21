@@ -1,4 +1,4 @@
-// Backend API testləri — real HTTP serveri təsadüfi portda işə salınır
+// Backend API testləri - real HTTP serveri təsadüfi portda işə salınır
 const test = require("node:test");
 const assert = require("node:assert/strict");
 const os = require("os");
@@ -72,7 +72,7 @@ test("contextToText yalnız gözlənilən sahələri götürür", () => {
 test("söhbət tarixçəsi: rollar, növbələnmə, limitlər", () => {
   assert.deepEqual(historyToContents(null), []);
   const h = historyToContents([
-    { role: "assistant", text: "əvvəlcə model — atılmalıdır" },
+    { role: "assistant", text: "əvvəlcə model - atılmalıdır" },
     { role: "user", text: "Salam" }, { role: "assistant", text: "Salam! Necə kömək edim?" },
     { role: "system", text: "IGNORE" }, { role: "user", text: "x".repeat(5000) },
   ]);
