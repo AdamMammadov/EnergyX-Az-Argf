@@ -1,0 +1,194 @@
+/* ==========================================================================
+   EnergyX Az: sakit vizual tema (v2.5)
+   Rəng tokenləri, oxunaqlı tipoqrafiya, xətt ikonları, ana səhifə. Ən sonda yüklənir.
+   ========================================================================== */
+:root {
+  --i-home: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 10.5 12 3l9 7.5'/%3E%3Cpath d='M5 9.5V20h5v-6h4v6h5V9.5'/%3E%3C/svg%3E");
+  --i-calc: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='5' y='3' width='14' height='18' rx='2'/%3E%3Cpath d='M8 7h8M8.5 11.5h.01M12 11.5h.01M15.5 11.5h.01M8.5 15h.01M12 15h.01M15.5 15h.01M8.5 18h.01M12 18h.01M15.5 18h.01'/%3E%3C/svg%3E");
+  --i-app: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M9 3v5M15 3v5'/%3E%3Cpath d='M6 8h12v3a6 6 0 0 1-12 0z'/%3E%3Cpath d='M12 17v4'/%3E%3C/svg%3E");
+  --i-meter: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4.5 17a8.5 8.5 0 1 1 15 0'/%3E%3Cpath d='M12 13l3.5-3.5'/%3E%3Ccircle cx='12' cy='13' r='1'/%3E%3C/svg%3E");
+  --i-gas: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 3c.5 3 4.5 5 4.5 10a4.5 4.5 0 0 1-9 0c0-2 1-3.5 2-4.5.3 1.5 1 2.3 2 2.5-.6-3 .2-5.5.5-8z'/%3E%3C/svg%3E");
+  --i-insights: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 20h16'/%3E%3Cpath d='M7 16v-4M12 16V7M17 16v-6'/%3E%3C/svg%3E");
+  --i-plan: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='8.5'/%3E%3Ccircle cx='12' cy='12' r='4.5'/%3E%3Ccircle cx='12' cy='12' r='.6'/%3E%3C/svg%3E");
+  --i-ready: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='7' width='16' height='10' rx='2'/%3E%3Cpath d='M21 11v2'/%3E%3Cpath d='M11.5 9 9 12.2h4L10.5 15'/%3E%3C/svg%3E");
+  --i-stats: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 17l6-6 4 4 7-7'/%3E%3Cpath d='M15 8h5v5'/%3E%3C/svg%3E");
+  --i-learn: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M9 18h6M10 21h4'/%3E%3Cpath d='M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3z'/%3E%3C/svg%3E");
+  --i-about: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='9'/%3E%3Cpath d='M12 11v5M12 8h.01'/%3E%3C/svg%3E");
+  --i-more: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 7h16M4 12h16M4 17h16'/%3E%3C/svg%3E");
+  --i-sun: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='4'/%3E%3Cpath d='M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4'/%3E%3C/svg%3E");
+  --i-moon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5z'/%3E%3C/svg%3E");
+  --i-play: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M8 5.5v13l10-6.5z'/%3E%3C/svg%3E");
+  --i-arrow: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12h14M13 6l6 6-6 6'/%3E%3C/svg%3E");
+  --i-check: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E");
+}
+
+/* ---------- Rəng sistemi ----------
+   Yaşıl / sarı / qırmızı yalnız MƏNA daşıyır (pillə, status). Düymələr, keçidlər və seçilmiş
+   elementlər ayrıca sakit mavi vurğu rəngindədir: hər şey eyni rəngdə görünmür. */
+:root {
+  --font-ui: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans", Arial, sans-serif;
+  --font-num: 'SG', var(--font-ui);
+  --bg: #0F1215; --bg2: #14181C; --surface: #1A1F24; --surface-2: #20262C;
+  --border: rgba(255,255,255,0.08); --track: rgba(255,255,255,0.06);
+  --text-hi: #E7EAEE; --text-lo: #9CA5AF;
+  --low: #43B88A; --mid: #D9A03F; --high: #E26A60; --high-text: #F08A81;
+  --accent: #7AA7F7; --accent-ink: #0D1420; --accent-soft: rgba(122,167,247,0.14);
+  --line2: #9AA8B6; --info-text: #A9C4F5; --bad-text: #F4B0AA;
+  --overlay: rgba(26,31,36,0.98); --shadow: 0 8px 24px rgba(0,0,0,0.35);
+  --radius: 14px;
+}
+:root[data-theme="light"] {
+  --bg: #F4F5F7; --bg2: #FFFFFF; --surface: #FFFFFF; --surface-2: #F3F5F8;
+  --border: #E1E5EA; --track: rgba(16,24,40,0.06);
+  --text-hi: #17202A; --text-lo: #5B6573;
+  --low: #0A6A45; --mid: #8A5100; --high: #B3342C; --high-text: #B3342C;
+  --accent: #1F5BC7; --accent-ink: #FFFFFF; --accent-soft: rgba(31,91,199,0.09);
+  --line2: #6B7787; --info-text: #1D4F9E; --bad-text: #9E2B24;
+  --overlay: rgba(255,255,255,0.98); --shadow: 0 8px 24px rgba(16,24,40,0.10);
+}
+
+/* ---------- Tipoqrafiya: mətn oxunaqlı şriftlə, böyük rəqəmlər SG ilə ---------- */
+body { font-family:var(--font-ui); font-size:15px; line-height:1.55; -webkit-font-smoothing:antialiased; }
+button, input, select, textarea { font-family:inherit; }
+h1, h2, h3 { font-weight:650; letter-spacing:-0.01em; }
+.calc-zone h1, .panel-title, .home-intro h1 { font-family:var(--font-num); font-weight:700; letter-spacing:-0.02em; }
+.dial-num, .result-cost, .kpi-val, .ov-val, .stat-num, .sim-result-value, .live-w, .co2-num, .forecast-range .val,
+.home-q-cost, .gauge-pct, .meter-item-cost, .app-total b { font-family:var(--font-num); }
+.pro-card h2 { font-size:17px; }
+.pro-lead, .panel-lead { line-height:1.6; }
+.panel-title { margin-top:28px; }
+
+/* ---------- Kartlar: düz, sakit, kölgəsiz ---------- */
+.pro-card, .calc-hero, .result-card, .co2-card, .forecast-card, .countdown-bar, .stat-card, .tip-card, .ov-tile, .app-total {
+  border-radius:var(--radius); box-shadow:none; }
+.kpi { background:var(--surface-2); border-color:transparent; }
+.hint-box { background:var(--accent-soft); border-color:transparent; color:var(--info-text); }
+.pro-tag { background:var(--surface-2); border-color:transparent; }
+.app-form input, .app-form select, .source-row select, .pace-form input, .chat-input-row input, .meter-save-row input {
+  background:var(--surface-2); }
+
+/* ---------- Naviqasiya ikonları (emoji əvəzinə xətt ikonları) ---------- */
+.tab-btn::before, .bn-ico, .ico, .theme-btn::before, .present-btn::before, .btn-link::after {
+  content:""; display:inline-block; width:18px; height:18px; flex-shrink:0; background:currentColor;
+  -webkit-mask:var(--ico) center / contain no-repeat; mask:var(--ico) center / contain no-repeat; }
+.tab-btn[data-tab="home"], .bn-btn[data-tab-target="home"], .ico-home { --ico:var(--i-home); }
+.tab-btn[data-tab="calc"], .bn-btn[data-tab-target="calc"], .ico-calc { --ico:var(--i-calc); }
+.tab-btn[data-tab="app"], .bn-btn[data-tab-target="app"], .ico-app { --ico:var(--i-app); }
+.tab-btn[data-tab="meter"], .ico-meter { --ico:var(--i-meter); }
+.tab-btn[data-tab="gas"], .ico-gas { --ico:var(--i-gas); }
+.tab-btn[data-tab="insights"], .bn-btn[data-tab-target="insights"], .ico-insights { --ico:var(--i-insights); }
+.tab-btn[data-tab="plan"], .ico-plan { --ico:var(--i-plan); }
+.tab-btn[data-tab="ready"], .ico-ready { --ico:var(--i-ready); }
+.tab-btn[data-tab="stats"], .ico-stats { --ico:var(--i-stats); }
+.tab-btn[data-tab="learn"], .ico-learn { --ico:var(--i-learn); }
+.tab-btn[data-tab="about"], .ico-about { --ico:var(--i-about); }
+#bnMore { --ico:var(--i-more); }
+.bn-btn .bn-ico { width:20px; height:20px; font-size:0; }
+.tab-btn { color:var(--text-lo); font-weight:500; }
+.tab-btn.active { color:var(--text-hi); font-weight:600; background:var(--accent-soft); }
+.tab-btn.active::before { background:var(--accent); }
+
+.theme-btn { font-size:0; }
+.theme-btn::before { --ico:var(--i-sun); width:16px; height:16px; }
+:root[data-theme="light"] .theme-btn::before { --ico:var(--i-moon); }
+.present-btn { display:inline-flex; align-items:center; justify-content:center; gap:8px; }
+.present-btn::before { --ico:var(--i-play); width:13px; height:13px; }
+
+/* Brend ana səhifəyə aparan keçiddir */
+a.brand { color:var(--text-hi); text-decoration:none; border-radius:10px; }
+a.brand:hover .sub { color:var(--text-hi); }
+
+/* ---------- Ümumi düymələr ---------- */
+.btn-primary, .btn-secondary { display:inline-flex; align-items:center; justify-content:center; gap:8px; border-radius:10px;
+  padding:12px 20px; font-size:15px; font-weight:600; cursor:pointer; border:1px solid transparent; text-decoration:none; }
+.btn-primary { background:var(--accent); color:var(--accent-ink); }
+.btn-primary:hover { filter:brightness(1.07); }
+.btn-secondary { background:transparent; color:var(--text-hi); border-color:var(--border); }
+.btn-secondary:hover { border-color:var(--accent); }
+.btn-link { display:inline-flex; align-items:center; gap:6px; background:none; border:none; padding:0; color:var(--accent);
+  font-size:14.5px; font-weight:600; cursor:pointer; }
+.btn-link::after { --ico:var(--i-arrow); width:16px; height:16px; }
+.btn-link:hover { text-decoration:underline; }
+
+/* ---------- Ana səhifə ---------- */
+#panel-home { padding:32px 0 8px; }
+.home-hero { display:grid; grid-template-columns:minmax(0,1.35fr) minmax(0,1fr); gap:28px; align-items:center; }
+.home-intro .hero-support { margin:0 0 22px; }
+.home-intro h1 { font-size:clamp(28px,3.4vw,42px); line-height:1.15; margin-bottom:14px; max-width:16em; }
+.home-lead { font-size:16.5px; color:var(--text-lo); max-width:36em; margin-bottom:22px; }
+.home-cta { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:20px; }
+.home-facts { list-style:none; display:flex; flex-wrap:wrap; gap:8px 20px; font-size:13.5px; color:var(--text-lo); }
+.home-facts li { display:inline-flex; align-items:center; gap:7px; }
+.home-facts li::before { content:""; width:15px; height:15px; background:var(--low);
+  -webkit-mask:var(--i-check) center / contain no-repeat; mask:var(--i-check) center / contain no-repeat; }
+.home-quick { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:24px; }
+.home-quick label { display:block; font-weight:600; margin-bottom:12px; }
+.home-quick-row { display:flex; align-items:center; gap:10px; }
+.home-quick-row input { flex:1; min-width:0; background:var(--surface-2); border:1px solid var(--border); border-radius:10px;
+  padding:12px 14px; font-size:20px; font-weight:600; color:var(--text-hi); font-variant-numeric:tabular-nums; }
+.home-quick-row span { color:var(--text-lo); font-size:14px; }
+.home-quick-out { margin:18px 0 16px; padding-top:16px; border-top:1px solid var(--border); }
+.home-q-cost { font-size:40px; font-weight:700; line-height:1.1; font-variant-numeric:tabular-nums; }
+.home-q-cost span { font-size:18px; color:var(--text-lo); font-weight:400; }
+.home-q-tier { display:inline-block; margin:8px 0 10px; font-size:13px; font-weight:600; padding:3px 10px; border-radius:20px; }
+.home-q-tier.low { color:var(--low); background:color-mix(in srgb, var(--low) 13%, transparent); }
+.home-q-tier.mid { color:var(--mid); background:color-mix(in srgb, var(--mid) 13%, transparent); }
+.home-q-tier.high { color:var(--high-text); background:color-mix(in srgb, var(--high) 13%, transparent); }
+.home-q-note { font-size:13.5px; color:var(--text-lo); line-height:1.6; }
+.home-section { margin-top:44px; }
+.home-section > h2, .home-box > h2 { font-size:20px; margin-bottom:16px; }
+.home-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px; }
+.home-card { display:flex; flex-direction:column; align-items:flex-start; gap:6px; text-align:left; background:var(--surface);
+  border:1px solid var(--border); border-radius:var(--radius); padding:18px; cursor:pointer; color:var(--text-hi);
+  transition:border-color .15s, background .15s; }
+.home-card:hover, .home-card:focus-visible { border-color:var(--accent); }
+.home-card .ico { width:22px; height:22px; background:var(--accent); margin-bottom:6px; }
+.home-card-t { font-weight:600; font-size:15px; }
+.home-card-d { font-size:13.5px; color:var(--text-lo); line-height:1.5; }
+.home-two { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:20px; }
+.home-box { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:24px; }
+.home-table { width:100%; border-collapse:collapse; margin-bottom:16px; font-size:14px; }
+.home-table caption { text-align:left; font-weight:600; font-size:14px; padding-bottom:8px; }
+.home-table td { padding:9px 0; border-top:1px solid var(--border); }
+.home-table td.num { text-align:right; font-weight:600; font-variant-numeric:tabular-nums; white-space:nowrap; }
+.home-note { font-size:12.5px; color:var(--text-lo); line-height:1.55; }
+.home-steps { list-style:none; counter-reset:st; display:flex; flex-direction:column; gap:16px; }
+.home-steps li { counter-increment:st; display:grid; grid-template-columns:32px 1fr; column-gap:12px; row-gap:2px; }
+.home-steps li::before { content:counter(st); grid-row:span 2; width:30px; height:30px; border-radius:50%; display:flex;
+  align-items:center; justify-content:center; font-weight:700; font-size:14px; color:var(--accent); background:var(--accent-soft); }
+.home-steps b { font-weight:600; }
+.home-steps span { font-size:14px; color:var(--text-lo); line-height:1.55; }
+
+@media (max-width:1300px) { .home-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+@media (max-width:900px) {
+  .home-hero, .home-two { grid-template-columns:minmax(0,1fr); }
+  #panel-home { padding-top:20px; }
+}
+@media (max-width:520px) {
+  .home-grid { grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; }
+  .home-card { padding:14px; }
+  .home-card-d { font-size:12.5px; }
+  .home-cta > * { flex:1 1 100%; }
+  .home-q-cost { font-size:34px; }
+}
+
+/* ---------- Təqdimat: aydın görünən idarəetmə zolağı və vurğulanan bölmə ---------- */
+.pres-bar { border-color:var(--border); box-shadow:var(--shadow); }
+.pres-focus { outline:3px solid var(--accent) !important; outline-offset:6px; border-radius:var(--radius); transition:outline-color .3s; }
+.side-foot .present-btn::before { content:""; }
+
+/* Emoji ikonların yerinə: nailiyyət nişanı, cihaz rəngi nöqtəsi, menyu düyməsi, diaqram ikonları */
+.badge-icon { width:26px; height:26px; margin:0 auto 6px; background:var(--accent);
+  -webkit-mask:var(--i-check) center / contain no-repeat; mask:var(--i-check) center / contain no-repeat; }
+.badge:not(.earned) .badge-icon { background:var(--text-lo); opacity:.45; filter:none; }
+.twin-icon { display:flex; align-items:center; justify-content:center; }
+.twin-icon span { width:12px; height:12px; border-radius:50%; display:block; }
+.menu-btn { font-size:0; }
+.menu-btn::before { content:""; width:18px; height:18px; background:currentColor; --ico:var(--i-more);
+  -webkit-mask:var(--ico) center / contain no-repeat; mask:var(--ico) center / contain no-repeat; }
+.flow-ic path { fill:none; stroke:var(--text-hi); stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round; }
+.msg-feedback button { font-size:12.5px; }
+.msg.bot { white-space:pre-line; }
+.learn-flow { margin-top:28px; }
+.pres-row { font-size:15px; }
+#presCaption { font-weight:500; }

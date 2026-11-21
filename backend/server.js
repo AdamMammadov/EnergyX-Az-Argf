@@ -1,5 +1,5 @@
 // ==========================================
-// EnergyX Az — Açıq Enerji Kalkulyatoru Backend
+// EnergyX Az - Açıq Enerji Kalkulyatoru Backend
 // Gənclər Fondu Qrantı çərçivəsində hazırlanmış,
 // tam pulsuz, açıq mənbə layihə.
 // ==========================================
@@ -17,7 +17,7 @@ app.disable("x-powered-by");
 app.set("trust proxy", 1);
 
 // ==========================================
-// 🛡️ TƏHLÜKƏSİZLİK
+// TƏHLÜKƏSİZLİK
 // ==========================================
 app.use((req, res, next) => {
   res.setHeader("X-Content-Type-Options", "nosniff");
@@ -43,7 +43,7 @@ function parseKwh(value) {
 }
 
 // ==========================================
-// 📊 POST /calculate — sadə, sürətli hesablama (AI lazım deyil)
+// POST /calculate - sadə, sürətli hesablama (AI lazım deyil)
 // ==========================================
 app.post("/calculate", (req, res) => {
   const kwh = parseKwh(req.body && req.body.kwh);
@@ -54,7 +54,7 @@ app.post("/calculate", (req, res) => {
 });
 
 // ==========================================
-// 🤖 POST /advise — AI enerji məsləhətçisi (Gemini, pulsuz tier)
+// POST /advise - AI enerji məsləhətçisi (Gemini, pulsuz tier)
 // ==========================================
 const aiLimiter = rateLimit({
   windowMs: 60 * 1000,
@@ -67,7 +67,7 @@ const aiLimiter = rateLimit({
 const LANG_NAMES = { az: "Azərbaycan", en: "English", ru: "русский" };
 
 // Frontend-dən gələn analitika kontekstini təhlükəsiz, qısa mətnə çevirir.
-// Yalnız gözlənilən sahələr və rəqəmlər götürülür — prompt injection riskini azaldır.
+// Yalnız gözlənilən sahələr və rəqəmlər götürülür - prompt injection riskini azaldır.
 function contextToText(ctx) {
   if (!ctx || typeof ctx !== "object") return "";
   const num = (v) => (Number.isFinite(Number(v)) ? Math.round(Number(v) * 100) / 100 : null);
@@ -118,16 +118,16 @@ function historyToContents(history) {
 }
 
 // Default: Google-un "həmişə ən son Flash" ləqəbi. Konkret versiyalar (2.0-flash, 2.5-flash …)
-// vaxtaşırı bağlanır — 2.0-flash 1 iyun 2026-da bağlandı və köhnə backend-də AI məhz buna görə dayandı.
+// vaxtaşırı bağlanır - 2.0-flash 1 iyun 2026-da bağlandı və köhnə backend-də AI məhz buna görə dayandı.
 const GEMINI_MODEL = String(process.env.GEMINI_MODEL || "gemini-flash-latest").trim();
 // Model bağlanıbsa (404) və ya müvəqqəti yüklənibsə (503 "high demand", 429 kvota, 500) bu modellər sınanır.
-// Hər model Google-da ayrı tutum/kvota hovuzundadır — biri yüklənəndə digəri adətən cavab verir.
+// Hər model Google-da ayrı tutum/kvota hovuzundadır - biri yüklənəndə digəri adətən cavab verir.
 const FALLBACK_MODELS = ["gemini-flash-latest", "gemini-flash-lite-latest", "gemini-2.5-flash"];
 const TRANSIENT_STATUS = new Set([429, 500, 503]);
 let activeModel = GEMINI_MODEL; // əsas işləyən model (yalnız əvvəlki model bağlananda dəyişir)
 const goneModels = new Map();   // 404 verən modellər → vaxt; 1 saat ərzində yenidən sınanmır
 const GONE_TTL_MS = 60 * 60 * 1000;
-const AI_TIMEOUT_MS = 20000;    // frontend 25 s gözləyir — backend ondan əvvəl cavab verməlidir
+const AI_TIMEOUT_MS = 20000;    // frontend 25 s gözləyir - backend ondan əvvəl cavab verməlidir
 
 // Generasiya parametrləri modelə görə:
 // - 2.5 Flash: "düşünmə" tokenləri maxOutputTokens-dan xərclənir → düşünmə söndürülür (thinkingBudget: 0)
@@ -148,6 +148,17 @@ function extractAnswer(data) {
   const reason = text ? null
     : (data && data.promptFeedback && data.promptFeedback.blockReason) || (cand && cand.finishReason) || "EMPTY_RESPONSE";
   return { text, reason };
+}
+
+// Model təlimata baxmayaraq emoji, markdown və ya uzun tire yaza bilər: cavab saytda sadə mətn kimi göstərilir
+function tidyAnswer(text) {
+  return String(text)
+    .replace(/[\u2014\u2013\u2212]/g, "-")
+    .replace(/\*\*|__|^#+\s*/gm, "")
+    .replace(/^\s*[*•]\s+/gm, "- ")
+    .replace(/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}]\uFE0F?[ \t]?/gu, "")
+    .replace(/[ \t]+\n/g, "\n")
+    .trim();
 }
 
 // Vahid Gemini çağırışı: { ok, text, model } və ya { ok:false, status, reason } qaytarır (açar heç vaxt qaytarılmır).
@@ -185,7 +196,7 @@ async function callGemini(opts) {
     if (r.status !== 404) firstFailure = firstFailure || r;
     if (r.status !== 404 && !TRANSIENT_STATUS.has(r.status)) return r;   // açar səhvi, timeout, boş cavab
   }
-  // Hamısı yüklənibsə — əsas modelə qısa fasilədən sonra son cəhd
+  // Hamısı yüklənibsə - əsas modelə qısa fasilədən sonra son cəhd
   if (primaryTransient && deadline - Date.now() > 4000) {
     await new Promise((res) => setTimeout(res, 1000));
     const r = await tryModel(order[0]);
@@ -202,7 +213,7 @@ async function callGeminiModel(model, { system, contents, maxOutputTokens = 1024
       `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`,
       {
         method: "POST",
-        // Açar URL-də yox, başlıqda göndərilir — loglara düşmür
+        // Açar URL-də yox, başlıqda göndərilir - loglara düşmür
         headers: { "Content-Type": "application/json", "x-goog-api-key": process.env.GEMINI_API_KEY },
         body: JSON.stringify({
           ...(system ? { systemInstruction: { parts: [{ text: system }] } } : {}),
@@ -259,6 +270,7 @@ Rəsmi tariflər: 0-200 kVt/saat = 8.4 qəpik, 200-300 kVt/saat = 10 qəpik, 300
 ${tariff ? `İstifadəçinin bu dövrki istifadəsi: ${kwh} kVt/saat (${tierNameAz[tariff.tier]} pillə, təxmini ${tariff.cost} ₼).` : ""}
 ${ctxText ? `İstifadəçinin analitika məlumatı (onun öz cihazında hesablanıb):\n${ctxText}` : ""}
 Qısa (3-5 cümlə), praktik, konkret enerji qənaəti məsləhətləri ver. Uydurma rəqəm vermə. Yalnız enerji mövzusunda cavab ver.
+Sadə, təbii dildə yaz: emoji, markdown (**, #, siyahı işarələri) və uzun tire işlətmə, lazım olsa qısa tire (-) yaz.
 Cavabı ${LANG_NAMES[lang]} dilində yaz.`;
 
   const result = await callGemini({
@@ -266,16 +278,16 @@ Cavabı ${LANG_NAMES[lang]} dilində yaz.`;
     contents: [...historyToContents(body.history), { role: "user", parts: [{ text: question }] }],
   });
   if (!result.ok) {
-    // Boş/bloklanmış cavab da xəta sayılır — frontend bu halda oflayn köməkçiyə keçir
+    // Boş/bloklanmış cavab da xəta sayılır - frontend bu halda oflayn köməkçiyə keçir
     const status = result.status === 504 ? 504 : 502;
     return res.status(status).json({ error: "AI xidmətində xəta baş verdi.", reason: result.reason });
   }
   bumpStats((s) => { s.totalAiQuestions += 1; });
-  res.json({ answer: result.text });
+  res.json({ answer: tidyAnswer(result.text) });
 });
 
 // ==========================================
-// 🩺 GET /ai-check — AI-ın real vəziyyətini yoxlayır (deploy-dan sonra diaqnostika üçün)
+// GET /ai-check - AI-ın real vəziyyətini yoxlayır (deploy-dan sonra diaqnostika üçün)
 // Kiçik test sorğusu göndərir; açar və ya istifadəçi məlumatı qaytarılmır.
 // ==========================================
 const aiCheckLimiter = rateLimit({ windowMs: 60 * 1000, max: 3, standardHeaders: true, legacyHeaders: false,
@@ -289,7 +301,7 @@ app.get("/ai-check", aiCheckLimiter, async (req, res) => {
 });
 
 // ==========================================
-// 📈 SADƏ STATİSTİKA SİSTEMİ (fayl-əsaslı, verilənlər bazası tələb etmir)
+// SADƏ STATİSTİKA SİSTEMİ (fayl-əsaslı, verilənlər bazası tələb etmir)
 // Yaddaşda saxlanılır, fayla atomik şəkildə (tmp + rename) yazılır.
 // ==========================================
 const STATS_FILE = process.env.STATS_FILE || path.join(__dirname, "stats.json");
@@ -374,7 +386,7 @@ app.use((err, req, res, next) => {
 
 if (require.main === module) {
   const PORT = process.env.PORT || 3000;
-  app.listen(PORT, () => console.log(`🚀 Server işə düşdü → port ${PORT}`));
+  app.listen(PORT, () => console.log(`Server işə düşdü → port ${PORT}`));
 }
 
-module.exports = { app, contextToText, historyToContents, extractAnswer, generationConfig };
+module.exports = { app, contextToText, historyToContents, extractAnswer, generationConfig, tidyAnswer };
