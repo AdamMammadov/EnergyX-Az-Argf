@@ -31,7 +31,7 @@ app.use((req, res, next) => {
 // məsələn "https://energyx.az,https://www.energyx.az" yazın.
 const allowedOrigins = (process.env.ALLOWED_ORIGINS || "").split(",").map((s) => s.trim()).filter(Boolean);
 app.use(cors(allowedOrigins.length ? { origin: allowedOrigins } : {}));
-app.use(express.json({ limit: "10kb" }));
+app.use(express.json({ limit: "24kb" }));
 
 const MAX_KWH = 100000;
 const MAX_QUESTION_LEN = 500;
@@ -87,7 +87,34 @@ function contextToText(ctx) {
       .map((d) => `${clean(d.name)} ${num(d.kwh)} kVt/ay`).join(", "));
   }
   if (num(ctx.budget) > 0) lines.push(`Aylıq büdcə: ${num(ctx.budget)} ₼`);
+  // Ağıllı sayğac (saatlıq yük profili) analizinin xülasəsi
+  const p = ctx.profile;
+  if (p && typeof p === "object" && num(p.baseloadW) !== null) {
+    lines.push(`Saatlıq yük profili${p.source === "csv" ? " (istifadəçinin sayğac CSV-si)" : p.source === "sim" ? " (cihazlardan simulyasiya)" : " (nümunə)"}: `
+      + `baza yükü ${num(p.baseloadW)} Vt, pik saat ${num(p.peakHour)}:00, gündəlik orta ${num(p.avgDailyKwh)} kVt·saat, `
+      + `gecə payı ${num(p.nightSharePct)}%, saatlıq anomaliya sayı ${num(p.events)}`);
+  }
   return lines.join("\n");
+}
+
+// Söhbət tarixçəsi (çoxaddımlı dialoq): yalnız user/assistant rolları, son 6 mesaj,
+// hər biri 1200 simvola qədər. Gemini ardıcıl user → model növbələnməsi tələb edir.
+const MAX_HISTORY = 6, MAX_HISTORY_TEXT = 1200;
+function historyToContents(history) {
+  if (!Array.isArray(history)) return [];
+  const items = history.slice(-MAX_HISTORY)
+    .filter((h) => h && (h.role === "user" || h.role === "assistant") && typeof h.text === "string" && h.text.trim())
+    .map((h) => ({ role: h.role === "assistant" ? "model" : "user", text: h.text.trim().slice(0, MAX_HISTORY_TEXT) }));
+  const merged = [];
+  items.forEach((it) => {
+    const last = merged[merged.length - 1];
+    if (last && last.role === it.role) last.text += "\n" + it.text;
+    else merged.push({ ...it });
+  });
+  while (merged.length && merged[0].role !== "user") merged.shift();
+  // Cari sual "user" olduğu üçün tarixçə "model" ilə bitməlidir
+  while (merged.length && merged[merged.length - 1].role !== "model") merged.pop();
+  return merged.map((m) => ({ role: m.role, parts: [{ text: m.text }] }));
 }
 
 const GEMINI_MODEL = process.env.GEMINI_MODEL || "gemini-2.5-flash";
@@ -128,7 +155,7 @@ Cavabı ${LANG_NAMES[lang]} dilində yaz.`;
         headers: { "Content-Type": "application/json", "x-goog-api-key": process.env.GEMINI_API_KEY },
         body: JSON.stringify({
           systemInstruction: { parts: [{ text: systemContext }] },
-          contents: [{ role: "user", parts: [{ text: question }] }],
+          contents: [...historyToContents(body.history), { role: "user", parts: [{ text: question }] }],
           generationConfig: { maxOutputTokens: 600, temperature: 0.6 },
         }),
         signal: controller.signal,
@@ -239,4 +266,4 @@ if (require.main === module) {
   app.listen(PORT, () => console.log(`🚀 Server işə düşdü → port ${PORT}`));
 }
 
-module.exports = { app, contextToText };
+module.exports = { app, contextToText, historyToContents };

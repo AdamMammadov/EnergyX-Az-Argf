@@ -77,13 +77,34 @@ Düzəlişlər: GitHub keçidi düzgün repoya yönəldildi; mobil ekranda cihaz
 - **Köhnə vs yeni cihaz** — illik qənaət, geri ödəmə müddəti və 10 illik xalis nəticə (pilləli tarifə görə)
 - Klaviatura qısayolları (**Alt + 1…9**), URL-də bölmə (`#insights`), çap üçün təmiz görünüş
 
+## 📟 v2.4 — Ağıllı sayğac AI laboratoriyası, vizual izah, Gənclər Fondu vizual identikası
+
+| # | Funksiya | Harada |
+|---|----------|--------|
+| 31 | **Ağıllı Sayğac AI Laboratoriyası** — saatlıq (smart meter) məlumatın analizi: 24 saatlıq yük əyrisi, baza yükü (həmişə açıq cihazlar) və onun illik xərci, pik saat, yük əmsalı, həftə × saat istilik xəritəsi, gündəlik cəmlər | Ağıllı sayğac |
+| 32 | **Saatlıq anomaliya aşkarlanması** — hər saat eyni saatın median/MAD bazası ilə müqayisə olunur (robust z-score); gecə/gündüz hadisələri izahla | Ağıllı sayğac |
+| 33 | **AI tövsiyələri** — ölçülə bilən göstəricilərə əsaslanan, ₼ ilə ifadə olunan konkret tövsiyələr (baza yükü, gecə anomaliyası, pillə proqnozu, axşam piki və s.) | Ağıllı sayğac |
+| 34 | **Simulyasiya sistemi** — Cihazlar siyahısından 4 həftəlik saatlıq yük profili (kateqoriyaya görə gün ərzində istifadə ritmi, həftəsonu effekti) | Ağıllı sayğac |
+| 35 | **CSV idxal/ixrac** — ağıllı sayğacdan saatlıq məlumat (ISO və ya `dd.mm.yyyy`, ayrı saat sütunu, `,` `;` tab, onluq vergül, Vt·saat → kVt·saat avtomatik, 15 dəq → saatlıq); fayl yalnız brauzerdə emal olunur | Ağıllı sayğac |
+| 36 | **Canlı sayğac** — hazırkı saatın profilinə əsaslanan animasiyalı güc göstəricisi | Ağıllı sayğac |
+| 37 | **Tarif pillələrinin animasiyalı izahı** — istifadənin pillələrə pillə-pillə dolması, hər pillənin kVt × qiymət = ₼ hesabı və orta qiymət | Kalkulyator |
+| 38 | **Enerji axını diaqramı** — stansiya → şəbəkə itkisi (7.6%) → sayğac → cihaz kateqoriyaları, canlı animasiya, mobil üçün şaquli versiya | Kalkulyator |
+| 39 | **AI məsləhətçi: çoxaddımlı dialoq** — son 6 mesaj kontekstdə saxlanılır; ağıllı sayğac analizi də AI-a ötürülür (serverdə təmizlənir) | Kalkulyator |
+| 40 | **Gənclər Fondunun loqosu** — yan panel, kalkulyatorun ilk ekranı, mobil menyu, Haqqında, footer (açıq temada rəngli, tünd temada ağ variant), PDF hesabatın başlığı | Hər yerdə |
+| 41 | **Məcburi qeyd** ("Bu nəşr … Gənclər Fondunun maliyyə yardımı ilə hazırlanmışdır …") footer-də və PDF-in hər səhifəsində; paylaşma mətnində **#AzGF #GenclerFondu** | Hər yerdə |
+| 42 | **Sosial şəbəkə önizləməsi** — `og-image.jpg` (1200×630, Fondun loqosu ilə) və Open Graph meta teqləri | — |
+
+Təqdimat rejimi 9 addıma genişləndi (vizual izah və ağıllı sayğac laboratoriyası əlavə olundu).
+
+> Qeyd: domen qoşulandan sonra `index.html`-də `og:image` üçün tam ünvan yazılması tövsiyə olunur (məs. `https://energyx.az/og-image.jpg`) — Facebook nisbi ünvanı qəbul etmir.
+
 ### 🛡️ Möhkəmlik və təhlükəsizlik
 - **XSS qoruması** — istifadəçinin yazdığı cihaz/sayğac adları HTML-ə təhlükəsiz yerləşdirilir
 - **Səhifə ~13 dəfə yüngülləşdi** (1.09 MB → ~85 KB): PDF şrifti ayrıca fayla çıxarıldı və yalnız PDF yaradılanda yüklənir
 - Backend: təhlükəsizlik başlıqları, `ALLOWED_ORIGINS` ilə CORS, 10 KB sorğu limiti, giriş doğrulaması, `/track` üçün rate-limit və hadisə növü siyahısı, statistikanın atomik yazılması, Gemini açarı URL-də yox başlıqda, 15 s timeout, `/health` endpoint, səliqəli 404/400 cavabları
 - AI-a göndərilən kontekst serverdə təmizlənir (prompt injection riskini azaltmaq üçün)
 - Tarif məntiqi vahid mənbədən gəlir və frontend ↔ backend uyğunluğu testlə yoxlanılır
-- **36 avtomatik test** (`cd backend && npm test`) + GitHub Actions CI
+- **53 avtomatik test** (`cd backend && npm test`) + GitHub Actions CI
 
 > Qeyd: "Nümunə məlumat" və təqdimat rejimindəki məlumat açıq şəkildə **nümunə** kimi etiketlənib — real istifadəçi məlumatı deyil.
 
@@ -102,6 +123,8 @@ energyx-az/
 │   ├── js/pro.js           Analitika / Planlaşdırma / Təqdimat / PDF / Yedək UI
 │   ├── js/extras.js        Qaz / Diaqnoz / Doğrulama / Hazırlıq / Nailiyyətlər UI
 │   ├── js/ux.js            Tema, naviqasiya, ümumi baxış, hesab yoxlayıcısı, cihaz müqayisəsi
+│   ├── js/lab.js           Ağıllı sayğac laboratoriyası, tarif animasiyası, enerji axını
+│   ├── img/                Gənclər Fondunun loqoları (rəngli / ağ)
 │   ├── css/pro.css, css/layout.css   Komponent stilləri + responsiv tətbiq qabığı
 │   ├── fonts/DejaVuSans.ttf  PDF üçün Unicode şrift (lazım olanda yüklənir)
 │   ├── sw.js, manifest.webmanifest, icon.svg

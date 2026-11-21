@@ -7,10 +7,11 @@
 //  - Fayl URL-ləri versiyalıdır (?v=...), yeni HTML həmişə yeni faylları istəyir.
 //  - CDN kitabxanaları (Chart.js, jsPDF) versiyalı URL-lərdir və dəyişmir: əvvəlcə keş.
 //  - API sorğuları (backend) keşlənmir.
-const VERSION = "2.3.0";
+const VERSION = "2.4.0";
 const CACHE = "energyx-" + VERSION;
 const CORE = ["./", "index.html", "SpaceGrotesk-Bold.ttf", "icon.svg", "manifest.webmanifest",
-  ...["css/pro.css", "css/layout.css", "js/engine.js", "js/pro.js", "js/extras.js", "js/ux.js"].map((f) => f + "?v=" + VERSION)];
+  "img/azgf-h-color.webp", "img/azgf-h-white.webp", "img/azgf-v-color.webp", "img/azgf-v-white.webp",
+  ...["css/pro.css", "css/layout.css", "js/engine.js", "js/pro.js", "js/extras.js", "js/ux.js", "js/lab.js"].map((f) => f + "?v=" + VERSION)];
 const CDN = "https://cdnjs.cloudflare.com/";
 
 self.addEventListener("install", (e) => {

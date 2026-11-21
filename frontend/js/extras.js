@@ -583,7 +583,8 @@
   }
   async function share() {
     const t = T(), kwh = +slider.value, c = E.calcTariff(kwh);
-    const text = fmt(t.share_text, { kwh, cost: c.cost.toFixed(2), tier: t["tier_" + c.tier] });
+    // Fondun tələbi: sosial şəbəkə paylaşımlarında #AzGF və #GenclerFondu heşteqləri (Siyahı 2.10.3)
+    const text = fmt(t.share_text, { kwh, cost: c.cost.toFixed(2), tier: t["tier_" + c.tier] }) + " #EnergyXAz #AzGF #GenclerFondu";
     const url = shareUrl();
     try {
       if (navigator.share) { await navigator.share({ title: "EnergyX Az", text, url }); return; }

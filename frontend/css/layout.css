@@ -253,3 +253,37 @@ main.wrap { padding-bottom:40px; }
   .sidebar, .bottom-nav, .nav-backdrop, .toast-box, .pres-bar, footer { display:none !important; }
   .shell { margin:0 !important; }
 }
+
+/* ===== Gənclər Fondu loqosu (v2.4) — tema üzrə rəngli / ağ variant ===== */
+.azgf-logo { display:block; height:auto; max-width:100%; }
+:root[data-theme="light"] .logo-on-dark, :root:not([data-theme="light"]) .logo-on-light { display:none; }
+.support-label { display:block; font-size:11.5px; color:var(--text-lo); letter-spacing:.2px; }
+.support-block { display:flex; flex-direction:column; gap:8px; text-decoration:none; padding:12px; border-radius:12px;
+  background:var(--surface); border:1px solid var(--border); transition:border-color .15s; }
+.support-block:hover, .support-block:focus-visible { border-color:var(--low); }
+.nav-support { display:none; }
+.hero-support { display:inline-flex; align-items:center; gap:14px; flex-wrap:wrap; justify-content:center; text-decoration:none;
+  margin:0 auto 24px; padding:10px 16px; border-radius:14px; background:var(--surface); border:1px solid var(--border); }
+.hero-support .azgf-logo { width:220px; }
+.hero-support .support-label { max-width:220px; text-align:left; line-height:1.35; }
+.hero-support:hover { border-color:var(--low); }
+.footer-logo { display:inline-block; margin:4px auto 14px; }
+.footer-logo .azgf-logo { width:260px; margin:0 auto; }
+.fund-disclaimer { font-size:12px; font-style:italic; max-width:640px; margin:0 auto 10px; line-height:1.55; }
+.about-support { display:flex; align-items:center; justify-content:center; background:var(--surface); border:1px solid var(--border);
+  border-radius:16px; padding:22px; }
+.about-support .azgf-logo { width:280px; }
+
+@media (min-width:1100px) {
+  .hero-support { margin:0 0 24px; }
+}
+@media (max-width:1099px) {
+  .side-support { display:none; }
+}
+@media (max-width:719px) {
+  .nav-support { display:flex; margin-top:auto; }
+  .nav-support .azgf-logo { width:100%; }
+  .hero-support { padding:10px 12px; gap:10px; }
+  .hero-support .azgf-logo { width:200px; }
+  .hero-support .support-label { text-align:center; max-width:none; }
+}

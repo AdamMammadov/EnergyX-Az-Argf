@@ -192,7 +192,8 @@
 /* Nailiyyətlər */
 .challenge { background:var(--bg2); border:1px solid var(--border); border-radius:14px; padding:14px 16px; margin-bottom:14px; }
 .ch-title { font-weight:700; margin-bottom:4px; }
-.badges { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; }
+.badges { display:grid; grid-template-columns:repeat(auto-fill,minmax(118px,1fr)); gap:10px; }
+.badge { min-width:0; overflow-wrap:anywhere; hyphens:auto; }
 .badge { background:var(--bg2); border:1px solid var(--border); border-radius:14px; padding:12px; text-align:center; opacity:.5; filter:grayscale(1); transition:all .3s; }
 .badge.earned { opacity:1; filter:none; border-color:rgba(0,217,163,0.5); }
 .badge-icon { font-size:26px; }
@@ -243,3 +244,66 @@
 }
 /* Grid daxilində input-ların təbii eni mobil ekranı aşmasın */
 .app-form > *, .pace-form > *, .inv-inputs > *, .gas-inputs > * { min-width:0; }
+
+/* ===== v2.4: Tarif pillələrinin animasiyalı izahı ===== */
+.tiers-explain .pro-card-head h2 { margin-bottom:0; }
+.tv-replay { font-size:12px; padding:6px 10px; }
+.tierviz { margin:16px 0 6px; }
+.tv-track { display:flex; gap:4px; height:30px; }
+.tv-seg { position:relative; flex-basis:0; background:var(--track); border-radius:8px; overflow:hidden; }
+.tv-fill { position:absolute; inset:0 auto 0 0; width:0; border-radius:8px; transition:width .7s cubic-bezier(.2,.8,.2,1); }
+.tv-seg.low .tv-fill { background:var(--low); } .tv-seg.mid .tv-fill { background:var(--mid); } .tv-seg.high .tv-fill { background:var(--high); }
+.tv-range { position:absolute; right:8px; top:50%; transform:translateY(-50%); font-size:11px; font-weight:700; color:var(--text-hi); mix-blend-mode:normal; text-shadow:0 0 6px var(--bg); }
+.tv-legend { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; margin-top:10px; }
+.tv-cell { display:flex; align-items:center; gap:6px; font-size:12.5px; font-variant-numeric:tabular-nums; min-width:0; }
+.tv-cell .tier-dot { display:inline-block; width:10px; height:10px; flex-shrink:0; }
+.tv-cell.off { color:var(--text-lo); opacity:.7; }
+.tv-total { margin-top:12px; font-weight:700; font-size:16px; }
+.tv-explain { font-size:13px; color:var(--text-lo); line-height:1.55; margin:8px 0 14px; }
+
+/* ===== v2.4: Enerji axını ===== */
+.flow-card { grid-column:1 / -1; }
+.flow-wrap { width:100%; }
+.flow-svg { width:100%; height:auto; display:block; overflow:visible; }
+.flow-base { fill:none; stroke-linecap:round; opacity:.22; }
+.flow-line { fill:none; stroke-linecap:round; opacity:.95; stroke-dasharray:2 16; animation:flowdash 1.1s linear infinite; }
+.flow-base.loss { opacity:.18; }
+@keyframes flowdash { to { stroke-dashoffset:-36; } }
+.flow-node { fill:var(--surface); stroke:var(--border); stroke-width:2; }
+.flow-big { font-size:26px; }
+.flow-ico { font-size:15px; }
+.flow-t { fill:var(--text-hi); font-family:'SG',sans-serif; font-size:14px; font-weight:700; }
+.flow-s { fill:var(--text-lo); font-family:'SG',sans-serif; font-size:12.5px; }
+.flow-t.loss-t { fill:var(--high); }
+@media (prefers-reduced-motion: reduce) { .flow-line { animation:none; } .tv-fill { transition:none; } }
+
+/* ===== v2.4: Ağıllı sayğac laboratoriyası ===== */
+.lab-sources .ghost-btn.active { border-color:var(--low); color:var(--low); background:rgba(0,217,163,0.08); }
+.live-card { display:grid; grid-template-columns:minmax(220px,0.8fr) minmax(0,2fr); gap:20px; align-items:center; }
+.live-meter { background:var(--bg2); border:1px solid var(--border); border-radius:16px; padding:18px; }
+.live-head { display:flex; align-items:center; gap:8px; font-size:12.5px; color:var(--text-lo); }
+.live-dot { width:9px; height:9px; border-radius:50%; background:var(--low); box-shadow:0 0 0 0 rgba(0,217,163,.6); animation:livepulse 1.6s infinite; }
+@keyframes livepulse { 0% { box-shadow:0 0 0 0 rgba(0,217,163,.55); } 70% { box-shadow:0 0 0 10px rgba(0,217,163,0); } 100% { box-shadow:0 0 0 0 rgba(0,217,163,0); } }
+.live-w { font-size:40px; font-weight:700; font-variant-numeric:tabular-nums; margin:6px 0 10px; color:var(--low); transition:color .3s; }
+.live-bar { position:relative; height:10px; background:var(--track); border-radius:6px; }
+.live-bar > div { height:100%; width:0; border-radius:6px; background:linear-gradient(90deg,var(--low),var(--mid)); transition:width 1.2s ease; }
+.live-bar > span { position:absolute; top:-4px; bottom:-4px; width:2px; background:var(--line2); }
+.live-sub { font-size:12px; color:var(--text-lo); margin-top:10px; line-height:1.45; }
+.lab-kpis { grid-template-columns:repeat(3,minmax(0,1fr)); margin-top:0; }
+.wk-heat { min-width:520px; display:flex; flex-direction:column; gap:3px; }
+.wk-row { display:grid; grid-template-columns:34px repeat(24,minmax(0,1fr)); gap:3px; }
+.wk-head span { font-size:10px; color:var(--text-lo); text-align:left; }
+.wk-day { font-size:11px; color:var(--text-lo); align-self:center; }
+.wk-cell { height:20px; border-radius:4px; background:var(--low); opacity:calc(0.1 + var(--k) * 0.9); }
+.wk-cell.none { background:var(--track); opacity:1; }
+.csv-example { background:var(--bg2); border:1px solid var(--border); border-radius:10px; padding:12px 14px; font-size:12.5px;
+  line-height:1.6; overflow-x:auto; color:var(--text-hi); font-family:ui-monospace,SFMono-Regular,Menlo,monospace; }
+@media (max-width:860px) {
+  .live-card { grid-template-columns:minmax(0,1fr); }
+}
+@media (max-width:719px) {
+  .lab-kpis { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .live-w { font-size:34px; }
+  .tv-legend { grid-template-columns:minmax(0,1fr); gap:6px; }
+  .tv-range { font-size:10px; right:5px; }
+}
