@@ -16,5 +16,5 @@ Fayllar
   Mətn və loqolar kənardan ən azı 55 mm içəridədir.
 - Aşağıdakı təxminən 100 mm boş saxlanılıb (stendin altlığı örtür).
 - Gənclər Fondunun loqosu vektordur (youthfoundation.az saytındakı rəsmi SVG), ölçünü istənilən qədər böyütmək olar.
-- QR kod https://energyx.az ünvanına aparır. QR-ı kiçiltməyin (indiki ölçü 162 x 162 mm), ətrafındakı ağ sahə qalsın.
+- QR kod https://energyx.az ünvanına aparır. QR-ı kiçiltməyin (indiki ölçü 180 x 180 mm), ətrafındakı ağ sahə qalsın.
 - Şrift: Inter və Inter Display (pulsuz, SIL Open Font License).

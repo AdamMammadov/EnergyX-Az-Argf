@@ -26,7 +26,7 @@ body {
 
 /* Üst tünd hissə */
 .top {
-  left: 0; top: 0; width: 850mm; height: 1090mm; color: #FFFFFF;
+  left: 0; top: 0; width: 850mm; height: 1070mm; color: #FFFFFF;
   background:
     radial-gradient(520mm 420mm at 92% 30%, rgba(67,184,138,0.20), rgba(67,184,138,0) 70%),
     radial-gradient(560mm 460mm at 0% 78%, rgba(31,91,199,0.30), rgba(31,91,199,0) 70%),
@@ -34,18 +34,20 @@ body {
 }
 /* Gənclər Fondunun loqosu: rəsmi vektor fayl, ortada və iri */
 .fund { left: 105mm; top: 58mm; width: 640mm; }
-.project { left: 60mm; right: 60mm; top: 236mm; display: flex; align-items: center; justify-content: center; gap: 12mm; color: #FFFFFF; }
-.project svg { width: 50mm; height: 50mm; flex: none; }
-.project span { font-family: "EX Inter Display", "EX Inter", sans-serif; font-weight: 700; font-size: 42mm; letter-spacing: -0.01em; white-space: nowrap; }
-.project span i { font-style: normal; font-family: "EX Inter", sans-serif; font-weight: 400; color: var(--soft); }
+/* Layihənin adı: böyük, başlıqdan daha çox gözə çarpır */
+.project { left: 40mm; right: 40mm; top: 244mm; text-align: center; color: #FFFFFF; }
+.project .name { display: flex; align-items: center; justify-content: center; gap: 15mm; }
+.project svg { width: 76mm; height: 76mm; flex: none; }
+.project .name span { font-family: "EX Inter Display", "EX Inter", sans-serif; font-weight: 700; font-size: 82mm; line-height: 1; letter-spacing: -0.015em; white-space: nowrap; }
+.project .sub { display: block; margin-top: 7mm; font-size: 38mm; line-height: 1.1; color: var(--soft); }
 .rule { top: 216mm; left: 245mm; width: 360mm; height: 0.7mm; background: var(--line-d); }
 
 h1 {
-  color: #FFFFFF; left: 40mm; top: 340mm; width: 770mm; text-align: center;
-  font-family: "EX Inter Display", "EX Inter", sans-serif; font-weight: 700; font-size: 76mm; line-height: 1.04; letter-spacing: -0.025em;
+  color: #FFFFFF; left: 40mm; top: 424mm; width: 770mm; text-align: center;
+  font-family: "EX Inter Display", "EX Inter", sans-serif; font-weight: 700; font-size: 50mm; line-height: 1.12; letter-spacing: -0.02em;
 }
 h1 em { font-style: normal; color: var(--green); }
-.lead { left: 75mm; top: 608mm; width: 700mm; text-align: center; font-size: 27mm; line-height: 1.32; color: var(--soft); }
+.lead { left: 75mm; top: 562mm; width: 700mm; text-align: center; font-size: 25mm; line-height: 1.32; color: var(--soft); }
 
 /* Telefonlar */
 .phone {
@@ -53,12 +55,12 @@ h1 em { font-style: normal; color: var(--green); }
   box-shadow: 0 0 0 1.4mm #2C343C, 0 26mm 60mm rgba(5,8,12,0.40);
 }
 .phone img { display: block; width: 100%; border-radius: 31mm; }
-.ph-c { left: 307mm; top: 735mm; width: 236mm; z-index: 3; }
-.ph-l { left: 120mm; top: 805mm; width: 200mm; z-index: 2; transform: rotate(-5deg); }
-.ph-r { left: 530mm; top: 805mm; width: 200mm; z-index: 2; transform: rotate(5deg); }
+.ph-c { left: 307mm; top: 712mm; width: 236mm; z-index: 3; }
+.ph-l { left: 120mm; top: 782mm; width: 200mm; z-index: 2; transform: rotate(-5deg); }
+.ph-r { left: 530mm; top: 782mm; width: 200mm; z-index: 2; transform: rotate(5deg); }
 
 /* İmkanlar */
-.features { left: 60mm; top: 1278mm; width: 730mm; display: grid; grid-template-columns: 1fr 1fr; column-gap: 30mm; row-gap: 20mm; }
+.features { left: 60mm; top: 1256mm; width: 730mm; display: grid; grid-template-columns: 1fr 1fr; column-gap: 30mm; row-gap: 20mm; }
 .f { display: grid; grid-template-columns: 54mm 1fr; column-gap: 13mm; align-items: center; }
 .f .ic { width: 54mm; height: 54mm; border-radius: 14mm; display: grid; place-items: center; }
 .f .ic svg { width: 32mm; height: 32mm; }
@@ -71,10 +73,10 @@ h1 em { font-style: normal; color: var(--green); }
 
 /* QR kartı */
 .cta {
-  left: 60mm; top: 1515mm; width: 730mm; height: 228mm; border-radius: 24mm; background: var(--ink); color: #FFFFFF;
+  left: 60mm; top: 1494mm; width: 730mm; height: 250mm; border-radius: 24mm; background: var(--ink); color: #FFFFFF;
   display: flex; align-items: center; gap: 32mm; padding: 0 36mm 0 22mm;
 }
-.qr { flex: none; width: 186mm; height: 186mm; background: #FFFFFF; border-radius: 11mm; padding: 12mm; }
+.qr { flex: none; width: 206mm; height: 206mm; background: #FFFFFF; border-radius: 12mm; padding: 13mm; }
 .qr img { display: block; width: 100%; height: 100%; }
 .cta small { display: block; font-size: 20mm; color: var(--soft); }
 .cta .url { display: block; margin-top: 4mm; font-family: "EX Inter Display", "EX Inter", sans-serif; font-weight: 700; font-size: 70mm; line-height: 1; letter-spacing: -0.02em; }
@@ -82,12 +84,11 @@ h1 em { font-style: normal; color: var(--green); }
 .chips i { font-style: normal; font-size: 17mm; font-weight: 600; padding: 3.5mm 9mm; border-radius: 30mm; border: 1mm solid rgba(67,184,138,0.65); color: #BFEBD8; }
 
 /* Layihə rəhbəri, yer və il, Fond qeydi */
-.foot { left: 60mm; top: 1772mm; width: 730mm; }
+.foot { left: 60mm; top: 1784mm; width: 730mm; }
 .foot .row { display: flex; justify-content: space-between; align-items: baseline; font-size: 21mm; line-height: 1.2; color: var(--text); }
 .foot .row b { font-weight: 700; }
 .foot .row .place { font-weight: 700; }
-.foot p.note { margin-top: 9mm; padding-top: 9mm; border-top: 0.6mm solid #DDE2E8; font-size: 15mm; line-height: 1.35; color: var(--muted); }
-.foot .tags { margin-top: 6mm; font-size: 17mm; font-weight: 700; color: var(--blue); letter-spacing: 0.01em; }
+.foot .tags { margin-top: 12mm; padding-top: 11mm; border-top: 0.6mm solid #DDE2E8; text-align: center; font-size: 21mm; font-weight: 700; color: var(--blue); letter-spacing: 0.01em; }
 
 /* Yoxlama üçün: təhlükəsiz sahə və stendin alt hissəsi (build.js --guides ilə görünür) */
 .guides { display: none; }
@@ -103,12 +104,15 @@ body.show-guides .guides { display: block; }
 <img class="abs fund" src="assets/azgf-logo-white.svg" alt="Azərbaycan Respublikasının Gənclər Fondu">
 <div class="abs rule"></div>
 <div class="abs project">
+  <div class="name">
     <svg viewBox="0 0 420 420" aria-hidden="true"><defs><linearGradient id="mg" x1="0%" y1="100%" x2="100%" y2="0%"><stop offset="0%" stop-color="#00E6B8"/><stop offset="100%" stop-color="#00A98A"/></linearGradient><linearGradient id="bg2g" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#5CB0FF"/><stop offset="100%" stop-color="#2F8FFF"/></linearGradient></defs><path d="M 78 78 C 130 130, 150 150, 175 178 M 245 242 C 270 268, 292 292, 342 342" stroke="url(#bg2g)" stroke-width="26" stroke-linecap="round" fill="none"/><path d="M 78 342 L 148 342 L 148 272 L 218 272 L 218 202 L 242 202" stroke="url(#mg)" stroke-width="26" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M 178 178 L 200 156 L 268 156 L 342 82" stroke="url(#mg)" stroke-width="26" stroke-linecap="round" stroke-linejoin="round" fill="none"/><circle cx="210" cy="210" r="22" fill="#EAFFFA"/></svg>
-    <span>“EnergyX Az” <i>layihəsi</i></span>
+    <span>“EnergyX Az”</span>
+  </div>
+  <span class="sub">layihəsi</span>
 </div>
 
-<h1 class="abs">Elektrik və qaz<br>xərcinizi ay<br><em>bitməmiş bilin</em></h1>
-<p class="abs lead">Rəsmi tariflərlə aylıq ödənişi hesablayır, hansı cihazın nə qədər işlətdiyini göstərir.</p>
+<h1 class="abs">Elektrik və qaz xərcinizi<br><em>ay bitməmiş bilin</em></h1>
+<p class="abs lead">Rəsmi tariflərlə aylıq ödənişi hesablayır,<br>hansı cihazın nə qədər işlətdiyini göstərir.</p>
 
 <div class="phone ph-l"><img src="build/app-chart.png" alt=""></div>
 <div class="phone ph-c"><img src="build/calc.png" alt=""></div>
@@ -140,7 +144,6 @@ body.show-guides .guides { display: block; }
 
 <div class="abs foot">
   <div class="row"><span>Layihə rəhbəri: <b>Adəm Məmmədov</b></span><span class="place">Xırdalan şəhəri - 2026</span></div>
-  <p class="note">Bu nəşr Azərbaycan Respublikasının Gənclər Fondunun maliyyə yardımı ilə hazırlanmışdır. Fond nəşrin məzmununa görə məsuliyyət daşımır.</p>
   <p class="tags">#AzGF #GenclerFondu</p>
 </div>
 
