@@ -1,0 +1,19 @@
+EnergyX Az: roll-up stend, 850 x 2000 mm
+
+Fayllar
+- rollup-energyx-850x2000.pdf: əsas çap faylı, 1:1 ölçü. Mətnlər vektordur, şriftlər fayla daxildir.
+- rollup-energyx-850x2000-150dpi.jpg: eyni dizayn, 150 dpi şəkil (PDF açılmasa).
+- rollup-preview.jpg: telefonda baxmaq üçün kiçik önizləmə.
+- fayllar/: dizaynı öz şablonunuzda yığmaq üçün ayrıca hissələr
+  energyx-mark.svg (EnergyX Az nişanı, vektor), qr-energyx-az.svg (QR kod, vektor),
+  azgf-h-white.png və azgf-h-color.png (Gənclər Fondunun loqosu),
+  ekran-*.png (saytın telefon ekranları, 1560 x 3376 px).
+
+Çap üçün
+- Rənglər RGB-dir, çapdan əvvəl CMYK-ya çevirin. Əsas rənglər: tünd fon #0F1215, yaşıl #43B88A, göy #1F5BC7.
+- Daşma (bleed) əlavə edilməyib. Fon kənara qədər gedir, stendinizin şablonu tələb edirsə fonu uzadın.
+  Mətn və loqolar kənardan ən azı 55 mm içəridədir.
+- Aşağıdakı təxminən 100 mm boş saxlanılıb (stendin altlığı örtür).
+- Gənclər Fondunun loqosu burada PNG-dir (1810 px). Fondun orijinal vektor loqosu varsa, onunla əvəz edin.
+- QR kod https://energyx.az ünvanına aparır. QR-ı kiçiltməyin (indiki ölçü 182 x 182 mm), ətrafındakı ağ sahə qalsın.
+- Şrift: Inter və Inter Display (pulsuz, SIL Open Font License).

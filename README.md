@@ -53,6 +53,10 @@ frontend/                Statik sayt (PWA)
 
 `tools/demo-video/` qovluğundakı skriptlər saytın təqdimat rejimindən Azərbaycan dilində izahlı, musiqili və altyazılı video hazırlayır. Addımlar həmin qovluğun README faylındadır.
 
+## Roll-up stend
+
+`tools/rollup/` qovluğunda 850 x 2000 mm roll-up stendin dizaynı və onu çap üçün PDF-ə çevirən skriptlər var. Addımlar həmin qovluğun README faylındadır.
+
 ## Testlər
 
 ```bash

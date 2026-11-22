@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="az">
+<head>
+<meta charset="utf-8">
+<title>EnergyX Az roll-up 850x2000</title>
+<!-- Roll-up stend: 850 x 2000 mm. Bütün ölçülər mm-dir. build.js bunu PDF-ə və önizləmə şəkillərinə çevirir. -->
+<style>
+@page { size: 850mm 2000mm; margin: 0; }
+/* Inter (SIL OFL 1.1), TrueType-a çevrilib: PDF-də şrift düzgün yerləşir */
+@font-face { font-family: "EX Inter"; font-weight: 400; src: url("assets/fonts/Inter-Regular.ttf") format("truetype"); }
+@font-face { font-family: "EX Inter"; font-weight: 600; src: url("assets/fonts/Inter-SemiBold.ttf") format("truetype"); }
+@font-face { font-family: "EX Inter"; font-weight: 700; src: url("assets/fonts/Inter-Bold.ttf") format("truetype"); }
+@font-face { font-family: "EX Inter Display"; font-weight: 700; src: url("assets/fonts/InterDisplay-Bold.ttf") format("truetype"); }
+:root {
+  --ink: #0F1215; --ink-2: #171C21; --line-d: #2A3138;
+  --green: #43B88A; --green-d: #0A6A45; --blue: #1F5BC7; --blue-l: #7AA7F7; --amber: #B86E00; --red: #B3342C;
+  --text: #17202A; --muted: #5B6573; --soft: #C3CBD3;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: 850mm; height: 2000mm; overflow: hidden; }
+body {
+  position: relative; overflow: hidden; background: #FFFFFF; color: var(--text);
+  font-family: "EX Inter", "DejaVu Sans", sans-serif; -webkit-print-color-adjust: exact; print-color-adjust: exact;
+}
+.abs { position: absolute; }
+
+/* Üst tünd hissə */
+.top {
+  left: 0; top: 0; width: 850mm; height: 1010mm; color: #FFFFFF;
+  background:
+    radial-gradient(520mm 420mm at 92% 4%, rgba(67,184,138,0.22), rgba(67,184,138,0) 70%),
+    radial-gradient(560mm 460mm at 0% 78%, rgba(31,91,199,0.30), rgba(31,91,199,0) 70%),
+    var(--ink);
+}
+.logos { color: #FFFFFF; left: 60mm; right: 60mm; top: 58mm; display: flex; align-items: center; justify-content: space-between; }
+.brand { display: flex; align-items: center; gap: 12mm; font-family: "EX Inter Display", "EX Inter", sans-serif; font-weight: 700; font-size: 34mm; letter-spacing: -0.01em; }
+.brand svg { width: 46mm; height: 46mm; }
+.fund { height: 40mm; }
+.rule { left: 60mm; right: 60mm; top: 132mm; height: 0.6mm; background: var(--line-d); }
+
+h1 {
+  color: #FFFFFF; left: 60mm; top: 170mm; width: 740mm;
+  font-family: "EX Inter Display", "EX Inter", sans-serif; font-weight: 700; font-size: 86mm; line-height: 1.04; letter-spacing: -0.025em;
+}
+h1 em { font-style: normal; color: var(--green); }
+.lead { left: 60mm; top: 460mm; width: 690mm; font-size: 30mm; line-height: 1.32; color: var(--soft); }
+
+/* Telefonlar */
+.phone {
+  position: absolute; padding: 7mm; background: #05070A; border-radius: 38mm;
+  box-shadow: 0 0 0 1.4mm #2C343C, 0 26mm 60mm rgba(5,8,12,0.40);
+}
+.phone img { display: block; width: 100%; border-radius: 31mm; }
+.ph-c { left: 300mm; top: 610mm; width: 250mm; z-index: 3; }
+.ph-l { left: 82mm; top: 690mm; width: 215mm; z-index: 2; transform: rotate(-5deg); }
+.ph-r { left: 553mm; top: 690mm; width: 215mm; z-index: 2; transform: rotate(5deg); }
+
+/* İmkanlar */
+.features { left: 60mm; top: 1200mm; width: 730mm; display: grid; grid-template-columns: 1fr 1fr; column-gap: 30mm; row-gap: 26mm; }
+.f { display: grid; grid-template-columns: 58mm 1fr; column-gap: 14mm; align-items: center; }
+.f .ic { width: 58mm; height: 58mm; border-radius: 15mm; display: grid; place-items: center; }
+.f .ic svg { width: 34mm; height: 34mm; }
+.f b { display: block; font-size: 25mm; line-height: 1.1; letter-spacing: -0.01em; }
+.f span { display: block; margin-top: 2.5mm; font-size: 17.5mm; line-height: 1.25; color: var(--muted); }
+.c-blue  { background: #E6EEFB; color: var(--blue); }
+.c-green { background: #E3F3EC; color: var(--green-d); }
+.c-amber { background: #FBF0DF; color: var(--amber); }
+.c-red   { background: #F9E5E3; color: var(--red); }
+
+/* QR kartı */
+.cta {
+  left: 60mm; top: 1505mm; width: 730mm; height: 270mm; border-radius: 26mm; background: var(--ink); color: #FFFFFF;
+  display: flex; align-items: center; gap: 34mm; padding: 0 40mm 0 30mm;
+}
+.qr { flex: none; width: 210mm; height: 210mm; background: #FFFFFF; border-radius: 12mm; padding: 14mm; }
+.qr img { display: block; width: 100%; height: 100%; }
+.cta small { display: block; font-size: 21mm; color: var(--soft); }
+.cta .url { display: block; margin-top: 4mm; font-family: "EX Inter Display", "EX Inter", sans-serif; font-weight: 700; font-size: 72mm; line-height: 1; letter-spacing: -0.02em; }
+.chips { display: flex; flex-wrap: wrap; gap: 6mm; margin-top: 16mm; }
+.chips i { font-style: normal; font-size: 17mm; font-weight: 600; padding: 3.5mm 9mm; border-radius: 30mm; border: 1mm solid rgba(67,184,138,0.65); color: #BFEBD8; }
+
+/* Fond qeydi */
+.foot { left: 60mm; top: 1810mm; width: 730mm; }
+.foot p { font-size: 15.5mm; line-height: 1.35; color: var(--muted); }
+.foot .tags { margin-top: 7mm; font-size: 18mm; font-weight: 700; color: var(--blue); letter-spacing: 0.01em; }
+
+/* Yoxlama üçün: təhlükəsiz sahə və stendin alt hissəsi (build.js --guides ilə görünür) */
+.guides { display: none; }
+body.show-guides .guides { display: block; }
+.guides .safe { position: absolute; left: 30mm; right: 30mm; top: 30mm; bottom: 100mm; outline: 1.5mm dashed rgba(226,106,96,0.9); }
+.guides .base { position: absolute; left: 0; right: 0; bottom: 0; height: 100mm; background: rgba(226,106,96,0.18); }
+</style>
+</head>
+<body>
+
+<div class="abs top"></div>
+
+<div class="abs logos">
+  <div class="brand">
+    <svg viewBox="0 0 420 420" aria-hidden="true"><defs><linearGradient id="mg" x1="0%" y1="100%" x2="100%" y2="0%"><stop offset="0%" stop-color="#00E6B8"/><stop offset="100%" stop-color="#00A98A"/></linearGradient><linearGradient id="bg2g" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#5CB0FF"/><stop offset="100%" stop-color="#2F8FFF"/></linearGradient></defs><path d="M 78 78 C 130 130, 150 150, 175 178 M 245 242 C 270 268, 292 292, 342 342" stroke="url(#bg2g)" stroke-width="26" stroke-linecap="round" fill="none"/><path d="M 78 342 L 148 342 L 148 272 L 218 272 L 218 202 L 242 202" stroke="url(#mg)" stroke-width="26" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M 178 178 L 200 156 L 268 156 L 342 82" stroke="url(#mg)" stroke-width="26" stroke-linecap="round" stroke-linejoin="round" fill="none"/><circle cx="210" cy="210" r="22" fill="#EAFFFA"/></svg>
+    EnergyX Az
+  </div>
+  <img class="fund" src="assets/azgf-h-white.png" alt="Azərbaycan Respublikasının Gənclər Fondu">
+</div>
+<div class="abs rule"></div>
+
+<h1 class="abs">Elektrik və qaz<br>xərcinizi ay<br><em>bitməmiş bilin</em></h1>
+<p class="abs lead">Rəsmi tariflərlə aylıq ödənişi hesablayır, hansı cihazın nə qədər işlətdiyini göstərir.</p>
+
+<div class="phone ph-l"><img src="build/app-chart.png" alt=""></div>
+<div class="phone ph-c"><img src="build/calc.png" alt=""></div>
+<div class="phone ph-r"><img src="build/meter-curve.png" alt=""></div>
+
+<div class="abs features">
+  <div class="f"><div class="ic c-blue"><svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'><rect x='5' y='3' width='14' height='18' rx='2'/><path d='M8 7h8M8.5 11.5h.01M12 11.5h.01M15.5 11.5h.01M8.5 15h.01M12 15h.01M15.5 15h.01M8.5 18h.01M12 18h.01M15.5 18h.01'/></svg></div>
+    <div><b>Aylıq hesab</b><span>Məbləğ və tarif pilləsi</span></div></div>
+  <div class="f"><div class="ic c-green"><svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'><path d='M9 3v5M15 3v5'/><path d='M6 8h12v3a6 6 0 0 1-12 0z'/><path d='M12 17v4'/></svg></div>
+    <div><b>Cihazlar</b><span>Hansı cihaz nə qədər işlədir</span></div></div>
+  <div class="f"><div class="ic c-amber"><svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'><path d='M4.5 17a8.5 8.5 0 1 1 15 0'/><path d='M12 13l3.5-3.5'/><circle cx='12' cy='13' r='1'/></svg></div>
+    <div><b>Ağıllı sayğac</b><span>Saatlıq yük və gizli sərf</span></div></div>
+  <div class="f"><div class="ic c-red"><svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'><path d='M12 3c.5 3 4.5 5 4.5 10a4.5 4.5 0 0 1-9 0c0-2 1-3.5 2-4.5.3 1.5 1 2.3 2 2.5-.6-3 .2-5.5.5-8z'/></svg></div>
+    <div><b>Təbii qaz</b><span>İllik pilləli qaz tarifi</span></div></div>
+  <div class="f"><div class="ic c-blue"><svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'><path d='M4 20h16'/><path d='M7 16v-4M12 16V7M17 16v-6'/></svg></div>
+    <div><b>Proqnoz</b><span>12 ay və enerji balı</span></div></div>
+  <div class="f"><div class="ic c-green"><svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'><path d='M9 18h6M10 21h4'/><path d='M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3z'/></svg></div>
+    <div><b>Məsləhətçi</b><span>Qənaət üçün konkret addımlar</span></div></div>
+</div>
+
+<div class="abs cta">
+  <div class="qr"><img src="assets/qr-energyx-az.svg" alt="QR: energyx.az"></div>
+  <div>
+    <small>Telefonun kamerası ilə skan edin</small>
+    <span class="url">energyx.az</span>
+    <div class="chips"><i>Pulsuz</i><i>Qeydiyyatsız</i><i>AZ · EN · RU</i></div>
+  </div>
+</div>
+
+<div class="abs foot">
+  <p>Bu nəşr Azərbaycan Respublikasının Gənclər Fondunun maliyyə yardımı ilə hazırlanmışdır. Fond nəşrin məzmununa görə məsuliyyət daşımır.</p>
+  <p class="tags">#AzGF #GenclerFondu</p>
+</div>
+
+<div class="guides"><div class="safe"></div><div class="base"></div></div>
+</body>
+</html>
