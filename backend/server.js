@@ -390,7 +390,7 @@ app.get("/stats/daily", statsLimiter, async (req, res) => {
 
 app.get("/health", (req, res) => {
   res.json({ status: "ok", version: require("./package.json").version, ai: Boolean(process.env.GEMINI_API_KEY), model: activeModel,
-    stats: stats.kind,
+    stats: stats.kind, ...(stats.lastError ? { statsError: stats.lastError } : {}),
     uptimeSec: Math.round(process.uptime()) });
 });
 

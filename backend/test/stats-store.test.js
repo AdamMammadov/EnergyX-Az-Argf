@@ -72,3 +72,20 @@ test("günlər Bakı vaxtı ilə, ardıcıl və təkrarsız", () => {
   const d = lastDays(5, new Date("2026-03-01T21:30:00Z"));   // Bakıda artıq 2 mart
   assert.deepEqual(d, ["2026-02-26", "2026-02-27", "2026-02-28", "2026-03-01", "2026-03-02"]);
 });
+
+test("Upstash dəyərləri dırnaqla kopyalananda da işləyir", async () => {
+  const up = fakeUpstash();
+  const s = createStatsStore({ UPSTASH_REDIS_REST_URL: ' "https://y.upstash.io" ', UPSTASH_REDIS_REST_TOKEN: '"tok2"\n' }, up.fetchImpl);
+  await s.add("visits");
+  assert.equal(up.calls[0].url, "https://y.upstash.io/pipeline");
+  assert.equal(up.calls[0].auth, "Bearer tok2");
+  assert.equal(s.lastError, null);
+});
+
+test("Upstash xətası lastError-da görünür, açar gizlədilir", async () => {
+  const s = createStatsStore({ UPSTASH_REDIS_REST_URL: "https://z.upstash.io", UPSTASH_REDIS_REST_TOKEN: "secret-token" },
+    async () => new Response(JSON.stringify({ error: "WRONGPASS invalid password secret-token" }), { status: 401 }));
+  await assert.rejects(() => s.totals());
+  assert.match(s.lastError, /Upstash HTTP 401: WRONGPASS/);
+  assert.ok(!s.lastError.includes("secret-token"));
+});
