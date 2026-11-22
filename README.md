@@ -28,7 +28,8 @@ Bütün hesablamalar istifadəçinin brauzerində aparılır. Sayğac və cihaz 
 
 ```
 backend/                 Node.js server (Express)
-  server.js              API: /advise (məsləhətçi), /ai-check, /health, /stats, /track
+  server.js              API: /advise (məsləhətçi), /ai-check, /health, /stats, /stats/daily, /track
+  stats-store.js         Statistika: Upstash Redis və ya lokal fayl
   tariff.js              Rəsmi tarif hesablaması
   test/                  Avtomatik testlər (node:test)
 frontend/                Statik sayt (PWA)
@@ -39,6 +40,7 @@ frontend/                Statik sayt (PWA)
   js/ux.js               Tema, naviqasiya, icmal, hesab yoxlama, cihaz müqayisəsi
   js/lab.js              Ağıllı sayğac analizi, tarif animasiyası, enerji axını
   js/home.js             Ana səhifə və başlanğıc bölməsi
+  js/report.js           Statistika və hesabat (CSV, PDF)
   css/                   Stillər (theme.css: rəng sistemi və ikonlar)
   vendor/                Chart.js 4.5.1 və jsPDF 2.5.1 (MIT), CDN-dən asılılıq yoxdur
   img/                   Gənclər Fondunun loqoları
@@ -70,8 +72,9 @@ Testlər tarif hesablamasını, analitika funksiyalarını, API-ni, frontend fay
    - `GEMINI_API_KEY`: Gemini API açarı ([aistudio.google.com](https://aistudio.google.com/apikey)).
    - `GEMINI_MODEL` (istəyə bağlı): default `gemini-flash-latest`. Köhnə `gemini-2.0-flash` 1 iyun 2026-da bağlanıb, bu dəyər yazılıbsa silin.
    - `ALLOWED_ORIGINS` (istəyə bağlı): məsələn `https://energyx.az`.
+   - `UPSTASH_REDIS_REST_URL` və `UPSTASH_REDIS_REST_TOKEN` (tövsiyə olunur): statistikanın qalıcı saxlanması üçün. [upstash.com](https://upstash.com)-da pulsuz Redis bazası yaradılır (region: Frankfurt), dəyərlər bazanın "REST API" bölməsindən götürülür.
 4. Deploy-dan sonra yoxlayın:
-   - `/health`: `"ai": true` və `"version"` repodakı versiya ilə eyni olmalıdır.
+   - `/health`: `"ai": true`, `"stats": "redis"` və `"version"` repodakı versiya ilə eyni olmalıdır.
    - `/ai-check`: `"ok": true` olmalıdır. `ok: false` olarsa, `reason` sahəsi səbəbi göstərir.
 
 Render-in pulsuz serveri 15 dəqiqə sorğu almayanda yatır. `.github/workflows/keepalive.yml` hər 10 dəqiqədən bir `/health` ünvanına sorğu göndərir ki, server oyaq qalsın (bir servis üçün pulsuz 750 saatlıq limit kifayətdir). Backend ünvanı dəyişsə, repo ayarlarında `BACKEND_URL` dəyişənini yazın. Sayt da açılan kimi serveri səssizcə oyadır.
@@ -83,8 +86,8 @@ Model müvəqqəti yüklənəndə (503), kvota bitəndə (429) və ya model bağ
 2. Backend ünvanı `frontend/index.html`-də `API_BASE` sabitindədir.
 3. Domen Vercel layihəsinin "Domains" bölməsindən qoşulur. Domen qoşulandan sonra `og:image` üçün tam ünvan yazmaq tövsiyə olunur (Facebook nisbi ünvanı qəbul etmir).
 
-### Statistika haqqında qeyd
-Backend istifadə statistikasını `stats.json` faylında saxlayır. Render-in pulsuz planında disk müvəqqətidir: server yenidən başlayanda fayl sıfırlanır. Qalıcı statistika üçün Render Persistent Disk və ya xarici verilənlər bazası lazımdır.
+### Statistika
+Sayt yalnız anonim saylar göndərir: səfər (sessiyada bir dəfə, interfeys dili ilə), hesablama, məsləhətçiyə sual, PDF hesabat, hesablanmış qənaət. IP ünvanı və ya istifadəçi identifikatoru saxlanılmır. Upstash qoşulubsa saylar qalıcıdır; qoşulmayıbsa lokal faylda saxlanılır və Render-in pulsuz planında server yenidən başlayanda sıfırlanır. "Statistika" bölməsi gün və ay üzrə göstəriciləri göstərir və CSV və PDF hesabat (Fondun loqosu və məcburi qeydi ilə) yükləməyə imkan verir.
 
 ## Mənbələr
 
@@ -99,6 +102,7 @@ Nümunə məlumat və təqdimat rejimindəki rəqəmlər real istifadəçi məlu
 
 ## Versiyalar
 
+- **2.6.0**: qalıcı statistika (Upstash Redis) və Fond üçün hesabat səhifəsi: səfərlər, hesablamalar, məsləhətçi sualları, gün və ay üzrə, dil bölgüsü, CSV və PDF hesabat.
 - **2.5.3**: tanıtım videosu ana səhifədə və "Haqqında" bölməsində (YouTube yalnız "oynat" basılanda yüklənir).
 - **2.5.2**: səsli tanıtım videosu üçün alətlər (`tools/demo-video/`): Azərbaycan dilində izah, musiqi, altyazı; təqdimat addımlarının müddəti istəyə görə verilə bilir.
 - **2.5.1**: backend-i oyaq saxlayan GitHub Actions işi (AI-ın ilk cavabı gecikmir), "Telefona quraşdır" düyməsi, PNG tətbiq ikonları.

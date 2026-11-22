@@ -19,7 +19,7 @@
 <meta property="og:locale" content="az_AZ">
 <meta name="twitter:card" content="summary_large_image">
 <!-- Tətbiq versiyası: dəyişəndə həm buradakı ?v=, həm də sw.js-dəki VERSION artırılmalıdır -->
-<meta name="app-version" content="2.5.3">
+<meta name="app-version" content="2.6.0">
 <link rel="manifest" href="manifest.webmanifest">
 <script>window.addEventListener("beforeinstallprompt", function (e) { e.preventDefault(); window.__installPrompt = e; });</script>
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
@@ -321,9 +321,9 @@ footer { padding:36px 0 48px; border-top:1px solid var(--border); text-align:cen
 footer a { color:var(--text-lo); text-decoration:underline; }
 footer .credit { margin-top:8px; font-size:12px; }
 </style>
-<link rel="stylesheet" href="css/pro.css?v=2.5.3">
-<link rel="stylesheet" href="css/layout.css?v=2.5.3">
-<link rel="stylesheet" href="css/theme.css?v=2.5.3">
+<link rel="stylesheet" href="css/pro.css?v=2.6.0">
+<link rel="stylesheet" href="css/layout.css?v=2.6.0">
+<link rel="stylesheet" href="css/theme.css?v=2.6.0">
 </head>
 <body>
 
@@ -932,19 +932,33 @@ tarix;saat;kVt·saat
 <div class="tab-panel" id="panel-stats">
   <h1 class="panel-title" data-i18n="stats_title">İstifadə statistikası</h1>
   <p class="panel-lead" data-i18n="stats_lead">Bu alətin ümumi istifadə göstəriciləri. Şəxsi məlumat toplanmır.</p>
-  <div class="stats-grid">
-    <div class="stat-card">
-      <div class="stat-num" id="statCalc">-</div>
-      <div class="stat-label" data-i18n="stat_calc_label">Aparılan hesablama</div>
+  <div class="report-bar">
+    <div class="seg" id="repRange" role="group" aria-label="Dövr">
+      <button type="button" data-days="30" class="active" data-i18n="rep_30">30 gün</button>
+      <button type="button" data-days="90" data-i18n="rep_90">90 gün</button>
+      <button type="button" data-days="365" data-i18n="rep_365">1 il</button>
     </div>
-    <div class="stat-card">
-      <div class="stat-num" id="statAi">-</div>
-      <div class="stat-label" data-i18n="stat_ai_label">Məsləhətçiyə verilən sual</div>
+    <div class="report-export">
+      <button type="button" class="ghost-btn" id="repCsv" data-i18n="rep_csv">CSV yüklə</button>
+      <button type="button" class="ghost-btn" id="repPdf" data-i18n="rep_pdf">PDF hesabat</button>
     </div>
-    <div class="stat-card">
-      <div class="stat-num" id="statSavings">-</div>
-      <div class="stat-label" data-i18n="stat_savings_label">₼ qənaət hesablanıb</div>
-    </div>
+  </div>
+  <div class="hint-box" id="repNote" hidden></div>
+  <div class="report-kpis" id="repKpis" aria-live="polite"></div>
+  <section class="pro-card report-chart">
+    <div class="pro-card-head"><h2 data-i18n="rep_daily_title">Gün üzrə istifadə</h2><span class="pro-tag" id="repPeriod"></span></div>
+    <div class="chart-box"><canvas id="repChart" aria-label="Gün üzrə istifadə qrafiki" role="img"></canvas></div>
+  </section>
+  <div class="report-two">
+    <section class="pro-card">
+      <div class="pro-card-head"><h2 data-i18n="rep_months_title">Aylar üzrə</h2></div>
+      <div class="table-scroll" tabindex="0" role="region" aria-label="Aylar üzrə"><table class="inv-table report-table" id="repMonths"></table></div>
+    </section>
+    <section class="pro-card">
+      <div class="pro-card-head"><h2 data-i18n="rep_lang_title">İnterfeys dili</h2></div>
+      <div id="repLangs"></div>
+      <p class="pro-note" data-i18n="rep_privacy">Saylar anonimdir: IP ünvanı, cihaz identifikatoru və ya şəxsi məlumat saxlanılmır.</p>
+    </section>
   </div>
 </div>
 
@@ -1047,7 +1061,7 @@ tarix;saat;kVt·saat
   <button class="bn-btn" type="button" id="bnMore" onclick="toggleNav(true)"><span class="bn-ico" aria-hidden="true"></span><span data-i18n="nav_more">Daha çox</span></button>
 </nav>
 
-<script src="js/engine.js?v=2.5.3"></script>
+<script src="js/engine.js?v=2.6.0"></script>
 <script>
 const API_BASE = "https://energyx-az-kalkulyator.onrender.com";
 
@@ -1525,7 +1539,7 @@ document.querySelectorAll(".faq-item").forEach(item => {
 function trackEvent(type, amount) {
   fetch(`${API_BASE}/track`, {
     method: "POST", headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ type, amount }),
+    body: JSON.stringify({ type, amount, lang: currentLang }),
   }).catch(() => {});
 }
 slider.addEventListener("change", () => trackEvent("calculation"));
@@ -1536,16 +1550,8 @@ simSlider.addEventListener("change", () => {
   if (savings > 0) trackEvent("savings", savings.toFixed(2));
 });
 
-async function loadStats() {
-  try {
-    const res = await fetch(`${API_BASE}/stats`);
-    const data = await res.json();
-    document.getElementById("statCalc").textContent = data.totalCalculations || 0;
-    document.getElementById("statAi").textContent = data.totalAiQuestions || 0;
-    document.getElementById("statSavings").textContent = (data.totalSavingsIdentified || 0).toFixed(0);
-  } catch (e) {
-    document.getElementById("statCalc").textContent = "-";
-  }
+function loadStats() {
+  if (window.EnergyReport) EnergyReport.load();
 }
 
 // ===== APPLIANCES (Cihaz Analizi) =====
@@ -1766,11 +1772,12 @@ updateCalc();
 updateSim();
 
 </script>
-<script src="js/pro.js?v=2.5.3"></script>
-<script src="js/extras.js?v=2.5.3"></script>
-<script src="js/ux.js?v=2.5.3"></script>
-<script src="js/lab.js?v=2.5.3"></script>
-<script src="js/home.js?v=2.5.3"></script>
+<script src="js/pro.js?v=2.6.0"></script>
+<script src="js/extras.js?v=2.6.0"></script>
+<script src="js/ux.js?v=2.6.0"></script>
+<script src="js/lab.js?v=2.6.0"></script>
+<script src="js/home.js?v=2.6.0"></script>
+<script src="js/report.js?v=2.6.0"></script>
 
 </body>
 </html>

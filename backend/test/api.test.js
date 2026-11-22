@@ -40,14 +40,27 @@ test("POST /advise doğrulama və AI açarı olmadıqda 503", async () => {
 });
 
 test("POST /track yalnız icazəli hadisələri qəbul edir", async () => {
-  const ok = await (await post("/track", { type: "calculation" })).json();
-  assert.ok(ok.totalCalculations >= 1);
+  const before = await (await fetch(base + "/stats")).json();
+  assert.deepEqual(await (await post("/track", { type: "calculation" })).json(), { ok: true });
   assert.equal((await post("/track", { type: "hack" })).status, 400);
   assert.equal((await post("/track", { type: "savings", amount: 5000 })).status, 400);
-  const s = await (await post("/track", { type: "savings", amount: "3.5" })).json();
-  assert.ok(s.totalSavingsIdentified >= 3.5);
+  assert.equal((await post("/track", { type: "savings", amount: "3.5" })).status, 200);
+  assert.equal((await post("/track", { type: "visit", lang: "en" })).status, 200);
+  assert.equal((await post("/track", { type: "visit", lang: "<script>" })).status, 200);  // dil qəbul olunmur, səfər sayılır
   const stats = await (await fetch(base + "/stats")).json();
-  assert.equal(stats.totalCalculations, ok.totalCalculations);
+  assert.equal(stats.totalCalculations, before.totalCalculations + 1);
+  assert.equal(stats.totalSavingsIdentified, Math.round((before.totalSavingsIdentified + 3.5) * 100) / 100);
+  assert.equal(stats.totalVisits, before.totalVisits + 2);
+  assert.equal(stats.languages.en, (before.languages.en || 0) + 1);
+  assert.equal(Object.keys(stats.languages).some((k) => k.includes("<")), false);
+  assert.equal(stats.storage, "file");
+  // gün üzrə: bugünkü sətir artıb
+  const daily = await (await fetch(base + "/stats/daily?days=7")).json();
+  assert.equal(daily.days.length, 7);
+  const last = daily.days[daily.days.length - 1];
+  assert.ok(last.calculations >= 1 && last.visits >= 2 && last.savings >= 3.5);
+  assert.match(last.date, /^\d{4}-\d{2}-\d{2}$/);
+  assert.equal((await (await fetch(base + "/stats/daily?days=99999")).json()).days.length, 400);
 });
 
 test("yanlış JSON və naməlum marşrut səliqəli cavab alır", async () => {

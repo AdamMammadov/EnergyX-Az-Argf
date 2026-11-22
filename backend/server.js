@@ -4,8 +4,6 @@
 // tam pulsuz, açıq mənbə layihə.
 // ==========================================
 require("dotenv").config();
-const fs = require("fs");
-const path = require("path");
 const express = require("express");
 const cors = require("cors");
 const rateLimit = require("express-rate-limit");
@@ -282,7 +280,7 @@ Cavabı ${LANG_NAMES[lang]} dilində yaz.`;
     const status = result.status === 504 ? 504 : 502;
     return res.status(status).json({ error: "AI xidmətində xəta baş verdi.", reason: result.reason });
   }
-  bumpStats((s) => { s.totalAiQuestions += 1; });
+  countStat("ai_questions");
   res.json({ answer: tidyAnswer(result.text) });
 });
 
@@ -301,36 +299,20 @@ app.get("/ai-check", aiCheckLimiter, async (req, res) => {
 });
 
 // ==========================================
-// SADƏ STATİSTİKA SİSTEMİ (fayl-əsaslı, verilənlər bazası tələb etmir)
-// Yaddaşda saxlanılır, fayla atomik şəkildə (tmp + rename) yazılır.
+// STATİSTİKA (stats-store.js): Upstash Redis varsa qalıcı, yoxsa lokal fayl.
+// Yalnız saylar saxlanılır, şəxsi məlumat yoxdur.
 // ==========================================
-const STATS_FILE = process.env.STATS_FILE || path.join(__dirname, "stats.json");
-const DEFAULT_STATS = { totalCalculations: 0, totalSavingsIdentified: 0, totalAiQuestions: 0, aiFeedbackUp: 0, aiFeedbackDown: 0, totalPdfExports: 0 };
-let statsCache = null;
-
-function loadStats() {
-  if (statsCache) return statsCache;
-  try {
-    statsCache = { ...DEFAULT_STATS, ...JSON.parse(fs.readFileSync(STATS_FILE, "utf-8")) };
-  } catch {
-    statsCache = { ...DEFAULT_STATS };
-  }
-  return statsCache;
-}
-function saveStats(stats) {
-  try {
-    const tmp = STATS_FILE + ".tmp";
-    fs.writeFileSync(tmp, JSON.stringify(stats));
-    fs.renameSync(tmp, STATS_FILE);
-  } catch (err) {
-    console.error("Statistika yazılmadı:", err.message);
-  }
-}
-function bumpStats(mutator) {
-  const s = loadStats();
-  mutator(s);
-  saveStats(s);
-  return s;
+const { createStatsStore, LANGS } = require("./stats-store");
+const stats = createStatsStore();
+const countStat = (field, by, lang) => stats.add(field, by, lang).catch((err) => console.error("Statistika yazılmadı:", err.message));
+// Oxu nəticələri qısa müddət yaddaşda saxlanılır: hesabat səhifəsi Upstash-ın pulsuz limitini xərcləməsin
+const readCache = new Map();
+async function cached(key, ttlMs, fn) {
+  const hit = readCache.get(key);
+  if (hit && Date.now() - hit.t < ttlMs) return hit.v;
+  const v = await fn();
+  readCache.set(key, { t: Date.now(), v });
+  return v;
 }
 
 const trackLimiter = rateLimit({
@@ -340,34 +322,75 @@ const trackLimiter = rateLimit({
   legacyHeaders: false,
   message: { error: "Çox sorğu." },
 });
+const statsLimiter = rateLimit({ windowMs: 60 * 1000, max: 60, standardHeaders: true, legacyHeaders: false,
+  message: { error: "Çox sorğu." } });
 
-const TRACK_HANDLERS = {
-  calculation: (s) => { s.totalCalculations += 1; },
-  ai_question: (s) => { s.totalAiQuestions += 1; },
-  ai_feedback_up: (s) => { s.aiFeedbackUp += 1; },
-  ai_feedback_down: (s) => { s.aiFeedbackDown += 1; },
-  pdf_export: (s) => { s.totalPdfExports += 1; },
+// Hadisə növü -> sayğac
+const TRACK_FIELDS = {
+  visit: "visits",
+  calculation: "calculations",
+  ai_question: "ai_questions",
+  ai_feedback_up: "ai_feedback_up",
+  ai_feedback_down: "ai_feedback_down",
+  pdf_export: "pdf_exports",
 };
 
-app.post("/track", trackLimiter, (req, res) => {
-  const { type, amount } = req.body || {};
-  if (type === "savings") {
-    const value = parseFloat(amount);
-    // Bir istifadəçinin statistikanı süni şişirtməsinin qarşısını almaq üçün yuxarı hədd
-    if (!Number.isFinite(value) || value <= 0 || value > 1000) return res.status(400).json({ error: "Yanlış məbləğ." });
-    return res.json(bumpStats((s) => { s.totalSavingsIdentified = Math.round((s.totalSavingsIdentified + value) * 100) / 100; }));
+app.post("/track", trackLimiter, async (req, res) => {
+  const { type, amount, lang } = req.body || {};
+  try {
+    if (type === "savings") {
+      const value = parseFloat(amount);
+      // Bir istifadəçinin statistikanı süni şişirtməsinin qarşısını almaq üçün yuxarı hədd
+      if (!Number.isFinite(value) || value <= 0 || value > 1000) return res.status(400).json({ error: "Yanlış məbləğ." });
+      await stats.add("savings_cents", Math.round(value * 100));
+      readCache.delete("totals");
+      return res.json({ ok: true });
+    }
+    const field = TRACK_FIELDS[type];
+    if (!field) return res.status(400).json({ error: "Naməlum hadisə növü." });
+    // Səfər zamanı yalnız interfeys dili qeyd olunur (az/en/ru)
+    await stats.add(field, 1, type === "visit" && LANGS.includes(lang) ? lang : undefined);
+    readCache.delete("totals");
+    res.json({ ok: true });
+  } catch (err) {
+    console.error("Statistika yazılmadı:", err.message);
+    res.status(503).json({ error: "Statistika müvəqqəti əlçatmazdır." });
   }
-  const handler = TRACK_HANDLERS[type];
-  if (!handler) return res.status(400).json({ error: "Naməlum hadisə növü." });
-  res.json(bumpStats(handler));
 });
 
-app.get("/stats", (req, res) => {
-  res.json(loadStats());
+// Ümumi göstəricilər (köhnə sahə adları saytın əvvəlki versiyası üçün saxlanılır)
+app.get("/stats", statsLimiter, async (req, res) => {
+  try {
+    const { totals: t, languages, since } = await cached("totals", 30 * 1000, () => stats.totals());
+    res.json({
+      totalVisits: t.visits, totalCalculations: t.calculations, totalAiQuestions: t.ai_questions,
+      aiFeedbackUp: t.ai_feedback_up, aiFeedbackDown: t.ai_feedback_down, totalPdfExports: t.pdf_exports,
+      totalSavingsIdentified: Math.round(t.savings_cents) / 100,
+      languages, since, storage: stats.kind,
+    });
+  } catch (err) {
+    console.error("Statistika oxunmadı:", err.message);
+    res.status(503).json({ error: "Statistika müvəqqəti əlçatmazdır." });
+  }
+});
+
+// Gün üzrə göstəricilər (hesabat səhifəsi üçün), ən çox 400 gün
+app.get("/stats/daily", statsLimiter, async (req, res) => {
+  const days = Math.min(400, Math.max(1, parseInt(req.query.days, 10) || 90));
+  try {
+    const rows = await cached("daily:" + days, 5 * 60 * 1000, () => stats.daily(days));
+    res.json({ days: rows.map((r) => ({ date: r.date, visits: r.visits, calculations: r.calculations, aiQuestions: r.ai_questions,
+      pdfExports: r.pdf_exports, feedbackUp: r.ai_feedback_up, feedbackDown: r.ai_feedback_down, savings: Math.round(r.savings_cents) / 100 })),
+      storage: stats.kind });
+  } catch (err) {
+    console.error("Statistika oxunmadı:", err.message);
+    res.status(503).json({ error: "Statistika müvəqqəti əlçatmazdır." });
+  }
 });
 
 app.get("/health", (req, res) => {
   res.json({ status: "ok", version: require("./package.json").version, ai: Boolean(process.env.GEMINI_API_KEY), model: activeModel,
+    stats: stats.kind,
     uptimeSec: Math.round(process.uptime()) });
 });
 

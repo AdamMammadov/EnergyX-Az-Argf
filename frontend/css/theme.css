@@ -223,3 +223,28 @@ a.brand:hover .sub { color:var(--text-hi); }
 .about-video { max-width:880px; margin:20px 0 8px; }
 @media (max-width:900px) { .home-video { grid-template-columns:minmax(0,1fr); gap:16px; } }
 a.btn-link { text-decoration:none; } a.btn-link:hover { text-decoration:underline; }
+
+/* Statistika / hesabat */
+.report-bar { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:12px; margin:4px 0 18px; }
+.report-export { display:flex; gap:8px; flex-wrap:wrap; }
+.seg { display:inline-flex; background:var(--surface); border:1px solid var(--border); border-radius:10px; overflow:hidden; }
+.seg button { background:none; border:none; padding:8px 14px; font-size:13.5px; font-weight:600; color:var(--text-lo); cursor:pointer; }
+.seg button.active { background:var(--accent); color:var(--accent-ink); }
+.seg button:not(.active):hover { color:var(--text-hi); }
+.report-kpis { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; margin-bottom:18px; }
+.report-kpis .stat-card { text-align:left; padding:18px 20px; }
+.report-kpis .stat-num { font-size:28px; color:var(--text-hi); }
+.stat-sub { font-size:12.5px; color:var(--text-lo); margin-top:4px; }
+.report-chart .chart-box { height:280px; }
+.report-two { display:grid; grid-template-columns:minmax(0,1.4fr) minmax(0,1fr); gap:18px; align-items:start; }
+.report-two .pro-card, .report-chart { margin:0 0 18px; }
+.report-table th, .report-table td { text-align:right; }
+.report-table th:first-child, .report-table td:first-child { text-align:left; }
+.rep-lang { display:grid; grid-template-columns:34px 1fr auto; align-items:center; gap:10px; margin:10px 0; font-size:14px; }
+.rep-lang-name { font-weight:600; }
+.rep-lang-bar { height:8px; background:var(--track); border-radius:6px; overflow:hidden; }
+.rep-lang-bar span { display:block; height:100%; background:var(--accent); border-radius:6px; }
+.rep-lang-val { color:var(--text-lo); font-variant-numeric:tabular-nums; }
+.report-retry { margin-left:10px; }
+@media (max-width:900px) { .report-two { grid-template-columns:minmax(0,1fr); } }
+@media (max-width:640px) { .report-kpis { grid-template-columns:repeat(2,minmax(0,1fr)); } .report-kpis .stat-num { font-size:22px; } }
