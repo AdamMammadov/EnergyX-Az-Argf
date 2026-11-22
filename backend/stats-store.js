@@ -25,28 +25,42 @@ function toRow(obj) {
 }
 
 // ---------- Upstash Redis (REST) ----------
+// Panel dəyərləri tez-tez dırnaqla kopyalanır (.env formatı: KEY="..."): dırnaq və boşluqlar təmizlənir
+const cleanEnv = (v) => String(v || "").trim().replace(/^["']+|["']+$/g, "").trim();
+
 function redisStore(url, token, fetchImpl) {
   const base = url.replace(/\/+$/, "");
+  const store = { kind: "redis", lastError: null };
   async function pipeline(cmds) {
-    const res = await (fetchImpl || globalThis.fetch)(base + "/pipeline", {
-      method: "POST",
-      headers: { Authorization: "Bearer " + token, "Content-Type": "application/json" },
-      body: JSON.stringify(cmds),
-      signal: AbortSignal.timeout(8000),
-    });
-    if (!res.ok) throw new Error("Upstash HTTP " + res.status);
-    const data = await res.json();
-    const bad = data.find((x) => x && x.error);
-    if (bad) throw new Error("Upstash: " + bad.error);
-    return data.map((x) => x.result);
+    try {
+      const res = await (fetchImpl || globalThis.fetch)(base + "/pipeline", {
+        method: "POST",
+        headers: { Authorization: "Bearer " + token, "Content-Type": "application/json" },
+        body: JSON.stringify(cmds),
+        signal: AbortSignal.timeout(8000),
+      });
+      if (!res.ok) {
+        let detail = "";
+        try { detail = String((await res.json()).error || ""); } catch {}
+        throw new Error(`Upstash HTTP ${res.status}${detail ? ": " + detail : ""}`);
+      }
+      const data = await res.json();
+      const bad = Array.isArray(data) ? data.find((x) => x && x.error) : { error: "gözlənilməz cavab" };
+      if (bad) throw new Error("Upstash: " + bad.error);
+      store.lastError = null;
+      return data.map((x) => x.result);
+    } catch (err) {
+      // Diaqnostika üçün (/health): açar heç vaxt mesajda olmur
+      store.lastError = String(err && err.message || err).split(token).join("***").slice(0, 160);
+      throw err;
+    }
   }
   const hashToObj = (arr) => {
     const o = {};
     if (Array.isArray(arr)) for (let i = 0; i + 1 < arr.length; i += 2) o[arr[i]] = arr[i + 1];
     return o;
   };
-  return {
-    kind: "redis",
+  return Object.assign(store, {
     async add(field, by = 1, lang) {
       const day = today();
       const cmds = [["HINCRBY", PREFIX + "totals", field, by], ["HINCRBY", PREFIX + "day:" + day, field, by],
@@ -63,7 +77,7 @@ function redisStore(url, token, fetchImpl) {
       const res = await pipeline(list.map((d) => ["HGETALL", PREFIX + "day:" + d]));
       return list.map((date, i) => ({ date, ...toRow(hashToObj(res[i])) }));
     },
-  };
+  });
 }
 
 // ---------- Lokal fayl ----------
@@ -118,9 +132,9 @@ function fileStore(file) {
 }
 
 function createStatsStore(env = process.env, fetchImpl) {
-  const url = env.UPSTASH_REDIS_REST_URL, token = env.UPSTASH_REDIS_REST_TOKEN;
-  if (url && token) return redisStore(url, token, fetchImpl);
+  const url = cleanEnv(env.UPSTASH_REDIS_REST_URL), token = cleanEnv(env.UPSTASH_REDIS_REST_TOKEN);
+  if (url && token) return redisStore(/^https?:\/\//i.test(url) ? url : "https://" + url, token, fetchImpl);
   return fileStore(env.STATS_FILE || path.join(__dirname, "stats.json"));
 }
 
-module.exports = { createStatsStore, FIELDS, LANGS, today, lastDays };
+module.exports = { createStatsStore, cleanEnv, FIELDS, LANGS, today, lastDays };
