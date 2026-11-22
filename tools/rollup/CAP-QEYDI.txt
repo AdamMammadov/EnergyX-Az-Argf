@@ -6,7 +6,8 @@ Fayllar
 - rollup-preview.jpg: telefonda baxmaq üçün kiçik önizləmə.
 - fayllar/: dizaynı öz şablonunuzda yığmaq üçün ayrıca hissələr
   energyx-mark.svg (EnergyX Az nişanı, vektor), qr-energyx-az.svg (QR kod, vektor),
-  azgf-h-white.png və azgf-h-color.png (Gənclər Fondunun loqosu),
+  azgf-logo-white.svg (Gənclər Fondunun rəsmi loqosu, vektor, Fondun saytından),
+  azgf-h-color.png (Fondun rəngli loqosu, açıq fon üçün),
   ekran-*.png (saytın telefon ekranları, 1560 x 3376 px).
 
 Çap üçün
@@ -14,6 +15,6 @@ Fayllar
 - Daşma (bleed) əlavə edilməyib. Fon kənara qədər gedir, stendinizin şablonu tələb edirsə fonu uzadın.
   Mətn və loqolar kənardan ən azı 55 mm içəridədir.
 - Aşağıdakı təxminən 100 mm boş saxlanılıb (stendin altlığı örtür).
-- Gənclər Fondunun loqosu burada PNG-dir (1810 px). Fondun orijinal vektor loqosu varsa, onunla əvəz edin.
-- QR kod https://energyx.az ünvanına aparır. QR-ı kiçiltməyin (indiki ölçü 182 x 182 mm), ətrafındakı ağ sahə qalsın.
+- Gənclər Fondunun loqosu vektordur (youthfoundation.az saytındakı rəsmi SVG), ölçünü istənilən qədər böyütmək olar.
+- QR kod https://energyx.az ünvanına aparır. QR-ı kiçiltməyin (indiki ölçü 162 x 162 mm), ətrafındakı ağ sahə qalsın.
 - Şrift: Inter və Inter Display (pulsuz, SIL Open Font License).

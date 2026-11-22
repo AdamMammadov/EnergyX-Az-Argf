@@ -15,4 +15,4 @@ Nəticə `tools/rollup/build/` qovluğundadır:
 - `rollup-preview.jpg`: kiçik önizləmə
 - `rollup-guides.jpg`: təhlükəsiz sahə və stendin altlığı qırmızı ilə göstərilir
 
-`assets/` qovluğunda QR kod (https://energyx.az, vektor), EnergyX Az nişanı, Gənclər Fondunun loqosu və Inter şriftləri (SIL OFL 1.1, TrueType-a çevrilib ki, PDF-də düzgün yerləşsin) var. Çapxana üçün qeydlər `CAP-QEYDI.txt` faylındadır.
+`assets/` qovluğunda QR kod (https://energyx.az, vektor), EnergyX Az nişanı, Gənclər Fondunun loqosu (rəsmi SVG, youthfoundation.az) və Inter şriftləri (SIL OFL 1.1, TrueType-a çevrilib ki, PDF-də düzgün yerləşsin) var. Çapxana üçün qeydlər `CAP-QEYDI.txt` faylındadır.
