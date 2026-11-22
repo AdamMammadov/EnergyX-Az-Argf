@@ -1071,6 +1071,7 @@
   window.EnergyPro = {
     refresh, refreshSoon, onTab, addPaceReading, removePaceReading, addPreset, loadSample, clearSample,
     exportBackup, importBackup, aiContext, localAnswer, exportPdf, startPresentation, stopPresentation, toast,
+    pdfKit: { loadFont, loadJsPdf, loadLogo },
     getState: () => state, monthLabel, shortMonth, fmt, load, store, cssVar, tint, chartBase, compute,
   };
   applyTranslations(currentLang);
