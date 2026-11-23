@@ -4,6 +4,8 @@ Azərbaycanda ev təsərrüfatları üçün pulsuz elektrik və qaz xərci kalku
 
 Layihə Azərbaycan Respublikasının Gənclər Fondunun qrant dəstəyi ilə hazırlanıb. Kod açıq mənbədir (MIT).
 
+Sayt: [energyx.az](https://energyx.az)
+
 Tanıtım videosu: [youtu.be/bov7zKZije4](https://youtu.be/bov7zKZije4)
 
 ## Saytda nə var
@@ -88,7 +90,7 @@ Model müvəqqəti yüklənəndə (503), kvota bitəndə (429) və ya model bağ
 ### Frontend (Vercel)
 1. Vercel-də yeni layihə yaradın, bu reponu seçin, Root Directory: `frontend`.
 2. Backend ünvanı `frontend/index.html`-də `API_BASE` sabitindədir.
-3. Domen Vercel layihəsinin "Domains" bölməsindən qoşulur. Domen qoşulandan sonra `og:image` üçün tam ünvan yazmaq tövsiyə olunur (Facebook nisbi ünvanı qəbul etmir).
+3. Domen: `energyx.az` (online.az-da qeydiyyat, 22.11.2027-yə qədər). DNS serverləri `ns1.vercel-dns.com` və `ns2.vercel-dns.com`, qeydləri Vercel özü idarə edir. `www.energyx.az` 308 ilə `energyx.az`-a yönlənir. `og:image`, `og:url` və `canonical` tam ünvanla yazılıb.
 
 ### Statistika
 Sayt yalnız anonim saylar göndərir: səfər (sessiyada bir dəfə, interfeys dili ilə), hesablama, məsləhətçiyə sual, PDF hesabat, hesablanmış qənaət. IP ünvanı və ya istifadəçi identifikatoru saxlanılmır. Upstash qoşulubsa saylar qalıcıdır; qoşulmayıbsa lokal faylda saxlanılır və Render-in pulsuz planında server yenidən başlayanda sıfırlanır. "Statistika" bölməsi gün və ay üzrə göstəriciləri göstərir və CSV və PDF hesabat (Fondun loqosu və məcburi qeydi ilə) yükləməyə imkan verir.
