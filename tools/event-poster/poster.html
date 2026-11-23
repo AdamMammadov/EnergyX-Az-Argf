@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="az">
+<head>
+<meta charset="utf-8">
+<title>EnergyX Az tədbir posteri</title>
+<!-- Sosial şəbəkə və qruplar üçün poster: 1080 x 1350 (4:5). build.js 2x ölçüdə PNG və JPG çıxarır. -->
+<style>
+@font-face { font-family: "EX Inter"; font-weight: 400; src: url("../rollup/assets/fonts/Inter-Regular.ttf") format("truetype"); }
+@font-face { font-family: "EX Inter"; font-weight: 600; src: url("../rollup/assets/fonts/Inter-SemiBold.ttf") format("truetype"); }
+@font-face { font-family: "EX Inter"; font-weight: 700; src: url("../rollup/assets/fonts/Inter-Bold.ttf") format("truetype"); }
+@font-face { font-family: "EX Inter Display"; font-weight: 700; src: url("../rollup/assets/fonts/InterDisplay-Bold.ttf") format("truetype"); }
+:root { --ink: #0F1215; --card: #171C21; --line: #2A3138; --green: #43B88A; --green-l: #BFEBD8; --blue-l: #7AA7F7; --soft: #C3CBD3; --lo: #8C96A1; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: 1080px; height: 1350px; overflow: hidden; }
+body {
+  position: relative; color: #FFFFFF; font-family: "EX Inter", sans-serif;
+  background:
+    radial-gradient(620px 520px at 95% 8%, rgba(67,184,138,0.20), rgba(67,184,138,0) 70%),
+    radial-gradient(700px 600px at 0% 85%, rgba(31,91,199,0.28), rgba(31,91,199,0) 70%),
+    var(--ink);
+}
+.abs { position: absolute; }
+.fund { left: 280px; top: 58px; width: 520px; }
+.rule { left: 390px; top: 190px; width: 300px; height: 1px; background: var(--line); }
+.project { left: 0; right: 0; top: 214px; display: flex; justify-content: center; align-items: center; gap: 14px; }
+.project svg { width: 46px; height: 46px; }
+.project span { font-size: 32px; font-weight: 600; color: var(--soft); }
+.project b { font-family: "EX Inter Display", sans-serif; font-weight: 700; color: #FFFFFF; }
+h1 { left: 50px; right: 50px; top: 292px; text-align: center; font-family: "EX Inter Display", sans-serif; font-weight: 700; font-size: 80px; line-height: 1.05; letter-spacing: -0.02em; }
+h1 em { font-style: normal; color: var(--green); }
+.sub { left: 0; right: 0; top: 476px; text-align: center; font-size: 30px; color: var(--soft); }
+
+.info { left: 72px; right: 72px; top: 548px; padding: 30px 38px; border-radius: 28px; background: var(--card); border: 1px solid var(--line); display: grid; gap: 22px; }
+.row { display: grid; grid-template-columns: 64px 1fr; column-gap: 24px; align-items: center; }
+.ic { width: 64px; height: 64px; border-radius: 18px; background: rgba(67,184,138,0.14); color: var(--green); display: grid; place-items: center; }
+.ic svg { width: 34px; height: 34px; }
+.row b { display: block; font-size: 38px; line-height: 1.1; font-weight: 700; }
+.row small { display: block; margin-top: 4px; font-size: 24px; color: var(--soft); }
+
+.learn { left: 72px; right: 72px; top: 902px; }
+.learn h2 { font-size: 26px; font-weight: 600; color: var(--lo); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 18px; }
+.learn li { list-style: none; display: grid; grid-template-columns: 34px 1fr; column-gap: 14px; align-items: start; font-size: 29px; line-height: 1.3; margin-bottom: 12px; }
+.learn li svg { width: 30px; height: 30px; margin-top: 4px; color: var(--green); }
+
+.badges { left: 72px; right: 72px; top: 1132px; display: flex; gap: 16px; flex-wrap: wrap; }
+.badges span { font-size: 28px; font-weight: 700; padding: 16px 28px; border-radius: 40px; }
+.badges .main { background: var(--green); color: #0B2A1D; }
+.badges .alt { border: 2px solid rgba(255,255,255,0.35); color: #FFFFFF; }
+
+.foot { left: 72px; right: 72px; top: 1262px; display: flex; justify-content: space-between; align-items: center; font-size: 25px; }
+.foot .tags { font-weight: 700; color: var(--blue-l); }
+.foot .url { font-weight: 600; color: var(--soft); }
+</style>
+</head>
+<body>
+<img class="abs fund" src="../rollup/assets/azgf-logo-white.svg" alt="Azərbaycan Respublikasının Gənclər Fondu">
+<div class="abs rule"></div>
+<div class="abs project"><svg viewBox="0 0 420 420"><defs><linearGradient id="mg" x1="0%" y1="100%" x2="100%" y2="0%"><stop offset="0%" stop-color="#00E6B8"/><stop offset="100%" stop-color="#00A98A"/></linearGradient><linearGradient id="bg2g" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#5CB0FF"/><stop offset="100%" stop-color="#2F8FFF"/></linearGradient></defs><path d="M 78 78 C 130 130, 150 150, 175 178 M 245 242 C 270 268, 292 292, 342 342" stroke="url(#bg2g)" stroke-width="26" stroke-linecap="round" fill="none"/><path d="M 78 342 L 148 342 L 148 272 L 218 272 L 218 202 L 242 202" stroke="url(#mg)" stroke-width="26" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M 178 178 L 200 156 L 268 156 L 342 82" stroke="url(#mg)" stroke-width="26" stroke-linecap="round" stroke-linejoin="round" fill="none"/><circle cx="210" cy="210" r="22" fill="#EAFFFA"/></svg><span><b>“EnergyX Az”</b> layihəsi</span></div>
+
+<h1 class="abs">Elektrik və qaz pulunu<br><em>necə azaltmalı?</em></h1>
+<p class="abs sub">Təqdimat, canlı nümayiş və praktiki seminar</p>
+
+<div class="abs info">
+  <div class="row"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M8 3v4M16 3v4M3.5 10h17"/></svg></div>
+    <div><b>30 noyabr, bazar ertəsi</b></div></div>
+  <div class="row"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg></div>
+    <div><b>14:00 - 15:00</b></div></div>
+  <div class="row"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0c0 5.4-6.5 11-6.5 11z"/><circle cx="12" cy="10" r="2.4"/></svg></div>
+    <div><b>Yeni bina, Akt zalı</b><small>Bakı Mühəndislik Universiteti</small></div></div>
+</div>
+
+<div class="abs learn">
+  <h2>Seminarda</h2>
+  <ul>
+    <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span>Aylıq işıq və qaz pulunu bir dəqiqəyə hesablamaq</span></li>
+    <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span>Hansı cihazın nə qədər işlətdiyini görmək</span></li>
+    <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span>Evdə qənaət üçün sadə addımlar</span></li>
+  </ul>
+</div>
+
+<div class="abs badges"><span class="main">Aktiv iştirakçılara sertifikat</span><span class="alt">Giriş sərbəstdir</span></div>
+
+<div class="abs foot"><span class="tags">#AzGF #GenclerFondu</span><span class="url">energyx.az</span></div>
+</body>
+</html>
